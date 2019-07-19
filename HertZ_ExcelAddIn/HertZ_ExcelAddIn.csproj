@@ -156,6 +156,12 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="BalanceAndJournalSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BalanceAndJournalSettingForm.Designer.cs">
+      <DependentUpon>BalanceAndJournalSettingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="BaseConfig.cs" />
     <Compile Include="HertZRibbon.cs">
       <SubType>Component</SubType>
@@ -166,6 +172,9 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="BalanceAndJournalSettingForm.resx">
+      <DependentUpon>BalanceAndJournalSettingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HertZRibbon.resx">
       <DependentUpon>HertZRibbon.cs</DependentUpon>
     </EmbeddedResource>
