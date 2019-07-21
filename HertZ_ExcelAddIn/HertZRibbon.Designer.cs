@@ -106,6 +106,7 @@
             this.BalanceAndJournalSetting.Name = "BalanceAndJournalSetting";
             this.BalanceAndJournalSetting.OfficeImageId = "AddInManager";
             this.BalanceAndJournalSetting.ShowImage = true;
+            this.BalanceAndJournalSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BalanceAndJournalSetting_Click);
             // 
             // HertZRibbon
             // 

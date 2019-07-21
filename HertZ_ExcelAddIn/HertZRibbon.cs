@@ -28,5 +28,11 @@ namespace HertZ_ExcelAddIn
         {
 
         }
+
+        private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
+        {
+            Form BalanceAndJournalSettingForm = new BalanceAndJournalSettingForm();
+            BalanceAndJournalSettingForm.Show();
+        }
     }
 }

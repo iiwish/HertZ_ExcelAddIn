@@ -201,4 +201,15 @@ namespace HertZ_ExcelAddIn
         }
         #endregion
     }
+
+    public class ClsThisAddinConfig : ClsBaseConfig
+    {
+        //构造函数
+        public ClsThisAddinConfig(string strPath)
+        {
+            ConfigPath = strPath;
+            ConfigName = "HertZConfig.xml";
+            RootNodeName = "Config";
+        }
+    }
 }

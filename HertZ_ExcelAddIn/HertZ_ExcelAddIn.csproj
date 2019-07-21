@@ -163,6 +163,7 @@
       <DependentUpon>BalanceAndJournalSettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="BaseConfig.cs" />
+    <Compile Include="commFun.cs" />
     <Compile Include="HertZRibbon.cs">
       <SubType>Component</SubType>
     </Compile>
