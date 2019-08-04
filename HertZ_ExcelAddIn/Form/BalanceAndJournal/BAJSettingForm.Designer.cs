@@ -1,6 +1,6 @@
 ﻿namespace HertZ_ExcelAddIn
 {
-    partial class BalanceAndJournalSettingForm
+    partial class BAJSettingForm
     {
         /// <summary>
         /// Required designer variable.
@@ -41,13 +41,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.SubjectCodeSign = new System.Windows.Forms.TextBox();
             this.SubjectCodeButton3 = new System.Windows.Forms.RadioButton();
-            this.SheetHeaderGroupBox = new System.Windows.Forms.GroupBox();
-            this.JournalBtn = new System.Windows.Forms.Button();
-            this.BalanceBtn = new System.Windows.Forms.Button();
             this.ConfirmBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.SubjectCodeGroupBox.SuspendLayout();
-            this.SheetHeaderGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // SubjectCodeButton1
@@ -90,12 +86,12 @@
             this.SubjectCodeGroupBox.Controls.Add(this.SubjectCodeButton1);
             this.SubjectCodeGroupBox.Controls.Add(this.SubjectCodeButton2);
             this.SubjectCodeGroupBox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.SubjectCodeGroupBox.Location = new System.Drawing.Point(150, 50);
+            this.SubjectCodeGroupBox.Location = new System.Drawing.Point(137, 39);
             this.SubjectCodeGroupBox.Name = "SubjectCodeGroupBox";
-            this.SubjectCodeGroupBox.Size = new System.Drawing.Size(500, 300);
+            this.SubjectCodeGroupBox.Size = new System.Drawing.Size(502, 304);
             this.SubjectCodeGroupBox.TabIndex = 2;
             this.SubjectCodeGroupBox.TabStop = false;
-            this.SubjectCodeGroupBox.Text = "科目编码设置";
+            this.SubjectCodeGroupBox.Text = "请选择编码格式";
             // 
             // SubjectCodeLength6
             // 
@@ -177,40 +173,10 @@
             this.SubjectCodeButton3.UseVisualStyleBackColor = true;
             this.SubjectCodeButton3.Click += new System.EventHandler(this.ChangeState);
             // 
-            // SheetHeaderGroupBox
-            // 
-            this.SheetHeaderGroupBox.Controls.Add(this.JournalBtn);
-            this.SheetHeaderGroupBox.Controls.Add(this.BalanceBtn);
-            this.SheetHeaderGroupBox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.SheetHeaderGroupBox.Location = new System.Drawing.Point(150, 397);
-            this.SheetHeaderGroupBox.Name = "SheetHeaderGroupBox";
-            this.SheetHeaderGroupBox.Size = new System.Drawing.Size(500, 144);
-            this.SheetHeaderGroupBox.TabIndex = 3;
-            this.SheetHeaderGroupBox.TabStop = false;
-            this.SheetHeaderGroupBox.Text = "常用列名修改";
-            // 
-            // JournalBtn
-            // 
-            this.JournalBtn.Location = new System.Drawing.Point(300, 60);
-            this.JournalBtn.Name = "JournalBtn";
-            this.JournalBtn.Size = new System.Drawing.Size(150, 50);
-            this.JournalBtn.TabIndex = 1;
-            this.JournalBtn.Text = "序时账";
-            this.JournalBtn.UseVisualStyleBackColor = true;
-            // 
-            // BalanceBtn
-            // 
-            this.BalanceBtn.Location = new System.Drawing.Point(50, 60);
-            this.BalanceBtn.Name = "BalanceBtn";
-            this.BalanceBtn.Size = new System.Drawing.Size(150, 50);
-            this.BalanceBtn.TabIndex = 0;
-            this.BalanceBtn.Text = "余额表";
-            this.BalanceBtn.UseVisualStyleBackColor = true;
-            // 
             // ConfirmBtn
             // 
             this.ConfirmBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ConfirmBtn.Location = new System.Drawing.Point(150, 621);
+            this.ConfirmBtn.Location = new System.Drawing.Point(137, 393);
             this.ConfirmBtn.Name = "ConfirmBtn";
             this.ConfirmBtn.Size = new System.Drawing.Size(150, 50);
             this.ConfirmBtn.TabIndex = 4;
@@ -221,7 +187,7 @@
             // CancelBtn
             // 
             this.CancelBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CancelBtn.Location = new System.Drawing.Point(500, 621);
+            this.CancelBtn.Location = new System.Drawing.Point(489, 393);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(150, 50);
             this.CancelBtn.TabIndex = 5;
@@ -229,21 +195,19 @@
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             // 
-            // BalanceAndJournalSettingForm
+            // BAJSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(774, 729);
+            this.ClientSize = new System.Drawing.Size(774, 495);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.ConfirmBtn);
-            this.Controls.Add(this.SheetHeaderGroupBox);
             this.Controls.Add(this.SubjectCodeGroupBox);
-            this.Name = "BalanceAndJournalSettingForm";
+            this.Name = "BAJSettingForm";
             this.Text = "账表加工设置";
-            this.Load += new System.EventHandler(this.BalanceAndJournalSettingForm_Load);
+            this.Load += new System.EventHandler(this.BAJSettingForm_Load);
             this.SubjectCodeGroupBox.ResumeLayout(false);
             this.SubjectCodeGroupBox.PerformLayout();
-            this.SheetHeaderGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -263,9 +227,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox SubjectCodeSign;
-        private System.Windows.Forms.GroupBox SheetHeaderGroupBox;
-        private System.Windows.Forms.Button JournalBtn;
-        private System.Windows.Forms.Button BalanceBtn;
         private System.Windows.Forms.Button ConfirmBtn;
         private System.Windows.Forms.Button CancelBtn;
     }

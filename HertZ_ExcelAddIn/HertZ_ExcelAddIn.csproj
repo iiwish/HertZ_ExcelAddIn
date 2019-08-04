@@ -156,11 +156,11 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="BalanceAndJournalSettingForm.cs">
+    <Compile Include="Form\BalanceAndJournal\BAJSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BalanceAndJournalSettingForm.Designer.cs">
-      <DependentUpon>BalanceAndJournalSettingForm.cs</DependentUpon>
+    <Compile Include="Form\BalanceAndJournal\BAJSettingForm.Designer.cs">
+      <DependentUpon>BAJSettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="BaseConfig.cs" />
     <Compile Include="commFun.cs" />
@@ -173,8 +173,8 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="BalanceAndJournalSettingForm.resx">
-      <DependentUpon>BalanceAndJournalSettingForm.cs</DependentUpon>
+    <EmbeddedResource Include="Form\BalanceAndJournal\BAJSettingForm.resx">
+      <DependentUpon>BAJSettingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HertZRibbon.resx">
       <DependentUpon>HertZRibbon.cs</DependentUpon>

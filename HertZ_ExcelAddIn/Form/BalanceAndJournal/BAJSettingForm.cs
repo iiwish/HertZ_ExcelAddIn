@@ -10,15 +10,15 @@ using System.Windows.Forms;
 
 namespace HertZ_ExcelAddIn
 {
-    public partial class BalanceAndJournalSettingForm : Form
+    public partial class BAJSettingForm : Form
     {
         
-        public BalanceAndJournalSettingForm()
+        public BAJSettingForm()
         {
             InitializeComponent();
         }
 
-        private void BalanceAndJournalSettingForm_Load(object sender, EventArgs e)
+        private void BAJSettingForm_Load(object sender, EventArgs e)
         {
             //从我的文档读取配置
             string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
@@ -106,27 +106,27 @@ namespace HertZ_ExcelAddIn
             string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
             ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
 
-            //写入父节点BalanceAndJournal中配置名SubjectCodeButton1的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeButton1(自动识别编码）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeButton1", SubjectCodeButton1.Checked.ToString());
 
-            //写入父节点BalanceAndJournal中配置名SubjectCodeButton2的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeButton2（使用分隔符拆分）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeButton2", SubjectCodeButton2.Checked.ToString());
-            //写入父节点BalanceAndJournal中配置名SubjectCodeSign的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeSign（分隔符号）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeSign", SubjectCodeSign.Text);
 
-            //写入父节点BalanceAndJournal中配置名SubjectCodeButton3的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeButton3（按编码长度拆分）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeButton3", SubjectCodeButton3.Checked.ToString());
-            //写入父节点BalanceAndJournal中配置名SubjectCodeLength1的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeLength1（一级科目长度）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeLength1", SubjectCodeLength1.Text);
-            //写入父节点BalanceAndJournal中配置名SubjectCodeLength2的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeLength2（二级科目长度）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeLength2", SubjectCodeLength2.Text);
-            //写入父节点BalanceAndJournal中配置名SubjectCodeLength3的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeLength3（三级科目长度）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeLength3", SubjectCodeLength3.Text);
-            //写入父节点BalanceAndJournal中配置名SubjectCodeLength4的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeLength4（四级科目长度）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeLength4", SubjectCodeLength4.Text);
-            //写入父节点BalanceAndJournal中配置名SubjectCodeLength5的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeLength5（五级科目长度）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeLength5", SubjectCodeLength5.Text);
-            //写入父节点BalanceAndJournal中配置名SubjectCodeLength6的配置项
+            //写入父节点BalanceAndJournal中配置名SubjectCodeLength6（六级科目长度）的配置项
             clsConfig.WriteConfig("BalanceAndJournal", "SubjectCodeLength6", SubjectCodeLength6.Text);
 
             //关闭窗体
