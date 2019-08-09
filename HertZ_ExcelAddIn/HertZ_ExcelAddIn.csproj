@@ -162,12 +162,13 @@
     <Compile Include="Form\BalanceAndJournal\BAJSettingForm.Designer.cs">
       <DependentUpon>BAJSettingForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="BaseConfig.cs" />
-    <Compile Include="commFun.cs" />
-    <Compile Include="HertZRibbon.cs">
+    <Compile Include="MainCode\A_BaseConfig.cs" />
+    <Compile Include="MainCode\A_commFun.cs" />
+    <Compile Include="MainCode\B_TableProcessing.cs" />
+    <Compile Include="Ribbon\HertZRibbon.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="HertZRibbon.Designer.cs">
+    <Compile Include="Ribbon\HertZRibbon.Designer.cs">
       <DependentUpon>HertZRibbon.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -176,7 +177,7 @@
     <EmbeddedResource Include="Form\BalanceAndJournal\BAJSettingForm.resx">
       <DependentUpon>BAJSettingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HertZRibbon.resx">
+    <EmbeddedResource Include="Ribbon\HertZRibbon.resx">
       <DependentUpon>HertZRibbon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

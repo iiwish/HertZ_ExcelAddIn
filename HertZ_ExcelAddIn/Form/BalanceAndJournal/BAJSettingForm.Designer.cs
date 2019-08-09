@@ -43,6 +43,7 @@
             this.SubjectCodeButton3 = new System.Windows.Forms.RadioButton();
             this.ConfirmBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
+            this.OrderCheckBox = new System.Windows.Forms.CheckBox();
             this.SubjectCodeGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -176,7 +177,7 @@
             // ConfirmBtn
             // 
             this.ConfirmBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ConfirmBtn.Location = new System.Drawing.Point(137, 393);
+            this.ConfirmBtn.Location = new System.Drawing.Point(137, 469);
             this.ConfirmBtn.Name = "ConfirmBtn";
             this.ConfirmBtn.Size = new System.Drawing.Size(150, 50);
             this.ConfirmBtn.TabIndex = 4;
@@ -187,7 +188,7 @@
             // CancelBtn
             // 
             this.CancelBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CancelBtn.Location = new System.Drawing.Point(489, 393);
+            this.CancelBtn.Location = new System.Drawing.Point(489, 469);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(150, 50);
             this.CancelBtn.TabIndex = 5;
@@ -195,11 +196,23 @@
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             // 
+            // OrderCheckBox
+            // 
+            this.OrderCheckBox.AutoSize = true;
+            this.OrderCheckBox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.OrderCheckBox.Location = new System.Drawing.Point(143, 373);
+            this.OrderCheckBox.Name = "OrderCheckBox";
+            this.OrderCheckBox.Size = new System.Drawing.Size(382, 35);
+            this.OrderCheckBox.TabIndex = 6;
+            this.OrderCheckBox.Text = "将余额表按照科目编码重新排序";
+            this.OrderCheckBox.UseVisualStyleBackColor = true;
+            // 
             // BAJSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(774, 495);
+            this.ClientSize = new System.Drawing.Size(774, 565);
+            this.Controls.Add(this.OrderCheckBox);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.SubjectCodeGroupBox);
@@ -209,6 +222,7 @@
             this.SubjectCodeGroupBox.ResumeLayout(false);
             this.SubjectCodeGroupBox.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -229,5 +243,6 @@
         private System.Windows.Forms.TextBox SubjectCodeSign;
         private System.Windows.Forms.Button ConfirmBtn;
         private System.Windows.Forms.Button CancelBtn;
+        private System.Windows.Forms.CheckBox OrderCheckBox;
     }
 }

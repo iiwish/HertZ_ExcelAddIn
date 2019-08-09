@@ -35,28 +35,28 @@
         private void InitializeComponent()
         {
             this.HertZTab = this.Factory.CreateRibbonTab();
-            this.SheetMake = this.Factory.CreateRibbonGroup();
+            this.TableProcessing = this.Factory.CreateRibbonGroup();
             this.BalanceAndJournal = this.Factory.CreateRibbonMenu();
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
             this.VoucherCheckList = this.Factory.CreateRibbonButton();
             this.BalanceAndJournalSetting = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
-            this.SheetMake.SuspendLayout();
+            this.TableProcessing.SuspendLayout();
             this.SuspendLayout();
             // 
             // HertZTab
             // 
-            this.HertZTab.Groups.Add(this.SheetMake);
+            this.HertZTab.Groups.Add(this.TableProcessing);
             this.HertZTab.Label = "赫兹";
             this.HertZTab.Name = "HertZTab";
             this.HertZTab.Position = this.Factory.RibbonPosition.AfterOfficeId("TabDeveloper");
             // 
-            // SheetMake
+            // TableProcessing
             // 
-            this.SheetMake.Items.Add(this.BalanceAndJournal);
-            this.SheetMake.Label = "加工";
-            this.SheetMake.Name = "SheetMake";
+            this.TableProcessing.Items.Add(this.BalanceAndJournal);
+            this.TableProcessing.Label = "加工";
+            this.TableProcessing.Name = "TableProcessing";
             // 
             // BalanceAndJournal
             // 
@@ -116,8 +116,8 @@
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.HertZRibbon_Load);
             this.HertZTab.ResumeLayout(false);
             this.HertZTab.PerformLayout();
-            this.SheetMake.ResumeLayout(false);
-            this.SheetMake.PerformLayout();
+            this.TableProcessing.ResumeLayout(false);
+            this.TableProcessing.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -125,7 +125,7 @@
         #endregion
 
         internal Microsoft.Office.Tools.Ribbon.RibbonTab HertZTab;
-        internal Microsoft.Office.Tools.Ribbon.RibbonGroup SheetMake;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup TableProcessing;
         internal Microsoft.Office.Tools.Ribbon.RibbonMenu BalanceAndJournal;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton JournalSheet;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton VoucherCheckList;
