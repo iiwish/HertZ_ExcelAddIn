@@ -10,6 +10,7 @@ namespace HertZ_ExcelAddIn
     /// <summary>
     /// 配置读写基类
     /// </summary>
+   
     public class ClsBaseConfig
     {
         #region 属性

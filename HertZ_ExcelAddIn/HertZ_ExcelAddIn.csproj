@@ -163,7 +163,7 @@
       <DependentUpon>BAJSettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MainCode\A_BaseConfig.cs" />
-    <Compile Include="MainCode\A_commFun.cs" />
+    <Compile Include="MainCode\A_Sheets.cs" />
     <Compile Include="MainCode\B_TableProcessing.cs" />
     <Compile Include="Ribbon\HertZRibbon.cs">
       <SubType>Component</SubType>

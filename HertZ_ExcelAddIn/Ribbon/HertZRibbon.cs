@@ -16,7 +16,7 @@ namespace HertZ_ExcelAddIn
 
         private void BalanceSheet_Click(object sender, RibbonControlEventArgs e)
         {
-            MessageBox.Show("你说啥");
+            new B_TableProcessing().testbox();
         }
 
         private void JournalSheet_Click(object sender, RibbonControlEventArgs e)

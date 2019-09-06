@@ -202,9 +202,9 @@
             this.OrderCheckBox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.OrderCheckBox.Location = new System.Drawing.Point(143, 373);
             this.OrderCheckBox.Name = "OrderCheckBox";
-            this.OrderCheckBox.Size = new System.Drawing.Size(382, 35);
+            this.OrderCheckBox.Size = new System.Drawing.Size(454, 35);
             this.OrderCheckBox.TabIndex = 6;
-            this.OrderCheckBox.Text = "将余额表按照科目编码重新排序";
+            this.OrderCheckBox.Text = "加工时将余额表按照科目编码重新排序";
             this.OrderCheckBox.UseVisualStyleBackColor = true;
             // 
             // BAJSettingForm
