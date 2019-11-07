@@ -156,10 +156,16 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="Form\BalanceAndJournal\BAJSettingForm.cs">
+    <Compile Include="Form\TableProcessing\CASetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\BalanceAndJournal\BAJSettingForm.Designer.cs">
+    <Compile Include="Form\TableProcessing\CASetting.Designer.cs">
+      <DependentUpon>CASetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\TableProcessing\BAJSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\TableProcessing\BAJSettingForm.Designer.cs">
       <DependentUpon>BAJSettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MainCode\A_BaseConfig.cs" />
@@ -174,8 +180,11 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Form\BalanceAndJournal\BAJSettingForm.resx">
+    <EmbeddedResource Include="Form\TableProcessing\BAJSettingForm.resx">
       <DependentUpon>BAJSettingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\TableProcessing\CASetting.resx">
+      <DependentUpon>CASetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Ribbon\HertZRibbon.resx">
       <DependentUpon>HertZRibbon.cs</DependentUpon>
@@ -224,6 +233,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\HertZ_Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HZlogo32.ico" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

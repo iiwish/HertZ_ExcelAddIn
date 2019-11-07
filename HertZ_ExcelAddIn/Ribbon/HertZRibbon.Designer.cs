@@ -41,6 +41,9 @@
             this.JournalSheet = this.Factory.CreateRibbonButton();
             this.VoucherCheckList = this.Factory.CreateRibbonButton();
             this.BalanceAndJournalSetting = this.Factory.CreateRibbonButton();
+            this.CurrentAccount = this.Factory.CreateRibbonSplitButton();
+            this.EditCurrentAccount = this.Factory.CreateRibbonButton();
+            this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.SuspendLayout();
@@ -55,6 +58,7 @@
             // TableProcessing
             // 
             this.TableProcessing.Items.Add(this.BalanceAndJournal);
+            this.TableProcessing.Items.Add(this.CurrentAccount);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
             // 
@@ -108,6 +112,28 @@
             this.BalanceAndJournalSetting.ShowImage = true;
             this.BalanceAndJournalSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BalanceAndJournalSetting_Click);
             // 
+            // CurrentAccount
+            // 
+            this.CurrentAccount.Items.Add(this.EditCurrentAccount);
+            this.CurrentAccount.Items.Add(this.CurrentAccountSetting);
+            this.CurrentAccount.Label = "往来款";
+            this.CurrentAccount.Name = "CurrentAccount";
+            this.CurrentAccount.OfficeImageId = "OrganizationChartSelectAllConnectors";
+            // 
+            // EditCurrentAccount
+            // 
+            this.EditCurrentAccount.Label = "加工往来款";
+            this.EditCurrentAccount.Name = "EditCurrentAccount";
+            this.EditCurrentAccount.OfficeImageId = "OrganizationChartSelectAllConnectors";
+            this.EditCurrentAccount.ShowImage = true;
+            // 
+            // CurrentAccountSetting
+            // 
+            this.CurrentAccountSetting.Label = "加工设置";
+            this.CurrentAccountSetting.Name = "CurrentAccountSetting";
+            this.CurrentAccountSetting.OfficeImageId = "AddInManager";
+            this.CurrentAccountSetting.ShowImage = true;
+            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -131,6 +157,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton VoucherCheckList;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BalanceAndJournalSetting;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BalanceSheet;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton CurrentAccount;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton EditCurrentAccount;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton CurrentAccountSetting;
     }
 
     partial class ThisRibbonCollection

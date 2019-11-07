@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BAJSettingForm));
             this.SubjectCodeButton1 = new System.Windows.Forms.RadioButton();
             this.SubjectCodeButton2 = new System.Windows.Forms.RadioButton();
             this.SubjectCodeGroupBox = new System.Windows.Forms.GroupBox();
@@ -216,6 +217,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.SubjectCodeGroupBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BAJSettingForm";
             this.Text = "账表加工设置";
             this.Load += new System.EventHandler(this.BAJSettingForm_Load);
