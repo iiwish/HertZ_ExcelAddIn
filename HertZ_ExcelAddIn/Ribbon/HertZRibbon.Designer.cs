@@ -43,7 +43,9 @@
             this.BalanceAndJournalSetting = this.Factory.CreateRibbonButton();
             this.CurrentAccount = this.Factory.CreateRibbonSplitButton();
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
+            this.Confirmation = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
+            this.AgeOfAccount = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.SuspendLayout();
@@ -51,7 +53,7 @@
             // HertZTab
             // 
             this.HertZTab.Groups.Add(this.TableProcessing);
-            this.HertZTab.Label = "赫兹";
+            this.HertZTab.Label = "HertZ";
             this.HertZTab.Name = "HertZTab";
             this.HertZTab.Position = this.Factory.RibbonPosition.AfterOfficeId("TabDeveloper");
             // 
@@ -115,6 +117,8 @@
             // CurrentAccount
             // 
             this.CurrentAccount.Items.Add(this.EditCurrentAccount);
+            this.CurrentAccount.Items.Add(this.AgeOfAccount);
+            this.CurrentAccount.Items.Add(this.Confirmation);
             this.CurrentAccount.Items.Add(this.CurrentAccountSetting);
             this.CurrentAccount.Label = "往来款";
             this.CurrentAccount.Name = "CurrentAccount";
@@ -126,6 +130,14 @@
             this.EditCurrentAccount.Name = "EditCurrentAccount";
             this.EditCurrentAccount.OfficeImageId = "OrganizationChartSelectAllConnectors";
             this.EditCurrentAccount.ShowImage = true;
+            this.EditCurrentAccount.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.EditCurrentAccount_Click);
+            // 
+            // Confirmation
+            // 
+            this.Confirmation.Label = "生成函证";
+            this.Confirmation.Name = "Confirmation";
+            this.Confirmation.OfficeImageId = "SignatureInsertMenu";
+            this.Confirmation.ShowImage = true;
             // 
             // CurrentAccountSetting
             // 
@@ -133,6 +145,13 @@
             this.CurrentAccountSetting.Name = "CurrentAccountSetting";
             this.CurrentAccountSetting.OfficeImageId = "AddInManager";
             this.CurrentAccountSetting.ShowImage = true;
+            // 
+            // AgeOfAccount
+            // 
+            this.AgeOfAccount.Label = "拆分账龄";
+            this.AgeOfAccount.Name = "AgeOfAccount";
+            this.AgeOfAccount.OfficeImageId = "BusinessFormWizard";
+            this.AgeOfAccount.ShowImage = true;
             // 
             // HertZRibbon
             // 
@@ -160,6 +179,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton CurrentAccount;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton EditCurrentAccount;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CurrentAccountSetting;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton Confirmation;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton AgeOfAccount;
     }
 
     partial class ThisRibbonCollection

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools.Ribbon;
 
 namespace HertZ_ExcelAddIn
 {
     public partial class HertZRibbon
     {
+        private Excel.Application ExcelApp;
+        private FunCtion FunC = new FunCtion();
         private void HertZRibbon_Load(object sender, RibbonUIEventArgs e)
         {
 
@@ -24,15 +27,18 @@ namespace HertZ_ExcelAddIn
 
         }
 
-        private void 加工余额表_Click(object sender, RibbonControlEventArgs e)
-        {
-
-        }
 
         private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
         {
             Form BAJSettingForm = new BAJSettingForm();
             BAJSettingForm.Show();
+        }
+
+        private void EditCurrentAccount_Click(object sender, RibbonControlEventArgs e)
+        {
+            //ExcelApp.Visible = false;//关闭Excel视图刷新
+            if (FunC.SelectSheet("往来款明细") == false) { return; };
+
         }
     }
 }

@@ -30,24 +30,24 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CASetting));
             this.ConfirmationSetting = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.AccountingFirmName = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.Auditee = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.ReplyAddress = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.PostalCode = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.AuditDeadline = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.Contact = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.Telephone = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.Department = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.Leading = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.Department = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.Telephone = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.Contact = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.AuditDeadline = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.PostalCode = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ReplyAddress = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.Auditee = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.AccountingFirmName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.ConfirmationSetting.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,143 +79,12 @@
             this.ConfirmationSetting.TabStop = false;
             this.ConfirmationSetting.Text = "函证信息设置";
             // 
-            // label1
+            // Leading
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.label1.Location = new System.Drawing.Point(7, 41);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 31);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "事务所：";
-            // 
-            // AccountingFirmName
-            // 
-            this.AccountingFirmName.Location = new System.Drawing.Point(101, 38);
-            this.AccountingFirmName.MaxLength = 100;
-            this.AccountingFirmName.Name = "AccountingFirmName";
-            this.AccountingFirmName.Size = new System.Drawing.Size(398, 39);
-            this.AccountingFirmName.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(7, 102);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(158, 31);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "被审计单位：";
-            // 
-            // Auditee
-            // 
-            this.Auditee.Location = new System.Drawing.Point(149, 99);
-            this.Auditee.MaxLength = 100;
-            this.Auditee.Name = "Auditee";
-            this.Auditee.Size = new System.Drawing.Size(350, 39);
-            this.Auditee.TabIndex = 5;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.label3.Location = new System.Drawing.Point(7, 161);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(134, 31);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "回函地址：";
-            // 
-            // ReplyAddress
-            // 
-            this.ReplyAddress.Location = new System.Drawing.Point(127, 158);
-            this.ReplyAddress.Name = "ReplyAddress";
-            this.ReplyAddress.Size = new System.Drawing.Size(372, 39);
-            this.ReplyAddress.TabIndex = 7;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(7, 222);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(86, 31);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "邮编：";
-            // 
-            // PostalCode
-            // 
-            this.PostalCode.Location = new System.Drawing.Point(82, 219);
-            this.PostalCode.Name = "PostalCode";
-            this.PostalCode.Size = new System.Drawing.Size(124, 39);
-            this.PostalCode.TabIndex = 9;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.label5.Location = new System.Drawing.Point(212, 222);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(158, 31);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "审计截止日：";
-            // 
-            // AuditDeadline
-            // 
-            this.AuditDeadline.Location = new System.Drawing.Point(354, 219);
-            this.AuditDeadline.Name = "AuditDeadline";
-            this.AuditDeadline.Size = new System.Drawing.Size(145, 39);
-            this.AuditDeadline.TabIndex = 11;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.label6.Location = new System.Drawing.Point(7, 276);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(110, 31);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "联系人：";
-            // 
-            // Contact
-            // 
-            this.Contact.Location = new System.Drawing.Point(106, 273);
-            this.Contact.Name = "Contact";
-            this.Contact.Size = new System.Drawing.Size(124, 39);
-            this.Contact.TabIndex = 13;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.label7.Location = new System.Drawing.Point(236, 276);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(134, 31);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "联系电话：";
-            // 
-            // Telephone
-            // 
-            this.Telephone.Location = new System.Drawing.Point(354, 273);
-            this.Telephone.Name = "Telephone";
-            this.Telephone.Size = new System.Drawing.Size(145, 39);
-            this.Telephone.TabIndex = 15;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.label8.Location = new System.Drawing.Point(7, 332);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(86, 31);
-            this.label8.TabIndex = 16;
-            this.label8.Text = "部门：";
-            // 
-            // Department
-            // 
-            this.Department.Location = new System.Drawing.Point(82, 329);
-            this.Department.Name = "Department";
-            this.Department.Size = new System.Drawing.Size(124, 39);
-            this.Department.TabIndex = 17;
+            this.Leading.Location = new System.Drawing.Point(354, 329);
+            this.Leading.Name = "Leading";
+            this.Leading.Size = new System.Drawing.Size(145, 39);
+            this.Leading.TabIndex = 19;
             // 
             // label9
             // 
@@ -227,18 +96,149 @@
             this.label9.TabIndex = 18;
             this.label9.Text = "项目负责人：";
             // 
-            // Leading
+            // Department
             // 
-            this.Leading.Location = new System.Drawing.Point(354, 329);
-            this.Leading.Name = "Leading";
-            this.Leading.Size = new System.Drawing.Size(145, 39);
-            this.Leading.TabIndex = 19;
+            this.Department.Location = new System.Drawing.Point(82, 329);
+            this.Department.Name = "Department";
+            this.Department.Size = new System.Drawing.Size(124, 39);
+            this.Department.TabIndex = 17;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.label8.Location = new System.Drawing.Point(7, 332);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(86, 31);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "部门：";
+            // 
+            // Telephone
+            // 
+            this.Telephone.Location = new System.Drawing.Point(354, 273);
+            this.Telephone.Name = "Telephone";
+            this.Telephone.Size = new System.Drawing.Size(145, 39);
+            this.Telephone.TabIndex = 15;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.label7.Location = new System.Drawing.Point(236, 276);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(134, 31);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "联系电话：";
+            // 
+            // Contact
+            // 
+            this.Contact.Location = new System.Drawing.Point(106, 273);
+            this.Contact.Name = "Contact";
+            this.Contact.Size = new System.Drawing.Size(124, 39);
+            this.Contact.TabIndex = 13;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.label6.Location = new System.Drawing.Point(7, 276);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(110, 31);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "联系人：";
+            // 
+            // AuditDeadline
+            // 
+            this.AuditDeadline.Location = new System.Drawing.Point(354, 219);
+            this.AuditDeadline.Name = "AuditDeadline";
+            this.AuditDeadline.Size = new System.Drawing.Size(145, 39);
+            this.AuditDeadline.TabIndex = 11;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.label5.Location = new System.Drawing.Point(212, 222);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(158, 31);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "审计截止日：";
+            // 
+            // PostalCode
+            // 
+            this.PostalCode.Location = new System.Drawing.Point(82, 219);
+            this.PostalCode.Name = "PostalCode";
+            this.PostalCode.Size = new System.Drawing.Size(124, 39);
+            this.PostalCode.TabIndex = 9;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(7, 222);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(86, 31);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "邮编：";
+            // 
+            // ReplyAddress
+            // 
+            this.ReplyAddress.Location = new System.Drawing.Point(127, 158);
+            this.ReplyAddress.Name = "ReplyAddress";
+            this.ReplyAddress.Size = new System.Drawing.Size(372, 39);
+            this.ReplyAddress.TabIndex = 7;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.label3.Location = new System.Drawing.Point(7, 161);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(134, 31);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "回函地址：";
+            // 
+            // Auditee
+            // 
+            this.Auditee.Location = new System.Drawing.Point(149, 99);
+            this.Auditee.MaxLength = 100;
+            this.Auditee.Name = "Auditee";
+            this.Auditee.Size = new System.Drawing.Size(350, 39);
+            this.Auditee.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.Location = new System.Drawing.Point(7, 102);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(158, 31);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "被审计单位：";
+            // 
+            // AccountingFirmName
+            // 
+            this.AccountingFirmName.Location = new System.Drawing.Point(101, 38);
+            this.AccountingFirmName.MaxLength = 100;
+            this.AccountingFirmName.Name = "AccountingFirmName";
+            this.AccountingFirmName.Size = new System.Drawing.Size(398, 39);
+            this.AccountingFirmName.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.label1.Location = new System.Drawing.Point(7, 41);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(110, 31);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "事务所：";
             // 
             // CASetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 564);
+            this.ClientSize = new System.Drawing.Size(800, 492);
             this.Controls.Add(this.ConfirmationSetting);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CASetting";
