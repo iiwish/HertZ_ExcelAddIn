@@ -37,7 +37,12 @@ namespace HertZ_ExcelAddIn
         private void EditCurrentAccount_Click(object sender, RibbonControlEventArgs e)
         {
             //ExcelApp.Visible = false;//关闭Excel视图刷新
+
+            //选中往来款明细表并继续
             if (FunC.SelectSheet("往来款明细") == false) { return; };
+
+
+            MessageBox.Show(FunC.RangeIsStandard().ToString());
 
         }
     }

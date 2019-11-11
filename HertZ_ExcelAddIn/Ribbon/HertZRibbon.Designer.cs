@@ -43,9 +43,9 @@
             this.BalanceAndJournalSetting = this.Factory.CreateRibbonButton();
             this.CurrentAccount = this.Factory.CreateRibbonSplitButton();
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
+            this.AgeOfAccount = this.Factory.CreateRibbonButton();
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
-            this.AgeOfAccount = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.SuspendLayout();
@@ -132,6 +132,13 @@
             this.EditCurrentAccount.ShowImage = true;
             this.EditCurrentAccount.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.EditCurrentAccount_Click);
             // 
+            // AgeOfAccount
+            // 
+            this.AgeOfAccount.Label = "拆分账龄";
+            this.AgeOfAccount.Name = "AgeOfAccount";
+            this.AgeOfAccount.OfficeImageId = "BusinessFormWizard";
+            this.AgeOfAccount.ShowImage = true;
+            // 
             // Confirmation
             // 
             this.Confirmation.Label = "生成函证";
@@ -145,13 +152,6 @@
             this.CurrentAccountSetting.Name = "CurrentAccountSetting";
             this.CurrentAccountSetting.OfficeImageId = "AddInManager";
             this.CurrentAccountSetting.ShowImage = true;
-            // 
-            // AgeOfAccount
-            // 
-            this.AgeOfAccount.Label = "拆分账龄";
-            this.AgeOfAccount.Name = "AgeOfAccount";
-            this.AgeOfAccount.OfficeImageId = "BusinessFormWizard";
-            this.AgeOfAccount.ShowImage = true;
             // 
             // HertZRibbon
             // 
