@@ -47,9 +47,6 @@ namespace HertZ_ExcelAddIn
         {
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
-            //清除后台没关干净的excel软件
-            FunC.ClearBackExcel();
-
             int AllRows = FunC.AllRows();
             int AllColumns = FunC.AllColumns();
             int ColumnNumber;

@@ -32,7 +32,7 @@ namespace HertZ_ExcelAddIn
                 }
                 catch
                 {
-                    ExcelApp.Quit();
+                    MessageBox.Show("后台有未清理的Excel程序，请检查并清理");
                 }
             }
         }
