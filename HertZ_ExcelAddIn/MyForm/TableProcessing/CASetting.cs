@@ -43,5 +43,40 @@ namespace HertZ_ExcelAddIn
             Leading.Text = clsConfig.ReadConfig<string>("CurrentAccount", "Leading", "请修改");
 
         }
+
+        private void ConfirmBtn_Click(object sender, EventArgs e)
+        {
+            //向我的文档写入配置文件
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //写入父节点CurrentAccount中配置名为AccountingFirmName的值，作为事务所名称
+            clsConfig.WriteConfig("CurrentAccount", "AccountingFirmName", AccountingFirmName.Text.ToString());
+            //写入父节点CurrentAccount中配置名为Auditee的值，作为被审计单位名称
+            clsConfig.WriteConfig("CurrentAccount", "Auditee", Auditee.Text.ToString());
+            //写入父节点CurrentAccount中读取配置名为ReplyAddress的值，作为回函地址
+            clsConfig.WriteConfig("CurrentAccount", "ReplyAddress", ReplyAddress.Text.ToString());
+            //从父节点CurrentAccount中读取配置名为PostalCode的值，作为回函邮编
+            clsConfig.WriteConfig("CurrentAccount", "PostalCode", PostalCode.Text.ToString());
+            //从父节点CurrentAccount中读取配置名为AuditDeadline的值，作为审计截止日，默认为2019年12月31日
+            clsConfig.WriteConfig("CurrentAccount", "AuditDeadline", AuditDeadline.Text.ToString());
+            //从父节点CurrentAccount中读取配置名为Contact的值，作为联系人名称，默认为空
+            clsConfig.WriteConfig("CurrentAccount", "Contact", Contact.Text.ToString());
+            //从父节点CurrentAccount中读取配置名为Telephone的值，作为联系电话，默认为空
+            clsConfig.WriteConfig("CurrentAccount", "Telephone", Telephone.Text.ToString());
+            //从父节点CurrentAccount中读取配置名为Department的值，作为部门，默认为空
+            clsConfig.WriteConfig("CurrentAccount", "Department", Department.Text.ToString());
+            //从父节点CurrentAccount中读取配置名为Leading的值，作为部门负责人，默认为空
+            clsConfig.WriteConfig("CurrentAccount", "Leading", Leading.Text.ToString());
+
+            //关闭窗体
+            this.Close();
+        }
+
+        private void CancelBtn_Click(object sender, EventArgs e)
+        {
+            //关闭窗体
+            this.Close();
+        }
     }
 }

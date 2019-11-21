@@ -41,7 +41,7 @@
             this.JournalSheet = this.Factory.CreateRibbonButton();
             this.VoucherCheckList = this.Factory.CreateRibbonButton();
             this.BalanceAndJournalSetting = this.Factory.CreateRibbonButton();
-            this.CurrentAccount = this.Factory.CreateRibbonSplitButton();
+            this.CurrentAccount = this.Factory.CreateRibbonMenu();
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
             this.AgeOfAccount = this.Factory.CreateRibbonButton();
             this.Confirmation = this.Factory.CreateRibbonButton();
@@ -123,6 +123,7 @@
             this.CurrentAccount.Label = "往来款";
             this.CurrentAccount.Name = "CurrentAccount";
             this.CurrentAccount.OfficeImageId = "OrganizationChartSelectAllConnectors";
+            this.CurrentAccount.ShowImage = true;
             // 
             // EditCurrentAccount
             // 
@@ -138,6 +139,7 @@
             this.AgeOfAccount.Name = "AgeOfAccount";
             this.AgeOfAccount.OfficeImageId = "BusinessFormWizard";
             this.AgeOfAccount.ShowImage = true;
+            this.AgeOfAccount.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AgeOfAccount_Click);
             // 
             // Confirmation
             // 
@@ -152,6 +154,7 @@
             this.CurrentAccountSetting.Name = "CurrentAccountSetting";
             this.CurrentAccountSetting.OfficeImageId = "AddInManager";
             this.CurrentAccountSetting.ShowImage = true;
+            this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
             // HertZRibbon
             // 
@@ -176,11 +179,11 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton VoucherCheckList;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BalanceAndJournalSetting;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton BalanceSheet;
-        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton CurrentAccount;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton EditCurrentAccount;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CurrentAccountSetting;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton Confirmation;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton AgeOfAccount;
+        internal Microsoft.Office.Tools.Ribbon.RibbonMenu CurrentAccount;
     }
 
     partial class ThisRibbonCollection

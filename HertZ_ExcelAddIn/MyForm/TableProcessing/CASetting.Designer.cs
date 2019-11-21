@@ -48,6 +48,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.AccountingFirmName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.ConfirmBtn = new System.Windows.Forms.Button();
+            this.CancelBtn = new System.Windows.Forms.Button();
             this.ConfirmationSetting.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -234,11 +236,35 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "事务所：";
             // 
+            // ConfirmBtn
+            // 
+            this.ConfirmBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.ConfirmBtn.Location = new System.Drawing.Point(137, 467);
+            this.ConfirmBtn.Name = "ConfirmBtn";
+            this.ConfirmBtn.Size = new System.Drawing.Size(150, 50);
+            this.ConfirmBtn.TabIndex = 4;
+            this.ConfirmBtn.Text = "保 存";
+            this.ConfirmBtn.UseVisualStyleBackColor = true;
+            this.ConfirmBtn.Click += new System.EventHandler(this.ConfirmBtn_Click);
+            // 
+            // CancelBtn
+            // 
+            this.CancelBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CancelBtn.Location = new System.Drawing.Point(511, 467);
+            this.CancelBtn.Name = "CancelBtn";
+            this.CancelBtn.Size = new System.Drawing.Size(150, 50);
+            this.CancelBtn.TabIndex = 5;
+            this.CancelBtn.Text = "取 消";
+            this.CancelBtn.UseVisualStyleBackColor = true;
+            this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
+            // 
             // CASetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 492);
+            this.ClientSize = new System.Drawing.Size(804, 549);
+            this.Controls.Add(this.CancelBtn);
+            this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.ConfirmationSetting);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CASetting";
@@ -270,5 +296,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox Department;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button ConfirmBtn;
+        private System.Windows.Forms.Button CancelBtn;
     }
 }

@@ -97,7 +97,7 @@ namespace HertZ_ExcelAddIn
             //检查输入字节的长度
             if (SubjectCodeSign.Text.Length != 1 || SubjectCodeLength1.Text.Length != 1 || SubjectCodeLength2.Text.Length != 1 || SubjectCodeLength3.Text.Length != 1 || SubjectCodeLength4.Text.Length != 1 || SubjectCodeLength5.Text.Length != 1 || SubjectCodeLength6.Text.Length != 1)
             {
-                MessageBox.Show("输入字节长度有误，请检查并重新输入");
+                MessageBox.Show("编码长度输入有误，目前仅支持1-9，请检查并重新输入");
                 IsValid = false;
             }
 
