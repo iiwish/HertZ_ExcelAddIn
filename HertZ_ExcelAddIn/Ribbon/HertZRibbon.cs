@@ -11,7 +11,7 @@ namespace HertZ_ExcelAddIn
 {
     public partial class HertZRibbon
     {
-        private readonly Excel.Application ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+        private Excel.Application ExcelApp;
         private Excel.Worksheet WST;
         private readonly FunCtion FunC = new FunCtion();
         
@@ -45,10 +45,11 @@ namespace HertZ_ExcelAddIn
 
         private void EditCurrentAccount_Click(object sender, RibbonControlEventArgs e)
         {
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
-            int AllRows = FunC.AllRows();
-            int AllColumns = FunC.AllColumns();
+            int AllRows;
+            int AllColumns;
             int ColumnNumber;
             List<string> ColumnName;
             //原始表格数组ORG
@@ -62,6 +63,8 @@ namespace HertZ_ExcelAddIn
             if (FunC.SelectSheet("往来款明细") == false) { return; };
             WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["往来款明细"];
             WST.Select();
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
 
             //规范原始数据
             if (FunC.RangeIsStandard() == false)

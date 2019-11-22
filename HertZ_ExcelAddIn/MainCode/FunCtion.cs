@@ -20,21 +20,21 @@ namespace HertZ_ExcelAddIn
         /// <returns></returns>
         public void ClearBackExcel()
         {
-            int Rows;
-            for (int i = 1; i < 13; i++)
-            {
-                ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
-                WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            //int Rows;
+            //for (int i = 1; i < 13; i++)
+            //{
+            //    ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            //    WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
-                try
-                {
-                    Rows = ((Excel.Range)(WST.Cells[WST.Rows.Count, 1])).End[Excel.XlDirection.xlUp].Row;
-                }
-                catch
-                {
-                    MessageBox.Show("后台有未清理的Excel程序，请检查并清理");
-                }
-            }
+            //    try
+            //    {
+            //        Rows = ((Excel.Range)(WST.Cells[WST.Rows.Count, 1])).End[Excel.XlDirection.xlUp].Row;
+            //    }
+            //    catch
+            //    {
+            //        MessageBox.Show("后台有未清理的Excel程序，请检查并清理");
+            //    }
+            //}
         }
 
         /// <summary>
@@ -440,18 +440,19 @@ namespace HertZ_ExcelAddIn
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             WST.Range["A1:N" + (AllRowsC + 6).ToString()].Value2 = NRG;
 
-            //调整格式
+            //更新总行数
+            AllRowsC = AllRows("B");
 
             //定义rg为有效区域
-            Excel.Range rg = WST.Range["A1:N" + (AllRowsC + 6).ToString()];
+            Excel.Range rg = WST.Range["A1:N" + AllRowsC.ToString()];
             //加框线
-            rg.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());
+            rg.Borders.LineStyle = 1;
             //设置数字格式
-            WST.Range["E2:L" + (AllRowsC + 6).ToString()].NumberFormatLocal = "#,##0.00 ";
+            WST.Range["E2:L" + AllRowsC.ToString()].NumberFormatLocal = "#,##0.00 ";
             //自动列宽
             rg.EntireColumn.AutoFit();
             //函证列
-            rg = WST.Range["N2:N" + (AllRowsC + 6).ToString()];
+            rg = WST.Range["N2:N" + (AllRowsC - 6).ToString()];
             AddData(rg, "函,补,");
 
             //如果未选择辅助列，则删除这列
