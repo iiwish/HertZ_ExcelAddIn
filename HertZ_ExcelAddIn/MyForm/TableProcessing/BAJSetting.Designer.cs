@@ -1,6 +1,6 @@
 ﻿namespace HertZ_ExcelAddIn
 {
-    partial class BAJSettingForm
+    partial class BAJSetting
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BAJSettingForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BAJSetting));
             this.SubjectCodeButton1 = new System.Windows.Forms.RadioButton();
             this.SubjectCodeButton2 = new System.Windows.Forms.RadioButton();
             this.SubjectCodeGroupBox = new System.Windows.Forms.GroupBox();

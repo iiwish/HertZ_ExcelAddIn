@@ -33,9 +33,8 @@ namespace HertZ_ExcelAddIn
 
         private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
         {
-            Form BAJSettingForm = new BAJSettingForm();
-            BAJSettingForm.Show();
-            BAJSettingForm.Dispose();
+            Form BAJSetting = new BAJSetting();
+            BAJSetting.Show();
         }
 
         private void CurrentAccount_Click(object sender, RibbonControlEventArgs e)
@@ -56,8 +55,6 @@ namespace HertZ_ExcelAddIn
             object[,] ORG;
             //目标新数组NRG
             object[,] NRG;
-
-            //ExcelApp.Visible = false;//关闭Excel视图刷新
 
             //选中往来款明细表并继续
             if (FunC.SelectSheet("往来款明细") == false) { return; };
@@ -200,13 +197,15 @@ namespace HertZ_ExcelAddIn
             SheetsName0.Distinct().ToList().ForEach(s => SheetsName1.Add(s));
 
             //定义往来款字典
-            Dictionary<string, string> SheetsName = new Dictionary<string, string>();
-            SheetsName.Add("应收账款", "借");
-            SheetsName.Add("预付账款", "借");
-            SheetsName.Add("其他应收款", "借");
-            SheetsName.Add("应付账款", "贷");
-            SheetsName.Add("预收账款", "贷");
-            SheetsName.Add("其他应付款", "贷");
+            Dictionary<string, string> SheetsName = new Dictionary<string, string>
+            {
+                { "应收账款", "借" },
+                { "预付账款", "借" },
+                { "其他应收款", "借" },
+                { "应付账款", "贷" },
+                { "预收账款", "贷" },
+                { "其他应付款", "贷" }
+            };
 
             //检查一级科目是否规范
             for (int i = 1; i < SheetsName1.Count; i++)
@@ -233,6 +232,8 @@ namespace HertZ_ExcelAddIn
                 }
             }
 
+            ExcelApp.Visible = false;//关闭Excel视图刷新
+
             //应收账款表
             if (!FunC.AddCASheet(ORG, AllRows, "应收账款", "应付账款")) { return; }
             //预付账款表
@@ -246,6 +247,8 @@ namespace HertZ_ExcelAddIn
             //其他应付款表
             if (!FunC.AddCASheet(ORG, AllRows, "其他应付款", "其他应收款")) { return; }
 
+            ExcelApp.Visible = true;//打开Excel视图刷新
+
         }
 
         private void AgeOfAccount_Click(object sender, RibbonControlEventArgs e)
@@ -257,7 +260,12 @@ namespace HertZ_ExcelAddIn
         {
             Form CASetting = new CASetting();
             CASetting.Show();
-            CASetting.Dispose();
+        }
+
+        private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
+        {
+            Form InfoForm = new VerInfo();
+            InfoForm.Show();
         }
     }
 }

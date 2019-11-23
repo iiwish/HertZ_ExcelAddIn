@@ -26,16 +26,40 @@
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>HertZ_ExcelAddIn</RootNamespace>
     <AssemblyName>HertZ_ExcelAddIn</AssemblyName>
-    <LoadBehavior>3</LoadBehavior>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BootstrapperComponentsLocation>HomeSite</BootstrapperComponentsLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <InstallUrl />
+    <TargetCulture>zh-chs</TargetCulture>
+    <ApplicationVersion>0.0.0.1</ApplicationVersion>
+    <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>days</UpdateIntervalUnits>
+    <ProductName>HertZ_ExcelAddIn</ProductName>
+    <PublisherName />
+    <SupportUrl />
+    <FriendlyName>HertZ_ExcelAddIn</FriendlyName>
+    <OfficeApplicationDescription />
+    <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
       <Visible>False</Visible>
-      <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 和 x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
@@ -101,9 +125,14 @@
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -157,17 +186,24 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="MyForm\VerInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MyForm\VerInfo.Designer.cs">
+      <DependentUpon>VerInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainCode\A_Update.cs" />
     <Compile Include="MyForm\TableProcessing\CASetting.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MyForm\TableProcessing\CASetting.Designer.cs">
       <DependentUpon>CASetting.cs</DependentUpon>
     </Compile>
-    <Compile Include="MyForm\TableProcessing\BAJSettingForm.cs">
+    <Compile Include="MyForm\TableProcessing\BAJSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MyForm\TableProcessing\BAJSettingForm.Designer.cs">
-      <DependentUpon>BAJSettingForm.cs</DependentUpon>
+    <Compile Include="MyForm\TableProcessing\BAJSetting.Designer.cs">
+      <DependentUpon>BAJSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="MainCode\A_BaseConfig.cs" />
     <Compile Include="MainCode\FunCtion.cs" />
@@ -180,11 +216,11 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="MyForm\SelectRg.resx">
-      <DependentUpon>SelectRg.cs</DependentUpon>
+    <EmbeddedResource Include="MyForm\VerInfo.resx">
+      <DependentUpon>VerInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MyForm\TableProcessing\BAJSettingForm.resx">
-      <DependentUpon>BAJSettingForm.cs</DependentUpon>
+    <EmbeddedResource Include="MyForm\TableProcessing\BAJSetting.resx">
+      <DependentUpon>BAJSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyForm\TableProcessing\CASetting.resx">
       <DependentUpon>CASetting.cs</DependentUpon>
@@ -202,7 +238,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="HertZ_ExcelAddIn_TemporaryKey.pfx" />
+    <None Include="HertZ_ExcelAddIn.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -210,12 +247,7 @@
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="MyForm\SelectRg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MyForm\SelectRg.Designer.cs">
-      <DependentUpon>SelectRg.cs</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
@@ -257,10 +289,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>HertZ_ExcelAddIn_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>HertZ_ExcelAddIn.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6A56EAB51D1BDD45D833037D1F0ED49B99ACBAE3</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>4F0539AB77B91DCAA066CA63D90139D90ADC6DA1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

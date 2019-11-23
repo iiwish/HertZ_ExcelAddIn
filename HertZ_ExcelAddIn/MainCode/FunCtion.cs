@@ -442,7 +442,7 @@ namespace HertZ_ExcelAddIn
 
             //更新总行数
             AllRowsC = AllRows("B");
-
+            //改格式
             //定义rg为有效区域
             Excel.Range rg = WST.Range["A1:N" + AllRowsC.ToString()];
             //加框线
@@ -454,6 +454,13 @@ namespace HertZ_ExcelAddIn
             //函证列
             rg = WST.Range["N2:N" + (AllRowsC - 6).ToString()];
             AddData(rg, "函,补,");
+            //首行颜色设置为灰色
+            rg = WST.Range["A1:N1"];
+            rg.Interior.ColorIndex = 15;
+            //冻结行和列
+            ExcelApp.ActiveWindow.SplitColumn = 2;
+            ExcelApp.ActiveWindow.SplitRow = 1;
+            ExcelApp.ActiveWindow.FreezePanes = true;
 
             //如果未选择辅助列，则删除这列
             if (AllRows("M") < 2)

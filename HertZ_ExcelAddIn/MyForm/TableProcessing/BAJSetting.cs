@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace HertZ_ExcelAddIn
 {
-    public partial class BAJSettingForm : Form
+    public partial class BAJSetting : Form
     {
         
-        public BAJSettingForm()
+        public BAJSetting()
         {
             InitializeComponent();
         }
