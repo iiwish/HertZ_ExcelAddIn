@@ -6,8 +6,8 @@ using System.Security;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("HertZ_ExcelAddIn")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("赫兹Excel加载项")]
+[assembly: AssemblyDescription("审计用Excel加载项")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("HertZ_ExcelAddIn")]
