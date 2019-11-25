@@ -33,22 +33,22 @@
     <AssemblyName>赫兹Excel加载项</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
-    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <IsWebBootstrapper>True</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>C:\aaa\testhertz\</PublishUrl>
-    <InstallUrl />
+    <PublishUrl>ftp://iftp.ihertz.xyz/</PublishUrl>
+    <InstallUrl>http://ihertz.xyz/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>0.0.0.2</ApplicationVersion>
+    <ApplicationVersion>0.0.0.8</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
     <ProductName>HertZ_ExcelAddIn</ProductName>
     <PublisherName>何未生</PublisherName>
-    <SupportUrl />
+    <SupportUrl>http://ihertz.xyz/</SupportUrl>
     <FriendlyName>HertZ</FriendlyName>
     <OfficeApplicationDescription>赫兹_审计用Excel加载项</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
@@ -136,6 +136,7 @@
       <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -195,14 +196,14 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="MainCode\HertZInstall.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MyForm\VerInfo.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MyForm\VerInfo.Designer.cs">
       <DependentUpon>VerInfo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainCode\A_Install.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="MyForm\TableProcessing\CASetting.cs">
       <SubType>Form</SubType>
@@ -249,6 +250,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="HertZ_CA.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -304,6 +306,12 @@
     <Analyzer Include="packages\Microsoft.NetFramework.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="packages\Microsoft.NetFramework.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HZlogo32.ico" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -316,6 +324,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>34876A497B0EF874624150FE7143B38507803723</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>HZlogo32.ico</ApplicationIcon>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

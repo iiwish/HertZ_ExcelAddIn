@@ -26,7 +26,14 @@ namespace HertZ_ExcelAddIn
 
             //从父节点Info中读取配置名为Vertion的值，该值为字符串
             //string VerInfo = clsConfig.ReadConfig<string>("Info", "Vertion", "0.0.0.01");
-            label1.Text = "当前版本：" +  ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(); ;
+            try
+            {
+                label1.Text = "当前版本：" + ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            catch
+            {
+
+            }
         }
 
         private void Manual_Click(object sender, EventArgs e)

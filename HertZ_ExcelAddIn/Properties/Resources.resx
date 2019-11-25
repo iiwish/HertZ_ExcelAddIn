@@ -121,6 +121,9 @@
   <data name="DivisionSign" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DivisionSign.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="HertZ_CA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HertZ_CA.cer;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="HertZ_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HertZ_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

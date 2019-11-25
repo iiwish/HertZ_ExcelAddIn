@@ -1,34 +1,26 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
-using Microsoft.Win32;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace HertZ_ExcelAddIn
 {
-    // Set 'RunInstaller' attribute to true.
     [RunInstaller(true)]
     public class MyInstallerClass : Installer
     {
         public MyInstallerClass() : base()
         {
-            //this.BeforeInstall += new InstallEventHandler(OnBeforeInstall);
-            //// Attach the 'Committed' event.
-            //this.Committed += new InstallEventHandler(MyInstaller_Committed);
-            //// Attach the 'Committing' event.
-            //this.Committing += new InstallEventHandler(MyInstaller_Committing);
-
+            BeforeInstall += new InstallEventHandler(BeforeInstallEventHandler);
         }
-
-        protected override void OnBeforeInstall(System.Collections.IDictionary savedState)
+        private void BeforeInstallEventHandler(object sender, InstallEventArgs e)
         {
-            base.OnBeforeInstall(savedState);
             //64位系统
             try
             {
@@ -79,7 +71,7 @@ namespace HertZ_ExcelAddIn
             };
 
             var result = from s in listSecurity
-                            select new { GroupName = Regex.Match(s, @".+?\\.+?\\.+?\\.+?\\").Value, Fullpath = s };
+                         select new { GroupName = Regex.Match(s, @".+?\\.+?\\.+?\\.+?\\").Value, Fullpath = s };
 
             //按HKEY_CURRENT_USER\Software\Microsoft\Office\15.0分组，防止多个EXCEL版本的原因引起信任位置添加不全
             var query = from s in result
@@ -107,13 +99,14 @@ namespace HertZ_ExcelAddIn
 
             if (certs.Count == 0 || certs[0].NotAfter < DateTime.Now)
             {
-                X509Certificate2 certificate = new X509Certificate2(Application.StartupPath + "\\Resources\\HertZ_CA.cer");
+                X509Certificate2 certificate = new X509Certificate2(Properties.Resources.HertZ_CA, "13243546");
                 store.Remove(certificate);   //可省略
                 store.Add(certificate);
                 store.Close();
             }
         }
     }
+
 
     class TrustDirSetting
     {

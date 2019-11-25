@@ -34,6 +34,7 @@ namespace HertZ_ExcelAddIn
         private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
         {
             Form BAJSetting = new BAJSetting();
+            BAJSetting.StartPosition = FormStartPosition.CenterScreen;
             BAJSetting.Show();
         }
 
@@ -259,12 +260,14 @@ namespace HertZ_ExcelAddIn
         private void CurrentAccountSetting_Click(object sender, RibbonControlEventArgs e)
         {
             Form CASetting = new CASetting();
+            CASetting.StartPosition = FormStartPosition.CenterScreen;
             CASetting.Show();
         }
 
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
         {
             Form InfoForm = new VerInfo();
+            InfoForm.StartPosition = FormStartPosition.CenterScreen;
             InfoForm.Show();
         }
     }
