@@ -33,22 +33,22 @@
     <AssemblyName>赫兹Excel加载项</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
-    <IsWebBootstrapper>True</IsWebBootstrapper>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>ftp://iftp.ihertz.xyz/</PublishUrl>
-    <InstallUrl>http://ihertz.xyz/</InstallUrl>
+    <PublishUrl>ftp://ftpgetapp.hertzexcel.com/</PublishUrl>
+    <InstallUrl />
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>0.0.0.8</ApplicationVersion>
+    <ApplicationVersion>0.0.0.9</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
     <ProductName>HertZ_ExcelAddIn</ProductName>
     <PublisherName>何未生</PublisherName>
-    <SupportUrl>http://ihertz.xyz/</SupportUrl>
+    <SupportUrl>http://getapp.hertzexcel.com/</SupportUrl>
     <FriendlyName>HertZ</FriendlyName>
     <OfficeApplicationDescription>赫兹_审计用Excel加载项</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
@@ -196,9 +196,6 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="MainCode\HertZInstall.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MyForm\VerInfo.cs">
       <SubType>Form</SubType>
     </Compile>

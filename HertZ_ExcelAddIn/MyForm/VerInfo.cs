@@ -32,7 +32,7 @@ namespace HertZ_ExcelAddIn
             }
             catch
             {
-
+                label1.Text = "版本号获取异常";
             }
         }
 
