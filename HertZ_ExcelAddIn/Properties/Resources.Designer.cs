@@ -71,16 +71,6 @@ namespace HertZ_ExcelAddIn.Properties {
         }
         
         /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] HertZ_CA {
-            get {
-                object obj = ResourceManager.GetObject("HertZ_CA", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
         internal static System.Drawing.Bitmap HertZ_Logo {
