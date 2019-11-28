@@ -23,7 +23,70 @@ namespace HertZ_ExcelAddIn
 
         private void BalanceSheet_Click(object sender, RibbonControlEventArgs e)
         {
-         
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            int AllRows;
+            int AllColumns;
+            int ColumnNumber;
+            List<string> ColumnName;
+            //原始表格数组ORG
+            object[,] ORG;
+            //目标新数组NRG
+            object[,] NRG;
+
+            //选中科目余额表并继续
+            if (FunC.SelectSheet("余额表") == false) { return; };
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["余额表"];
+            WST.Select();
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
+
+            //规范原始数据
+            if (FunC.RangeIsStandard() == false)
+            {
+                MessageBox.Show("请规范数据格式，保证数据内容不超出首行和首列");
+                return;
+            }
+
+            //将表格读入数组ORG
+            ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+            //创建目标新数组NRG
+            NRG = new object[AllRows, 9];
+
+            //将列名读入List
+            List<string> OName = new List<string> { };
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                OName.Add(ORG[1, i].ToString());
+            }
+
+            //选择[科目编码]列
+            ColumnName = new List<string> { "[科目编码]", "科目编码", "科目编号", "科目号" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 1);
+            NRG[0, 0] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择[科目名称]列
+            ColumnName = new List<string> { "[科目名称]", "科目名称" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
+            if (ColumnNumber == 0) { return; }
+            NRG[0, 1] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择期初期末余额列示方式
+            DialogResult dr = MessageBox.Show("期初期末余额是否按[借贷方向][金额]列示？" + Environment.NewLine + "若以[借方余额][贷方余额]方式列示，请选否", "请选择", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                
+            }
+
+
+
+
         }
 
         private void JournalSheet_Click(object sender, RibbonControlEventArgs e)
@@ -188,7 +251,7 @@ namespace HertZ_ExcelAddIn
                 }
                 catch(NullReferenceException)
                 {
-                    MessageBox.Show("一级科目列第" + (i+1).ToString() + "行存在空值，请检查");
+                    MessageBox.Show("一级科目列第" + (i + 1).ToString() + "行存在空值，请检查");
                     ORG = null;
                     return;
                 }
