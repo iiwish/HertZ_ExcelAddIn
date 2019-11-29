@@ -21,6 +21,7 @@ namespace HertZ_ExcelAddIn
             FunC.ClearBackExcel();
         }
 
+        //加工余额表
         private void BalanceSheet_Click(object sender, RibbonControlEventArgs e)
         {
             ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
@@ -34,6 +35,10 @@ namespace HertZ_ExcelAddIn
             object[,] ORG;
             //目标新数组NRG
             object[,] NRG;
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
 
             //选中科目余额表并继续
             if (FunC.SelectSheet("余额表") == false) { return; };
@@ -78,22 +83,223 @@ namespace HertZ_ExcelAddIn
             ColumnName.Clear();
 
             //选择期初期末余额列示方式
-            DialogResult dr = MessageBox.Show("期初期末余额是否按[借贷方向][金额]列示？" + Environment.NewLine + "若以[借方余额][贷方余额]方式列示，请选否", "请选择", MessageBoxButtons.YesNo);
+            DialogResult dr = MessageBox.Show("期初期末余额是否按[借贷方向][金额]列示？" + Environment.NewLine + "若分别[借方余额][贷方余额]按列示，请选否", "请选择", MessageBoxButtons.YesNo);
             if (dr == DialogResult.Yes)
+            {
+                //选择[方向]列,可选列
+                ColumnName = new List<string> { "[方向]", "借贷方向" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, false);
+                if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 4); }
+                NRG[0, 3] = ColumnName[0];
+                ColumnName.Clear();
+
+                //选择[期初余额]列
+                ColumnName = new List<string> { "[期初余额]", "期初余额", "期初金额", "期初数", "审定期初数" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 5);
+                if (ColumnNumber == 0) { return; }
+                NRG[0, 4] = ColumnName[0];
+                ColumnName.Clear();
+
+                //选择[期末余额]列
+                ColumnName = new List<string> { "[期末余额]", "期末余额", "期末金额", "期末数", "审定期末数" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 8);
+                if (ColumnNumber == 0) { return; }
+                NRG[0, 7] = ColumnName[0];
+                ColumnName.Clear();
+            }
+            else
+            {
+                //选择[期初借方]列，先借用NRG的第6列存放数据
+                ColumnName = new List<string> { "[期初借方]", "期初借方", "期初借方金额", "期初借方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //选择[期初贷方]列，先借用NRG的第7列存放数据
+                ColumnName = new List<string> { "[期初贷方]", "期初贷方", "期初贷方金额", "期初贷方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //赋值[方向]列,[期初余额]列
+                NRG[0, 3] = "[方向]";
+                NRG[0, 4] = "[期初余额]";
+                for (int i = 1; i < AllRows; i++)
+                {
+                    //规范[期初借方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 5].ToString()))
+                    {
+                        NRG[i, 5] = 0;
+                    }
+                    else
+                    {
+                        if(!FunC.IsNumber(NRG[i, 5].ToString()))
+                        {
+                            MessageBox.Show("所选[期初借方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //规范[期初贷方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 6].ToString()))
+                    {
+                        NRG[i, 6] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 6].ToString()))
+                        {
+                            MessageBox.Show("所选[期初贷方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //计算[方向]列
+                    if(double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString()) > 0)
+                    {
+                        NRG[i, 3] = "借";
+                        NRG[i, 4] = double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString());
+                    }
+                    else if(double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString()) < 0)
+                    {
+                        NRG[i, 3] = "贷";
+                        NRG[i, 4] = double.Parse(NRG[i, 6].ToString()) - double.Parse(NRG[i, 5].ToString());
+                    }
+                    else
+                    {
+                        NRG[i, 3] = "平";
+                    }
+                }
+
+                //选择[期末借方]列，先借用NRG的第6列存放数据
+                ColumnName = new List<string> { "[期末借方]", "期末借方", "期末借方金额", "期末借方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //选择[期末贷方]列，先借用NRG的第7列存放数据
+                ColumnName = new List<string> { "[期末贷方]", "期末贷方", "期末贷方金额", "期末贷方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //赋值[期末余额]列
+                NRG[0, 7] = "[期末余额]";
+                for (int i = 1; i < AllRows; i++)
+                {
+                    //规范[期末借方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 5].ToString()))
+                    {
+                        NRG[i, 5] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 5].ToString()))
+                        {
+                            MessageBox.Show("所选[期末借方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //规范[期末贷方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 6].ToString()))
+                    {
+                        NRG[i, 6] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 6].ToString()))
+                        {
+                            MessageBox.Show("所选[期初贷方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //计算[期末余额]列
+                    if (NRG[i, 3].ToString() == "借")
+                    {
+                        NRG[i, 7] = double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString());
+                    }
+                    else if (NRG[i, 3].ToString() == "贷")
+                    {
+                        NRG[i, 7] = double.Parse(NRG[i, 6].ToString()) - double.Parse(NRG[i, 5].ToString());
+                    }
+                    else
+                    {
+                        if (double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString()) > 0)
+                        {
+                            NRG[i, 3] = "借";
+                            NRG[i, 7] = double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString());
+                        }
+                        else if (double.Parse(NRG[i, 5].ToString()) - double.Parse(NRG[i, 6].ToString()) < 0)
+                        {
+                            NRG[i, 3] = "贷";
+                            NRG[i, 7] = double.Parse(NRG[i, 6].ToString()) - double.Parse(NRG[i, 5].ToString());
+                        }
+                    }
+                }
+
+            }
+
+            //选择[本年借方]列
+            ColumnName = new List<string> { "[本年借方]", "本年借方", "本年借方累计", "借方金额累计", "审定借方发生额" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+            if (ColumnNumber == 0) { return; }
+            NRG[0, 5] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择[本年贷方]列
+            ColumnName = new List<string> { "[本年贷方]", "本年贷方", "本年贷方累计", "贷方金额累计", "审定贷方发生额" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+            if (ColumnNumber == 0) { return; }
+            NRG[0, 6] = ColumnName[0];
+            ColumnName.Clear();
+
+            
+            //规范[科目编码]列
+            //使用长度区分科目层级
+            Dictionary<int, string> CodeLen = new Dictionary<int, string> { };
+            for (int i = 1; i < AllRows; i++)
+            {
+                CodeLen.Add(NRG[i, 0].ToString().Length, NRG[i, 0].ToString());
+            }
+            //字典排序
+            CodeLen = CodeLen.OrderBy(o => o.Key).ToDictionary(o => o.Key, p => p.Value);
+
+            //添加显示层级列
+            NRG[0, 8] = "显示";
+            for(int i = 1; i < AllRows; i++)
             {
                 
             }
 
+            //删除sheet中的原始数据
+            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
 
+            //写入数据
+            WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
 
+            //释放数组
+            ORG = null;
+            NRG = null;
 
         }
 
+        //加工序时账
         private void JournalSheet_Click(object sender, RibbonControlEventArgs e)
         {
 
         }
 
+        //账表加工设置
         private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
         {
             Form BAJSetting = new BAJSetting();
@@ -106,6 +312,7 @@ namespace HertZ_ExcelAddIn
             
         }
 
+        //加工往来款
         private void EditCurrentAccount_Click(object sender, RibbonControlEventArgs e)
         {
             ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
@@ -315,11 +522,13 @@ namespace HertZ_ExcelAddIn
 
         }
 
+        //拆分账龄
         private void AgeOfAccount_Click(object sender, RibbonControlEventArgs e)
         {
             
         }
 
+        //往来款加工设置
         private void CurrentAccountSetting_Click(object sender, RibbonControlEventArgs e)
         {
             Form CASetting = new CASetting();
@@ -327,6 +536,7 @@ namespace HertZ_ExcelAddIn
             CASetting.Show();
         }
 
+        //版本信息
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
         {
             Form InfoForm = new VerInfo();

@@ -224,7 +224,7 @@ namespace HertZ_ExcelAddIn
             {
                 for (int i1 = 1; i1 <= OName.Count(); i1++)
                 {
-                    if (ColumnName[i -1] == OName[i1 - 1])
+                    if (ColumnName[i - 1] == OName[i1 - 1])
                     {
                         returnValue = i1;
                         return returnValue;
