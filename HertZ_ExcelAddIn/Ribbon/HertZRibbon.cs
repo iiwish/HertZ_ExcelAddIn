@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools.Ribbon;
+using System.Drawing;
 
 namespace HertZ_ExcelAddIn
 {
@@ -263,7 +264,6 @@ namespace HertZ_ExcelAddIn
             NRG[0, 6] = ColumnName[0];
             ColumnName.Clear();
 
-            
             //规范[科目编码]列
             //使用长度区分科目层级
             Dictionary<int, string> CodeLen = new Dictionary<int, string> { };
@@ -271,14 +271,38 @@ namespace HertZ_ExcelAddIn
             {
                 CodeLen.Add(NRG[i, 0].ToString().Length, NRG[i, 0].ToString());
             }
+
             //字典排序
             CodeLen = CodeLen.OrderBy(o => o.Key).ToDictionary(o => o.Key, p => p.Value);
 
-            //添加显示层级列
-            NRG[0, 8] = "显示";
+            //字典转list
+            int[] CodeList = (from val in CodeLen select val.Key).ToArray<int>();
+            CodeLen.Clear();
+
+            //添加是否显示列
+            NRG[0, 8] = "[显示]";
             for(int i = 1; i < AllRows; i++)
             {
-                
+                if(NRG[i,0].ToString().Length == CodeList[0])
+                {
+                    NRG[i, 8] = 1;
+                }
+                else
+                {
+                    NRG[i, 8] = 0;
+                }
+            }
+            //添加科目层级列
+            NRG[0, 9] = "[科目层级]";
+            for (int i = 1; i < AllRows; i++)
+            {
+                for(int i1 = 1;i1 <= CodeList.Count();i1++)
+                {
+                    if(NRG[i, 0].ToString().Length == CodeList[i1-1])
+                    {
+                        NRG[i, 9] = i1;
+                    }
+                }
             }
 
             //删除sheet中的原始数据
@@ -291,6 +315,24 @@ namespace HertZ_ExcelAddIn
             ORG = null;
             NRG = null;
 
+            //调整格式
+            WST.Range["A1:I1"].Interior.Color = Color.LightGray;
+            //按科目层级修改颜色
+            try
+            {
+                WST.Range["A1:I" + AllRows].AutoFilter(10, 1);
+                WST.Range["A2:I" + AllRows].Interior.Color = Color.Silver;
+                WST.Range["A1:I" + AllRows].AutoFilter(10, 2);
+                WST.Range["A2:I" + AllRows].Interior.Color = Color.PaleTurquoise;
+                WST.Range["A1:I" + AllRows].AutoFilter(10, 3);
+                WST.Range["A2:I" + AllRows].Interior.Color = Color.PeachPuff;
+                WST.Range["A1:I" + AllRows].AutoFilter(10, 4);
+                WST.Range["A2:I" + AllRows].Interior.Color = Color.PaleGreen;
+                WST.Range["A1:I" + AllRows].AutoFilter(10, 5);
+                WST.Range["A2:I" + AllRows].Interior.Color = Color.PapayaWhip;
+            }
+            catch { }
+            
         }
 
         //加工序时账
@@ -302,9 +344,9 @@ namespace HertZ_ExcelAddIn
         //账表加工设置
         private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
         {
-            Form BAJSetting = new BAJSetting();
-            BAJSetting.StartPosition = FormStartPosition.CenterScreen;
-            BAJSetting.Show();
+            //Form BAJSetting = new BAJSetting();
+            //BAJSetting.StartPosition = FormStartPosition.CenterScreen;
+            //BAJSetting.Show();
         }
 
         private void CurrentAccount_Click(object sender, RibbonControlEventArgs e)
