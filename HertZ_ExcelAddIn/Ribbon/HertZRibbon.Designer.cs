@@ -84,15 +84,18 @@
             // 
             // BalanceSheet
             // 
+            this.BalanceSheet.Description = "large";
             this.BalanceSheet.Label = "加工余额表";
             this.BalanceSheet.Name = "BalanceSheet";
             this.BalanceSheet.OfficeImageId = "OutlineSubtotals";
-            this.BalanceSheet.ScreenTip = "小熊加班加点更新ing";
+            this.BalanceSheet.ScreenTip = "单击开始加工余额表，规范余额表格式，便于后续操作";
             this.BalanceSheet.ShowImage = true;
+            this.BalanceSheet.SuperTip = "请在余额表中使用该功能，在加工前检查余额表科目层级是否正确";
             this.BalanceSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BalanceSheet_Click);
             // 
             // JournalSheet
             // 
+            this.JournalSheet.Description = "large";
             this.JournalSheet.Label = "加工序时账";
             this.JournalSheet.Name = "JournalSheet";
             this.JournalSheet.OfficeImageId = "QueryUpdate";
@@ -103,6 +106,7 @@
             // 
             // VoucherCheckList
             // 
+            this.VoucherCheckList.Description = "large";
             this.VoucherCheckList.Label = "生成抽凭表";
             this.VoucherCheckList.Name = "VoucherCheckList";
             this.VoucherCheckList.OfficeImageId = "CreateQueryFromWizard";
@@ -112,6 +116,7 @@
             // 
             // BalanceAndJournalSetting
             // 
+            this.BalanceAndJournalSetting.Description = "large";
             this.BalanceAndJournalSetting.Label = "加工设置";
             this.BalanceAndJournalSetting.Name = "BalanceAndJournalSetting";
             this.BalanceAndJournalSetting.OfficeImageId = "AddInManager";

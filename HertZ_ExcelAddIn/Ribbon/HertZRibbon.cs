@@ -367,9 +367,10 @@ namespace HertZ_ExcelAddIn
             //调整格式
             WST.Range["A1:I1"].Interior.Color = Color.LightGray;
             //按科目层级修改颜色
-            for(int i = 2; i <= AllRows; i++)
+            Excel.Range rg;//定义单元格区域对象
+            for (int i = 2; i <= AllRows; i++)
             {
-                Excel.Range rg = WST.Range["A" + i + ":I" + i];
+                rg = WST.Range["A" + i + ":I" + i];
                 switch (NRG[i-1, 8])
                 {
                     case 1:
@@ -423,11 +424,6 @@ namespace HertZ_ExcelAddIn
             //Form BAJSetting = new BAJSetting();
             //BAJSetting.StartPosition = FormStartPosition.CenterScreen;
             //BAJSetting.Show();
-        }
-
-        private void CurrentAccount_Click(object sender, RibbonControlEventArgs e)
-        {
-            
         }
 
         //加工往来款
@@ -643,7 +639,15 @@ namespace HertZ_ExcelAddIn
         //拆分账龄
         private void AgeOfAccount_Click(object sender, RibbonControlEventArgs e)
         {
-            
+            string PromptText = "请选择去年应收账款表"  + Environment.NewLine + "如果需要打开该表，请直接点击取消";
+            try
+            {
+                returnValue = ExcelApp.InputBox(Prompt: PromptText, Type: 8).Column;
+            }
+            catch
+            {
+                returnValue = 0;
+            }
         }
 
         //往来款加工设置
