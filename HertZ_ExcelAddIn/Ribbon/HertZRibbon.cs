@@ -410,6 +410,7 @@ namespace HertZ_ExcelAddIn
             WST.Columns["H:H"].Hidden = true;
 
             ExcelApp.Visible = true;//打开Excel视图刷新
+            WST.Tab.Color = 3;//设置tab颜色为红色
         }
 
         //加工序时账
@@ -639,15 +640,23 @@ namespace HertZ_ExcelAddIn
         //拆分账龄
         private void AgeOfAccount_Click(object sender, RibbonControlEventArgs e)
         {
-            string PromptText = "请选择去年应收账款表"  + Environment.NewLine + "如果需要打开该表，请直接点击取消";
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //定义第二个表
+            Excel.Worksheet WST2;
+
+            string PromptText = "请选择上一年度账龄表";
             try
             {
-                returnValue = ExcelApp.InputBox(Prompt: PromptText, Type: 8).Column;
+                WST2 = ExcelApp.ActiveWorkbook.Worksheets[ExcelApp.InputBox(Prompt: PromptText, Type: 2).Replace("!", "").Replace("=", "")];
+                WST2.Select();
             }
             catch
             {
-                returnValue = 0;
+                return;
             }
+            //WST2.Select();
         }
 
         //往来款加工设置
@@ -657,6 +666,147 @@ namespace HertZ_ExcelAddIn
             CASetting.StartPosition = FormStartPosition.CenterScreen;
             CASetting.Show();
         }
+
+
+        private void CompareTwoColumns_Click(object sender, RibbonControlEventArgs e)
+        {
+            Excel.Worksheet WST2;
+            //Excel.Workbook WBK;
+            //Excel.Workbook WBK2;
+            int AllRows;
+            string SelectColomn;
+            string SelectColomn2;
+            object[,] ORG;//原始数组ORG
+            object[,] NRG;//新数组NRG
+            object[,] ARG;//计算用数组
+
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            //WBK = ExcelApp.ActiveWorkbook;
+
+            //选择第一列，并捕获用户 直接点击取消 的情况
+            try
+            {
+                SelectColomn = FunC.CName(ExcelApp.InputBox(Prompt: "请选择第一列", Type: 8).Column);
+            }
+            catch
+            {
+                return;
+            }
+
+            //获取所选列的行数
+            AllRows = FunC.AllRows(SelectColomn);
+            //如果行数为1，则终止程序
+            if(AllRows < 2) 
+            {
+                MessageBox.Show("所选列行数小于2，请重新开始");
+                return; 
+            }
+
+            //将所选列的赋值至数组
+            ORG = WST.Range[SelectColomn + "1:" + SelectColomn + AllRows].Value2;
+
+            //选择第二列，并捕获用户 直接点击取消 的情况
+            try
+            {
+                string InputText = ExcelApp.InputBox(Prompt: "请选择第二列", Type: 2);
+                string[] InputTexts = InputText.Split(new char[] { '[', ']', '!', '$'}, StringSplitOptions.RemoveEmptyEntries);
+                WST2 = ExcelApp.Workbooks[InputTexts[0]].Worksheets[InputTexts[1]];
+                WST2.Select();
+                SelectColomn2 = InputTexts[2];
+                InputText = null;
+                InputTexts = null;
+            }
+            catch
+            {
+                return;
+            }
+
+            //获取所选列的行数
+            AllRows = FunC.AllRows(SelectColomn2);
+            //如果行数为1，则终止程序
+            if (AllRows < 2)
+            {
+                MessageBox.Show("所选列行数小于2，请重新开始");
+                return;
+            }
+
+            //将所选列的赋值至数组
+            NRG = WST2.Range[SelectColomn2 + "1:" + SelectColomn2 + AllRows].Value2;
+
+            ExcelApp.Visible = false;//关闭Excel视图刷新
+
+            AllRows = Math.Max(ORG.GetLength(0), NRG.GetLength(0));
+            ARG = new object[AllRows, 8];
+            //将数组org存入
+            for(int i = 1;i<= ORG.GetLength(0); i++)
+            {
+                ARG[i - 1, 0] = ORG[i, 1].ToString();
+            }
+            ORG = null;//释放数组
+            //将数组nrg存入
+            for (int i = 1; i <= NRG.GetLength(0); i++)
+            {
+                ARG[i - 1, 1] = NRG[i, 1].ToString();
+            }
+            NRG = null;//释放数组
+
+            //计算是否重复出现
+            for (int i = 0; i < AllRows; i++)
+            {
+                for (int i1 = 0; i1 < AllRows; i1++)
+                {
+                    //第三列表示第一列中重复的次数
+                    if (ARG[i, 0] != null && ARG[i, 0] == ARG[i1, 0])
+                    {
+                        ARG[i, 2] = int.Parse(ARG[i, 2].ToString()) + 1;
+                    }
+
+                    //第四列表示第二列中重复的次数
+                    if (ARG[i, 1] != null && ARG[i, 1] == ARG[i1, 1])
+                    {
+                        ARG[i, 3] = int.Parse(ARG[i, 3].ToString()) + 1;
+                    }
+
+                    //第五列表示第一列数在第二列中出现的次数
+                    if (ARG[i, 0] != null && ARG[i, 0] == ARG[i1, 1])
+                    {
+                        ARG[i, 4] = int.Parse(ARG[i, 4].ToString()) + 1;
+                    }
+
+                    //第六列表示第二列数在第一列中出现的次数
+                    if (ARG[i, 1] != null && ARG[i, 1] == ARG[i1, 0])
+                    {
+                        ARG[i, 5] = int.Parse(ARG[i, 5].ToString()) + 1;
+                    }
+                }
+            }
+
+            for (int i = 0; i < AllRows; i++)
+            {
+                for (int i1 = 0; i1 < AllRows; i1++)
+                {
+                    //第七列为第二列中是否存在与第一列数相同的值
+                    if (ARG[i, 0] == ARG[i1, 1] && ARG[i, 2] == ARG[i, 4])
+                    {
+                        ARG[i, 6] = 1;
+                    }
+
+                    //第八列为第一列中是否存在与第二列数相同的值
+                    if (ARG[i, 1] == ARG[i1, 0] && ARG[i, 3] == ARG[i, 5])
+                    {
+                        ARG[i, 7] = 1;
+                    }
+                }
+            }
+
+
+
+
+
+            ExcelApp.Visible = true;//打开Excel视图刷新
+        }
+
 
         //版本信息
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)

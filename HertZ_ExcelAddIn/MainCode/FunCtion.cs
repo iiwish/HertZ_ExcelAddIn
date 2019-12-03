@@ -217,7 +217,7 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public int SelectColumn(List<string> ColumnName,List<string> OName,bool MustSelect)
         {
-            int returnValue;
+            int returnValue = 0;
             
             //匹配现有列名和目标列名
             for (int i = 1; i <= ColumnName.Count(); i++)

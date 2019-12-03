@@ -48,14 +48,18 @@
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
             this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
+            this.Tool = this.Factory.CreateRibbonGroup();
+            this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.VersionGroup.SuspendLayout();
+            this.Tool.SuspendLayout();
             this.SuspendLayout();
             // 
             // HertZTab
             // 
             this.HertZTab.Groups.Add(this.TableProcessing);
+            this.HertZTab.Groups.Add(this.Tool);
             this.HertZTab.Groups.Add(this.VersionGroup);
             this.HertZTab.Label = "HertZ";
             this.HertZTab.Name = "HertZTab";
@@ -153,8 +157,9 @@
             this.AgeOfAccount.Label = "拆分账龄";
             this.AgeOfAccount.Name = "AgeOfAccount";
             this.AgeOfAccount.OfficeImageId = "BusinessFormWizard";
-            this.AgeOfAccount.ScreenTip = "小熊加班加点更新ing";
+            this.AgeOfAccount.ScreenTip = "按上年账龄拆分本年账龄";
             this.AgeOfAccount.ShowImage = true;
+            this.AgeOfAccount.SuperTip = "需要先将上一年度往来款及账龄粘到一张表里，并将这张表放到加工完的本年度往来款表中";
             this.AgeOfAccount.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AgeOfAccount_Click);
             // 
             // Confirmation
@@ -162,8 +167,9 @@
             this.Confirmation.Label = "生成函证";
             this.Confirmation.Name = "Confirmation";
             this.Confirmation.OfficeImageId = "SignatureInsertMenu";
-            this.Confirmation.ScreenTip = "小熊加班加点更新ing";
+            this.Confirmation.ScreenTip = "根据各往来款的抽函情况补充同一公司未抽中的款项，并生成word函证";
             this.Confirmation.ShowImage = true;
+            this.Confirmation.SuperTip = "小熊加班加点更新ing";
             // 
             // CurrentAccountSetting
             // 
@@ -191,6 +197,22 @@
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
             // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
+            // CompareTwoColumns
+            // 
+            this.CompareTwoColumns.Label = "对比两列";
+            this.CompareTwoColumns.Name = "CompareTwoColumns";
+            this.CompareTwoColumns.OfficeImageId = "TableStyleBandedColumns";
+            this.CompareTwoColumns.ScreenTip = "对比两列数据";
+            this.CompareTwoColumns.ShowImage = true;
+            this.CompareTwoColumns.SuperTip = "选择两列进行对比，对两列中不同的数据用黄色标注，第二列可跨簿跨表";
+            this.CompareTwoColumns.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CompareTwoColumns_Click);
+            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -203,6 +225,8 @@
             this.TableProcessing.PerformLayout();
             this.VersionGroup.ResumeLayout(false);
             this.VersionGroup.PerformLayout();
+            this.Tool.ResumeLayout(false);
+            this.Tool.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -223,6 +247,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonMenu CurrentAccount;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup VersionGroup;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton VersionInfo;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup Tool;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton CompareTwoColumns;
     }
 
     partial class ThisRibbonCollection
