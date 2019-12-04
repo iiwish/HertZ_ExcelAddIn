@@ -675,7 +675,7 @@ namespace HertZ_ExcelAddIn
             string SelectColomn2;
             object[,] ORG;//原始数组ORG
             object[,] NRG;//新数组NRG
-            object[,] ARG;//计算用数组
+            string[,] ARG;//计算用数组
 
             ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
@@ -728,17 +728,31 @@ namespace HertZ_ExcelAddIn
             ExcelApp.Visible = false;//关闭Excel视图刷新
 
             AllRows = Math.Max(ORG.GetLength(0), NRG.GetLength(0));
-            ARG = new object[AllRows, 2];
+            ARG = new string[AllRows, 2];
             //将数组org存入
             for (int i = 1; i <= ORG.GetLength(0); i++)
             {
-                ARG[i - 1, 0] = ORG[i, 1].ToString();
+                if (ORG[i, 1] != null)
+                {
+                    ARG[i - 1, 0] = ORG[i, 1].ToString();
+                }
+                else
+                {
+                    ARG[i - 1, 0] = "0";
+                }
             }
             ORG = null;//释放数组
             //将数组nrg存入
             for (int i = 1; i <= NRG.GetLength(0); i++)
             {
-                ARG[i - 1, 1] = NRG[i, 1].ToString();
+                if (NRG[i, 1] != null)
+                {
+                    ARG[i - 1, 1] = NRG[i, 1].ToString();
+                }
+                else
+                {
+                    ARG[i - 1, 1] = "0";
+                }
             }
             NRG = null;//释放数组
 
@@ -799,7 +813,7 @@ namespace HertZ_ExcelAddIn
             string CellsRange = "0";
             for (int i = 0; i < AllRows; i++)
             {
-                if (Arr[i, 7] != 1 && ARG[i, 1] != null && ARG[i, 1].ToString() != "0")
+                if (Arr[i, 7] != 1 && ARG[i, 1] != null && ARG[i, 1] != "0")
                 {
                     CellsRange = CellsRange + "," + SelectColomn2 + (i+1);
                 }
@@ -813,7 +827,7 @@ namespace HertZ_ExcelAddIn
             CellsRange = "0";
             for (int i = 0; i < AllRows; i++)
             {
-                if (Arr[i, 6] != 1 && ARG[i, 0] != null && ARG[i, 0].ToString() != "0")
+                if (Arr[i, 6] != 1 && ARG[i, 0] != null && ARG[i, 0] != "0")
                 {
                     CellsRange = CellsRange + "," + SelectColomn + (i + 1);
                 }

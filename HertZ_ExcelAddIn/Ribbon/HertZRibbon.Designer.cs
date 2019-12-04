@@ -46,14 +46,14 @@
             this.AgeOfAccount = this.Factory.CreateRibbonButton();
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
-            this.VersionInfo = this.Factory.CreateRibbonButton();
             this.Tool = this.Factory.CreateRibbonGroup();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
+            this.VersionInfo = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
-            this.VersionGroup.SuspendLayout();
             this.Tool.SuspendLayout();
+            this.VersionGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // HertZTab
@@ -181,6 +181,22 @@
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
+            // CompareTwoColumns
+            // 
+            this.CompareTwoColumns.Label = "对比两列";
+            this.CompareTwoColumns.Name = "CompareTwoColumns";
+            this.CompareTwoColumns.OfficeImageId = "TableStyleBandedColumns";
+            this.CompareTwoColumns.ScreenTip = "对比两列数据";
+            this.CompareTwoColumns.ShowImage = true;
+            this.CompareTwoColumns.SuperTip = "选择两列进行对比，对两列中不同的数据用黄色标注，要求两列需在同一sheet中";
+            this.CompareTwoColumns.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CompareTwoColumns_Click);
+            // 
             // VersionGroup
             // 
             this.VersionGroup.Items.Add(this.VersionInfo);
@@ -197,22 +213,6 @@
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
             // 
-            // Tool
-            // 
-            this.Tool.Items.Add(this.CompareTwoColumns);
-            this.Tool.Label = "实用工具";
-            this.Tool.Name = "Tool";
-            // 
-            // CompareTwoColumns
-            // 
-            this.CompareTwoColumns.Label = "对比两列";
-            this.CompareTwoColumns.Name = "CompareTwoColumns";
-            this.CompareTwoColumns.OfficeImageId = "TableStyleBandedColumns";
-            this.CompareTwoColumns.ScreenTip = "对比两列数据";
-            this.CompareTwoColumns.ShowImage = true;
-            this.CompareTwoColumns.SuperTip = "选择两列进行对比，对两列中不同的数据用黄色标注，第二列可跨簿跨表";
-            this.CompareTwoColumns.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CompareTwoColumns_Click);
-            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -223,10 +223,10 @@
             this.HertZTab.PerformLayout();
             this.TableProcessing.ResumeLayout(false);
             this.TableProcessing.PerformLayout();
-            this.VersionGroup.ResumeLayout(false);
-            this.VersionGroup.PerformLayout();
             this.Tool.ResumeLayout(false);
             this.Tool.PerformLayout();
+            this.VersionGroup.ResumeLayout(false);
+            this.VersionGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
