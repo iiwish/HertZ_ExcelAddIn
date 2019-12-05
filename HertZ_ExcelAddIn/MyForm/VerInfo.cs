@@ -38,7 +38,7 @@ namespace HertZ_ExcelAddIn
 
         private void Manual_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("");
+            System.Diagnostics.Process.Start("https://www.jianshu.com/nb/41200586");
         }
 
         private void OnlineVideo_Click(object sender, EventArgs e)

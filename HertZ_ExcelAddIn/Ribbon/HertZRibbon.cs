@@ -465,7 +465,14 @@ namespace HertZ_ExcelAddIn
             List<string> OName = new List<string> { };
             for (int i = 1;i <= AllColumns; i++)
             {
-                OName.Add(ORG[1, i].ToString());
+                if(ORG[1, i] != null)
+                {
+                    OName.Add(ORG[1, i].ToString());
+                }
+                else
+                {
+                    OName.Add("0");
+                }
             }
 
             //选择[客户编号]列
