@@ -516,7 +516,7 @@ namespace HertZ_ExcelAddIn
             ColumnName.Clear();
 
             //选择[本期借方]列
-            ColumnName = new List<string> { "[本期借方]", "本期借方", "本年累计借方" };
+            ColumnName = new List<string> { "[本期借方]", "本期借方", "本年借方", "本年累计借方" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
             if (ColumnNumber == 0) { return; }
@@ -525,7 +525,7 @@ namespace HertZ_ExcelAddIn
             ColumnName.Clear();
 
             //选择[本期贷方]列
-            ColumnName = new List<string> { "[本期贷方]", "本期贷方", "本年累计贷方" };
+            ColumnName = new List<string> { "[本期贷方]", "本期贷方", "本年贷方", "本年累计贷方" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
             if (ColumnNumber == 0) { return; }
@@ -650,20 +650,74 @@ namespace HertZ_ExcelAddIn
             ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
-            //定义第二个表
-            Excel.Worksheet WST2;
+            int AllRows;
+            int AllColumns;
+            int ColumnNumber;
+            List<string> ColumnName;
+            //原始表格数组ORG
+            object[,] ORG;
+            //目标新数组NRG
+            object[,] NRG;
 
-            string PromptText = "请选择上一年度账龄表";
-            try
+            DialogResult dr = MessageBox.Show(" 请在上年账龄表中使用该功能" + Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.No) { return;}
+
+            //规范原始数据
+            if (FunC.RangeIsStandard() == false)
             {
-                WST2 = ExcelApp.ActiveWorkbook.Worksheets[ExcelApp.InputBox(Prompt: PromptText, Type: 2).Replace("!", "").Replace("=", "")];
-                WST2.Select();
-            }
-            catch
-            {
+                MessageBox.Show("请规范数据格式，保证数据内容不超出首行和首列");
                 return;
             }
+
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
+
+            //将表格读入数组ORG
+            ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+            //创建目标新数组NRG
+            NRG = new object[AllRows, 9];
+
+            //将列名读入List
+            List<string> OName = new List<string> { };
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                OName.Add(ORG[1, i].ToString());
+            }
+
+            //选择[客户名称]或[客户编号]列，做为引用的依据
+            ColumnName = new List<string> { "[客户名称]或[客户编号]列" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 1);
+            NRG[0, 0] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择[期末余额]列
+            ColumnName = new List<string> { "[期末余额]", "期末余额", "期末金额", "期末数", "审定期末数" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
+            NRG[0, 1] = ColumnName[0];
+            ColumnName.Clear();
+
+
+
+            ////定义第二个表
+            //Excel.Worksheet WST2;
+
+            //string PromptText = "请选择上一年度账龄表";
+            //try
+            //{
+            //    WST2 = ExcelApp.ActiveWorkbook.Worksheets[ExcelApp.InputBox(Prompt: PromptText).Replace("'!", "").Replace("='", "")];
+            //    WST2.Select();
+            //}
+            //catch
+            //{
+            //    return;
+            //}
             //WST2.Select();
+
+            //MessageBox.Show(WST2.Name);
         }
 
         //往来款加工设置
@@ -817,6 +871,7 @@ namespace HertZ_ExcelAddIn
 
             //调整单元格颜色
             //调整第二列的格式
+            WST.Columns[SelectColomn2 + ":" + SelectColomn2].Interior.ColorIndex = 0;
             string CellsRange = "0";
             for (int i = 0; i < AllRows; i++)
             {
@@ -830,7 +885,7 @@ namespace HertZ_ExcelAddIn
                 WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
             }
             //调整第一列的格式
-            WST.Select();
+            WST.Columns[SelectColomn + ":" + SelectColomn].Interior.ColorIndex = 0;
             CellsRange = "0";
             for (int i = 0; i < AllRows; i++)
             {
