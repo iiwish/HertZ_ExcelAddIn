@@ -816,7 +816,7 @@ namespace HertZ_ExcelAddIn
             AllColumns = FunC.AllColumns();
 
             //将表格读入数组ORG
-            ORG = WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows.ToString()].Value2;
+            ORG = WST2.Range["A1:" + FunC.CName(AllColumns + 7) + AllRows.ToString()].Value2;
 
             //找对应的列号
             int ColumnNumber2 = 0;//期初审定数
@@ -869,14 +869,13 @@ namespace HertZ_ExcelAddIn
             FunC.ColorNotNum(FunC.CName(ColumnNumber4) + "2:" + FunC.CName(ColumnNumber4) + AllRows);
             FunC.ColorNotNum(FunC.CName(ColumnNumber5) + "2:" + FunC.CName(ColumnNumber5) + AllRows);
             ExcelApp.Visible = true;//打开Excel视图刷新
-
             //改表头
             for (int i = 1;i <= 6; i++)
             {
                 ORG[1, AllColumns + i] = NRG[0,i + 1];
             }
             //匹配余额
-            for (int i = 0;i < AllRows; i++)
+            for (int i = 2;i <= AllRows; i++)
             {
                 //如果期末余额为0，则账龄为0
                 if(Convert.ToInt32(FunC.TD(ORG[i,ColumnNumber3]).ToString()) == 0 )
@@ -978,16 +977,20 @@ namespace HertZ_ExcelAddIn
                         }
                     }
                 }
+
+                //最后增加一列验证列
+                ORG[i, AllColumns + 7] = "=ABS(" + FunC.CName(ColumnNumber3) + i + "-sum(" + FunC.CName(AllColumns + 1) + i + ":" + FunC.CName(AllColumns + 6) + i + ")<0.01";
             }
 
+
             //赋值
-            WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows].Value2 = ORG;
+            WST2.Range["A1:" + FunC.CName(AllColumns + 7) + AllRows].Value2 = ORG;
             //定义rg为有效区域
-            Excel.Range rg = WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows];
+            Excel.Range rg = WST2.Range["A1:" + FunC.CName(AllColumns + 7) + AllRows];
             //加框线
             rg.Borders.LineStyle = 1;
             //设置首行颜色为灰色
-            rg = WST.Range["A1:" + FunC.CName(AllColumns + 6) + "1"];
+            rg = WST2.Range["A1:" + FunC.CName(AllColumns + 7) + "1"];
             rg.Interior.ColorIndex = 15;
 
         }
