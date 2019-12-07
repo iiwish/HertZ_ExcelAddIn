@@ -663,15 +663,26 @@ namespace HertZ_ExcelAddIn
             //输入科目名称
             try
             {
-                ProjectName = ExcelApp.InputBox(Prompt: "请输入账龄表对应的科目名称", Type: 2);
+                ProjectName = ExcelApp.InputBox(Prompt: "请输入账龄表对应的往来科目名称", Type: 2);
             }
             catch
             {
                 return;
             }
 
+            //检查输入的是不是往来款科目
+            if (ProjectName.Contains("应收") || ProjectName.Contains("预收") || ProjectName.Contains("应付") || ProjectName.Contains("预付"))
+            {
+                if (ProjectName.Contains("款项")) { ProjectName.Replace("款项", "账款"); }
+            }
+            else
+            {
+                MessageBox.Show("请检查输入的科目名称是否正确");
+                return;
+            }
+
             //检查科目名称是否有效
-            if (!FunC.SheetExist(ProjectName))
+            if (!FunC.SheetExist(ProjectName) )
             {
                 MessageBox.Show("请将上年账龄表与加工完的往来款表放在同一工作簿");
                 return;
@@ -773,15 +784,12 @@ namespace HertZ_ExcelAddIn
             NRG[0, 7] = ColumnName[0];
             ColumnName.Clear();
 
-            //释放数组ORG
-            ORG = null;
-
             //借用数组ORG删除NRG中期末余额为0或空值的行
             ORG = new object[AllRows, 8];
             int i3 = 0;
             for (int i = 0; i < AllRows; i++)
             {
-                if(Convert.ToInt32(FunC.ToDouble(NRG[i, 1]).ToString()) != 0)
+                if(Convert.ToInt32(FunC.TD(NRG[i, 1]).ToString()) != 0)
                 {
                     for (int i1 = 0; i1 < 8; i1++)
                     {
@@ -800,9 +808,6 @@ namespace HertZ_ExcelAddIn
                 }
             }
             
-            //释放数组ORG
-            ORG = null;
-
             //选中第二个工作表
             WST2.Select();
 
@@ -814,10 +819,10 @@ namespace HertZ_ExcelAddIn
             ORG = WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows.ToString()].Value2;
 
             //找对应的列号
-            int ColumnNumber2 = 0;
-            int ColumnNumber3 = 0;
-            int ColumnNumber4 = 0;
-            int ColumnNumber5 = 0;
+            int ColumnNumber2 = 0;//期初审定数
+            int ColumnNumber3 = 0;//期末审定数
+            int ColumnNumber4 = 0;//本期借方
+            int ColumnNumber5 = 0;//本期贷方
             ColumnName = new List<string> { "[客户编号]", "[客户名称]", "[期初审定数]", "[期末审定数]", "[本期借方]", "[本期贷方]" };
             if (FunC.IsNumber(NRG[1, 0].ToString()))
             {
@@ -874,7 +879,7 @@ namespace HertZ_ExcelAddIn
             for (int i = 0;i < AllRows; i++)
             {
                 //如果期末余额为0，则账龄为0
-                if(Convert.ToInt32(FunC.ToDouble(ORG[i,ColumnNumber3]).ToString()) == 0 )
+                if(Convert.ToInt32(FunC.TD(ORG[i,ColumnNumber3]).ToString()) == 0 )
                 {
                     for(int i1 = 1; i1 <= 6; i1++)
                     {
@@ -882,12 +887,30 @@ namespace HertZ_ExcelAddIn
                     }
                 }
                 //如果期初余额为0，则账龄为[1年以内]
-                else if(Convert.ToInt32(FunC.ToDouble(ORG[i, ColumnNumber2]).ToString()) == 0 )
+                else if(Convert.ToInt32(FunC.TD(ORG[i, ColumnNumber2]).ToString()) == 0 )
                 {
                     ORG[i, AllColumns + 1] = ORG[i, ColumnNumber3];
                     for (int i1 = 2; i1 <= 6; i1++)
                     {
                         ORG[i, AllColumns + i1] = 0;
+                    }
+                }
+                //如果借方科目借方金额大于期末余额
+                else if ((ProjectName.Contains("应收") || ProjectName.Contains("预付")) && FunC.TD(ORG[i, ColumnNumber4]) >= FunC.TD(ORG[i, ColumnNumber3]))
+                {
+                    ORG[i, AllColumns + 1] = FunC.TD(ORG[i, ColumnNumber3]);
+                    for (int i2 = 2; i2 <= 6; i2++)
+                    {
+                        ORG[i, AllColumns + i2] = 0;
+                    }
+                }
+                //如果贷方科目贷方金额大于期末余额
+                else if ((ProjectName.Contains("应付") || ProjectName.Contains("预收")) && FunC.TD(ORG[i, ColumnNumber5]) >= FunC.TD(ORG[i, ColumnNumber3]))
+                {
+                    ORG[i, AllColumns + 1] = FunC.TD(ORG[i, ColumnNumber3]);
+                    for (int i2 = 2; i2 <= 6; i2++)
+                    {
+                        ORG[i, AllColumns + i2] = 0;
                     }
                 }
                 //否则从账龄表中匹配
@@ -896,7 +919,7 @@ namespace HertZ_ExcelAddIn
                     for (int i1 = 1; i1 < i3; i1++)
                     {
                         //如果不匹配，直接下一个
-                        if (Math.Abs(FunC.ToDouble(ORG[i, ColumnNumber2]) - FunC.ToDouble(NRG[i1,1])) > 0.005 || ORG[i, ColumnNumber].ToString() != NRG[i1, 0].ToString())
+                        if (Math.Abs(FunC.TD(ORG[i, ColumnNumber2]) - FunC.TD(NRG[i1,1])) > 0.005 || ORG[i, ColumnNumber].ToString() != NRG[i1, 0].ToString())
                         {
                             break;
                         }
@@ -909,20 +932,50 @@ namespace HertZ_ExcelAddIn
                         
                         NRG[i1, 8] = 1;
                         //检查本期发生额，如果为0则平移账龄
-                        if (Convert.ToInt32(FunC.ToDouble(ORG[i, ColumnNumber4]).ToString()) == 0 && Convert.ToInt32(FunC.ToDouble(ORG[i, ColumnNumber5]).ToString()) == 0)
+                        if (Convert.ToInt32(FunC.TD(ORG[i, ColumnNumber4]).ToString()) == 0 && Convert.ToInt32(FunC.TD(ORG[i, ColumnNumber5]).ToString()) == 0)
                         {
                             ORG[i, AllColumns + 1] = 0;
-                            for (int i2 = 2; i2 <= 6; i2++)
+                            for (int i2 = 2; i2 <= 5; i2++)
                             {
-                                ORG[i, AllColumns + i2] = NRG[i, i2 + 1];
+                                ORG[i, AllColumns + i2] = NRG[i1, i2];
                             }
+                            ORG[i, AllColumns + 6] = FunC.TD(NRG[i1, 6]) + FunC.TD(NRG[i1, 7]);
                         }
                         //如果本期有发生额，则计算账龄
                         else
                         {
+                            if (ProjectName.Contains("应收") || ProjectName.Contains("预付"))
+                            {
+                                //一年以内
+                                ORG[i, AllColumns + 1] = FunC.TD(ORG[i, ColumnNumber4]);
+                                //1-2年
+                                ORG[i, AllColumns + 2] = Math.Min(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber4]), FunC.TD(NRG[i1, 2]));
+                                //2-3年
+                                ORG[i, AllColumns + 3] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber4]) - FunC.TD(NRG[i1, 2]), 0), FunC.TD(NRG[i1, 3]));
+                                //3-4年
+                                ORG[i, AllColumns + 4] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber4]) - FunC.TD(NRG[i1, 2]) - FunC.TD(NRG[i1, 3]), 0), FunC.TD(NRG[i1, 4]));
+                                //4-5年
+                                ORG[i, AllColumns + 5] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber4]) - FunC.TD(NRG[i1, 2]) - FunC.TD(NRG[i1, 3]) - FunC.TD(NRG[i1, 4]), 0), FunC.TD(NRG[i1, 5]));
+                                //5年以上
+                                ORG[i, AllColumns + 6] = FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, AllColumns + 1]) - FunC.TD(ORG[i, AllColumns + 2]) - FunC.TD(ORG[i, AllColumns + 3]) - FunC.TD(ORG[i, AllColumns + 4]) - FunC.TD(ORG[i, AllColumns + 5]);
 
+                            }
+                            else
+                            {
+                                //一年以内
+                                ORG[i, AllColumns + 1] = FunC.TD(ORG[i, ColumnNumber5]);
+                                //1-2年
+                                ORG[i, AllColumns + 2] = Math.Min(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber5]), FunC.TD(NRG[i1, 2]));
+                                //2-3年
+                                ORG[i, AllColumns + 3] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber5]) - FunC.TD(NRG[i1, 2]), 0), FunC.TD(NRG[i1, 3]));
+                                //3-4年
+                                ORG[i, AllColumns + 4] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber5]) - FunC.TD(NRG[i1, 2]) - FunC.TD(NRG[i1, 3]), 0), FunC.TD(NRG[i1, 4]));
+                                //4-5年
+                                ORG[i, AllColumns + 5] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber5]) - FunC.TD(NRG[i1, 2]) - FunC.TD(NRG[i1, 3]) - FunC.TD(NRG[i1, 4]), 0), FunC.TD(NRG[i1, 5]));
+                                //5年以上
+                                ORG[i, AllColumns + 6] = FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, AllColumns + 1]) - FunC.TD(ORG[i, AllColumns + 2]) - FunC.TD(ORG[i, AllColumns + 3]) - FunC.TD(ORG[i, AllColumns + 4]) - FunC.TD(ORG[i, AllColumns + 5]);
+                            }
                         }
-                        
                     }
                 }
             }
@@ -942,12 +995,14 @@ namespace HertZ_ExcelAddIn
         //往来款加工设置
         private void CurrentAccountSetting_Click(object sender, RibbonControlEventArgs e)
         {
-            Form CASetting = new CASetting();
-            CASetting.StartPosition = FormStartPosition.CenterScreen;
+            Form CASetting = new CASetting
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
             CASetting.Show();
         }
 
-
+        //对比两列数
         private void CompareTwoColumns_Click(object sender, RibbonControlEventArgs e)
         {
             int AllRows;
@@ -1125,8 +1180,10 @@ namespace HertZ_ExcelAddIn
         //版本信息
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
         {
-            Form InfoForm = new VerInfo();
-            InfoForm.StartPosition = FormStartPosition.CenterScreen;
+            Form InfoForm = new VerInfo
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
             InfoForm.Show();
         }
     }

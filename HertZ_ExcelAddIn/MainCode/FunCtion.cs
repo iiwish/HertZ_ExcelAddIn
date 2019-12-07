@@ -495,10 +495,12 @@ namespace HertZ_ExcelAddIn
             rg.Value2 = "";
         }
 
-        ///<summary>
-        ///将object转换为int
-        ///</summary>
-        public double ToDouble(object Value)
+        /// <summary>
+        /// 将object转换为double,保留两位小数
+        /// </summary>
+        /// <param name="objectValue"></param>
+        /// <returns></returns>
+        public double TD(object Value)
         {
             double returnValue = 0d;
             if (Value == null)
@@ -507,6 +509,7 @@ namespace HertZ_ExcelAddIn
             }
             string inputValue = Value.ToString();
             double.TryParse(inputValue, out returnValue);
+            returnValue = Math.Round(returnValue, 2);
             return returnValue;
         }
 
