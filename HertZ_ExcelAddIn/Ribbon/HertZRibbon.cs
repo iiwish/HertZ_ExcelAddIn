@@ -653,11 +653,36 @@ namespace HertZ_ExcelAddIn
             int AllRows;
             int AllColumns;
             int ColumnNumber;
+            string ProjectName;
             List<string> ColumnName;
             //原始表格数组ORG
             object[,] ORG;
             //目标新数组NRG
             object[,] NRG;
+
+            //输入科目名称
+            try
+            {
+                ProjectName = ExcelApp.InputBox(Prompt: "请输入账龄表对应的科目名称", Type: 2);
+            }
+            catch
+            {
+                return;
+            }
+
+            //检查科目名称是否有效
+            if (!FunC.SheetExist(ProjectName))
+            {
+                MessageBox.Show("请将上年账龄表与加工完的往来款表放在同一工作簿");
+                return;
+            }
+            else if(ExcelApp.Sheets[ProjectName].Range["A1"] != "[客户编号]")
+            {
+                MessageBox.Show("请先加工往来款");
+                return;
+            }
+            //定义第二个工作表
+            Excel.Worksheet WST2 = ExcelApp.ActiveWorkbook.Sheets[ProjectName];
 
             DialogResult dr = MessageBox.Show(" 请在上年账龄表中使用该功能" + Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
             if (dr == DialogResult.No) { return;}
@@ -675,7 +700,7 @@ namespace HertZ_ExcelAddIn
             //将表格读入数组ORG
             ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
             //创建目标新数组NRG
-            NRG = new object[AllRows, 9];
+            NRG = new object[AllRows, 8];
 
             //将列名读入List
             List<string> OName = new List<string> { };
@@ -692,32 +717,226 @@ namespace HertZ_ExcelAddIn
             NRG[0, 0] = ColumnName[0];
             ColumnName.Clear();
 
-            //选择[期末余额]列
-            ColumnName = new List<string> { "[期末余额]", "期末余额", "期末金额", "期末数", "审定期末数" };
+            //选择审定[期末余额]列
+            ColumnName = new List<string> { "[期末余额]", "审定期末数", "期末审定数", "审定期末余额" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
             NRG[0, 1] = ColumnName[0];
             ColumnName.Clear();
 
+            //选择账龄[1年以内]列
+            ColumnName = new List<string> { "[1年以内]", "1年以内", "一年以内" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 3);
+            NRG[0, 2] = ColumnName[0];
+            ColumnName.Clear();
 
+            //选择账龄[1-2年]列
+            ColumnName = new List<string> { "[1-2年]", "1-2年" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 4);
+            NRG[0, 3] = ColumnName[0];
+            ColumnName.Clear();
 
-            ////定义第二个表
-            //Excel.Worksheet WST2;
+            //选择账龄[2-3年]列
+            ColumnName = new List<string> { "[2-3年]", "2-3年" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 5);
+            NRG[0, 4] = ColumnName[0];
+            ColumnName.Clear();
 
-            //string PromptText = "请选择上一年度账龄表";
-            //try
-            //{
-            //    WST2 = ExcelApp.ActiveWorkbook.Worksheets[ExcelApp.InputBox(Prompt: PromptText).Replace("'!", "").Replace("='", "")];
-            //    WST2.Select();
-            //}
-            //catch
-            //{
-            //    return;
-            //}
-            //WST2.Select();
+            //选择账龄[3-4年]列
+            ColumnName = new List<string> { "[3-4年]", "3-4年" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+            NRG[0, 5] = ColumnName[0];
+            ColumnName.Clear();
 
-            //MessageBox.Show(WST2.Name);
+            //选择账龄[4-5年]列
+            ColumnName = new List<string> { "[4-5年]", "4-5年" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+            NRG[0, 6] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择账龄[5年以上]列
+            ColumnName = new List<string> { "[5年以上]", "5年以上", "五年以上" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 8);
+            NRG[0, 7] = ColumnName[0];
+            ColumnName.Clear();
+
+            //释放数组ORG
+            ORG = null;
+
+            //借用数组ORG删除NRG中期末余额为0或空值的行
+            ORG = new object[AllRows, 8];
+            int i3 = 0;
+            for (int i = 0; i < AllRows; i++)
+            {
+                if(Convert.ToInt32(FunC.ToDouble(NRG[i, 1]).ToString()) != 0)
+                {
+                    for (int i1 = 0; i1 < 8; i1++)
+                    {
+                        ORG[i3, i1] = NRG[i, i1];
+                    }
+                    i3 += 1;
+                }
+            }
+            NRG = null;
+            NRG = new object[i3, 9];
+            for (int i = 0; i < i3; i++)
+            {
+                for (int i1 = 0; i1 < 8; i1++)
+                {
+                    NRG[i, i1] = ORG[i, i1];
+                }
+            }
+            
+            //释放数组ORG
+            ORG = null;
+
+            //选中第二个工作表
+            WST2.Select();
+
+            //读取行列数
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
+
+            //将表格读入数组ORG
+            ORG = WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows.ToString()].Value2;
+
+            //找对应的列号
+            int ColumnNumber2 = 0;
+            int ColumnNumber3 = 0;
+            int ColumnNumber4 = 0;
+            int ColumnNumber5 = 0;
+            ColumnName = new List<string> { "[客户编号]", "[客户名称]", "[期初审定数]", "[期末审定数]", "[本期借方]", "[本期贷方]" };
+            if (FunC.IsNumber(NRG[1, 0].ToString()))
+            {
+                ColumnNumber = 0;
+            }
+            else
+            {
+                ColumnNumber = 1;
+            }
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                if(ORG[1,i].ToString() == ColumnName[ColumnNumber])
+                {
+                    ColumnNumber = i;
+                }
+                else if(ORG[1, i].ToString() == ColumnName[2])
+                {
+                    ColumnNumber2 = i;
+                }
+                else if (ORG[1, i].ToString() == ColumnName[3])
+                {
+                    ColumnNumber3 = i;
+                }
+                else if (ORG[1, i].ToString() == ColumnName[4])
+                {
+                    ColumnNumber4 = i;
+                }
+                else if (ORG[1, i].ToString() == ColumnName[5])
+                {
+                    ColumnNumber5 = i;
+                }
+            }
+            //检查是否匹配成功
+            if(ColumnNumber2 == 0 || ColumnNumber3 == 0 || ColumnNumber4 == 0 || ColumnNumber5 == 0)
+            {
+                MessageBox.Show("未匹配到[期初审定数]、[期末审定数]、[本期借方]或[本期贷方]列，请检查并重新开始");
+                return;
+            }
+
+            //检查指定列是否有非数字内容
+            ExcelApp.Visible = false;//关闭Excel视图刷新
+            FunC.ColorNotNum(FunC.CName(ColumnNumber2) + "2:" + FunC.CName(ColumnNumber2) + AllRows);
+            FunC.ColorNotNum(FunC.CName(ColumnNumber3) + "2:" + FunC.CName(ColumnNumber3) + AllRows);
+            FunC.ColorNotNum(FunC.CName(ColumnNumber4) + "2:" + FunC.CName(ColumnNumber4) + AllRows);
+            FunC.ColorNotNum(FunC.CName(ColumnNumber5) + "2:" + FunC.CName(ColumnNumber5) + AllRows);
+            ExcelApp.Visible = true;//打开Excel视图刷新
+
+            //改表头
+            for (int i = 1;i <= 6; i++)
+            {
+                ORG[1, AllColumns + i] = NRG[0,i + 1];
+            }
+            //匹配余额
+            for (int i = 0;i < AllRows; i++)
+            {
+                //如果期末余额为0，则账龄为0
+                if(Convert.ToInt32(FunC.ToDouble(ORG[i,ColumnNumber3]).ToString()) == 0 )
+                {
+                    for(int i1 = 1; i1 <= 6; i1++)
+                    {
+                        ORG[i, AllColumns + i1] = 0;
+                    }
+                }
+                //如果期初余额为0，则账龄为[1年以内]
+                else if(Convert.ToInt32(FunC.ToDouble(ORG[i, ColumnNumber2]).ToString()) == 0 )
+                {
+                    ORG[i, AllColumns + 1] = ORG[i, ColumnNumber3];
+                    for (int i1 = 2; i1 <= 6; i1++)
+                    {
+                        ORG[i, AllColumns + i1] = 0;
+                    }
+                }
+                //否则从账龄表中匹配
+                else
+                {
+                    for (int i1 = 1; i1 < i3; i1++)
+                    {
+                        //如果不匹配，直接下一个
+                        if (Math.Abs(FunC.ToDouble(ORG[i, ColumnNumber2]) - FunC.ToDouble(NRG[i1,1])) > 0.005 || ORG[i, ColumnNumber].ToString() != NRG[i1, 0].ToString())
+                        {
+                            break;
+                        }
+                        //检查是否被匹配过，如果被匹配过直接下一个，防止出现同一供应商多个余额相等的情况
+                        if (NRG[i1, 8] != null)
+                        {
+                            ORG[i, AllColumns + 1] = "请手动计算该供应商的账龄";
+                            break;
+                        }
+                        
+                        NRG[i1, 8] = 1;
+                        //检查本期发生额，如果为0则平移账龄
+                        if (Convert.ToInt32(FunC.ToDouble(ORG[i, ColumnNumber4]).ToString()) == 0 && Convert.ToInt32(FunC.ToDouble(ORG[i, ColumnNumber5]).ToString()) == 0)
+                        {
+                            ORG[i, AllColumns + 1] = 0;
+                            for (int i2 = 2; i2 <= 6; i2++)
+                            {
+                                ORG[i, AllColumns + i2] = NRG[i, i2 + 1];
+                            }
+                        }
+                        //如果本期有发生额，则计算账龄
+                        else
+                        {
+
+                        }
+                        
+                    }
+                }
+            }
+
+            //赋值
+            WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows].Value2 = ORG;
+            //定义rg为有效区域
+            Excel.Range rg = WST2.Range["A1:" + FunC.CName(AllColumns + 6) + AllRows];
+            //加框线
+            rg.Borders.LineStyle = 1;
+            //设置首行颜色为灰色
+            rg = WST.Range["A1:" + FunC.CName(AllColumns + 6) + "1"];
+            rg.Interior.ColorIndex = 15;
+
         }
 
         //往来款加工设置

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using System.Drawing;
 
 namespace HertZ_ExcelAddIn
 {
@@ -248,7 +249,7 @@ namespace HertZ_ExcelAddIn
             {
                 returnValue = 0;
             }
-
+            //判断选区是否超出有效区域
             if(returnValue > OName.Count())
             {
                 MessageBox.Show("所选区域超出数据有效区域，请检查并重新选择");
@@ -334,13 +335,13 @@ namespace HertZ_ExcelAddIn
             NRG[0, 2] = "[一级科目]";
             NRG[0, 3] = "[明细科目]";
             NRG[0, 4] = "[期初余额]";
-            NRG[0, 5] = "[重分类]";
-            NRG[0, 6] = "[审定数]";
+            NRG[0, 5] = "[期初重分类]";
+            NRG[0, 6] = "[期初审定数]";
             NRG[0, 7] = "[本期借方]";
             NRG[0, 8] = "[本期贷方]";
             NRG[0, 9] = "[期末余额]";
-            NRG[0, 10] = "[重分类]";
-            NRG[0, 11] = "[审定数]";
+            NRG[0, 10] = "[期末重分类]";
+            NRG[0, 11] = "[期末审定数]";
             NRG[0, 12] = ORG[0, 8];
             NRG[0, 13] = "[函证]";
 
@@ -492,6 +493,52 @@ namespace HertZ_ExcelAddIn
             rg.Validation.InCellDropdown = true;
             rg.Validation.IgnoreBlank = true;
             rg.Value2 = "";
+        }
+
+        ///<summary>
+        ///将object转换为int
+        ///</summary>
+        public double ToDouble(object Value)
+        {
+            double returnValue = 0d;
+            if (Value == null)
+            {
+                return 0d;
+            }
+            string inputValue = Value.ToString();
+            double.TryParse(inputValue, out returnValue);
+            return returnValue;
+        }
+
+        public void ColorNotNum(string SelectRange)
+        {
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            Excel.Range rg = WST.Range[SelectRange];
+            object[,] ORG = rg.Value2;
+            int StartRow = rg.Row;
+            int StartColumn = rg.Column;
+
+            //清除选区颜色
+            rg.Interior.ColorIndex = 0;
+            //寻找非数字单元格
+            string CellsStr = "0";
+            for (int i = 1; i <= ORG.GetLength(0);i++)
+            {
+                for (int i1 = 1; i1 <= ORG.GetLength(1); i1++)
+                {
+                    if (ORG[i, i1] == null) { break; }
+                    if (!IsNumber(ORG[i, i1].ToString()))
+                    {
+                        CellsStr = CellsStr + "," + CName(StartColumn + i1 - 1) + (StartRow + i - 1);
+                    }
+                }
+            }
+            //修改颜色
+            if (CellsStr != "0")
+            {
+                WST.Range[CellsStr.Remove(0, 2)].Interior.Color = Color.Yellow;
+            }
         }
     }
 }
