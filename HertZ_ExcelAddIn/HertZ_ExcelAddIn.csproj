@@ -33,17 +33,17 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>ftp://ftpgetapp.hertzexcel.com/</PublishUrl>
-    <InstallUrl>http://getapp.hertzexcel.com/</InstallUrl>
+    <PublishUrl>C:\aaa\hertz\</PublishUrl>
+    <InstallUrl>http://hertzexcel.oss-cn-beijing.aliyuncs.com/HertZ/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>1.0.0.7</ApplicationVersion>
+    <ApplicationVersion>0.0.0.7</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
     <ProductName>HertZ_ExcelAddIn</ProductName>
     <PublisherName>何未生</PublisherName>
-    <SupportUrl>http://hertzexcel.com/</SupportUrl>
+    <SupportUrl />
     <FriendlyName>HertZ</FriendlyName>
     <OfficeApplicationDescription>赫兹_审计用Excel加载项</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
@@ -311,6 +311,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

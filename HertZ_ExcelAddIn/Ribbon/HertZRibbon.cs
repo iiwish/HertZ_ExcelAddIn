@@ -1189,5 +1189,16 @@ namespace HertZ_ExcelAddIn
             };
             InfoForm.Show();
         }
+
+        private void CheckNum_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            
+
+            ExcelApp.Visible = false;//关闭Excel视图刷新
+            FunC.ColorNotNum();
+            ExcelApp.Visible = true;//关闭Excel视图刷新
+        }
     }
 }

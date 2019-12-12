@@ -50,6 +50,7 @@
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
+            this.CheckNum = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -184,6 +185,7 @@
             // Tool
             // 
             this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Items.Add(this.CheckNum);
             this.Tool.Label = "实用工具";
             this.Tool.Name = "Tool";
             // 
@@ -212,6 +214,15 @@
             this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
+            // 
+            // CheckNum
+            // 
+            this.CheckNum.Label = "检查数字";
+            this.CheckNum.Name = "CheckNum";
+            this.CheckNum.OfficeImageId = "ConditionalFormattingBottomNItems";
+            this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
+            this.CheckNum.ShowImage = true;
+            this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
             // 
             // HertZRibbon
             // 
@@ -249,6 +260,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton VersionInfo;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup Tool;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CompareTwoColumns;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton CheckNum;
     }
 
     partial class ThisRibbonCollection

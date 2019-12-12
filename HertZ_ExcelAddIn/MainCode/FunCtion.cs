@@ -498,7 +498,7 @@ namespace HertZ_ExcelAddIn
         /// <summary>
         /// 将object转换为double,保留两位小数
         /// </summary>
-        /// <param name="objectValue"></param>
+        /// <param name="Value"></param>
         /// <returns></returns>
         public double TD(object Value)
         {
@@ -513,6 +513,10 @@ namespace HertZ_ExcelAddIn
             return returnValue;
         }
 
+        /// <summary>
+        /// 将不是数字的单元格标注黄色
+        /// </summary>
+        /// <param name="SelectRange"></param>
         public void ColorNotNum(string SelectRange)
         {
             ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
