@@ -275,7 +275,6 @@ namespace HertZ_ExcelAddIn
                 {
                     NRG[i - 1, NColumn - 1] = "";
                 }
-
             }
         }
 
@@ -287,7 +286,11 @@ namespace HertZ_ExcelAddIn
             bool returnValue = true;
             for (int i = StartRow; i < EndRow; i++)
             {
-                if (!IsNumber(NRG[i, Column].ToString()))
+                if (NRG[i, Column] == null)
+                {
+
+                }
+                else if (!IsNumber(NRG[i, Column].ToString()))
                 {
                     MessageBox.Show("所选列第“" + (i + 1).ToString() + "”行不是数字格式，请检查");
                     returnValue = false;
@@ -342,19 +345,19 @@ namespace HertZ_ExcelAddIn
             NRG[0, 9] = "[期末余额]";
             NRG[0, 10] = "[期末重分类]";
             NRG[0, 11] = "[期末审定数]";
-            NRG[0, 12] = ORG[0, 8];
+            NRG[0, 12] = ORG[1, 9];
             NRG[0, 13] = "[函证]";
 
             //读取当前科目的行
             int i3 = 1;
-            for (int i = 1; i < AllRowsC; i++)
+            for (int i = 2; i <= AllRowsC; i++)
             {
-                if (ORG[i, 2].ToString() == AccountName)
+                if (ORG[i, 3].ToString() == AccountName)
                 {
                     //读入前4列
                     for (int i1 = 0; i1 < 5; i1++)
                     {
-                        NRG[i3, i1] = ORG[i, i1];
+                        NRG[i3, i1] = ORG[i, i1 + 1];
                     }
                     //第5、6列
                     if (double.Parse(NRG[i3, 4].ToString()) < 0) { NRG[i3, 5] = -double.Parse(NRG[i3, 4].ToString()); }
@@ -362,52 +365,52 @@ namespace HertZ_ExcelAddIn
                     //读入7-9列
                     for (int i1 = 7; i1 < 10; i1++)
                     {
-                        NRG[i3, i1] = ORG[i, i1 - 2];
+                        NRG[i3, i1] = ORG[i, i1 - 1];
                     }
                     //第10、11列
                     if (double.Parse(NRG[i3, 9].ToString()) < 0) { NRG[i3, 10] = -double.Parse(NRG[i3, 9].ToString()); }
                     NRG[i3, 11] = "=J" + (i3 + 1).ToString() + "+K" + (i3 + 1).ToString();
                     //读入12列
-                    NRG[i3, 12] = ORG[i, 8];
+                    NRG[i3, 12] = ORG[i, 9];
 
                     i3 += 1;
                 }
             }
             //读取重分类至当前科目的行
             int i4 = i3 + 1;
-            for (int i = 1; i < AllRowsC; i++)
+            for (int i = 2; i <= AllRowsC; i++)
             {
                 //取期末余额小于0的对方科目行
-                if (ORG[i, 2].ToString() == OtherName)
+                if (ORG[i, 3].ToString() == OtherName)
                 {
-                    if (double.Parse(ORG[i, 7].ToString()) < 0)
+                    if (double.Parse(ORG[i, 8].ToString()) < 0)
                     {
                         //读入前3列
                         for (int i1 = 0; i1 < 4; i1++)
                         {
-                            NRG[i4, i1] = ORG[i, i1];
+                            NRG[i4, i1] = ORG[i, i1 + 1];
                         }
 
                         //第5、6列
-                        if (double.Parse(ORG[i, 4].ToString()) < 0) { NRG[i4, 5] = -double.Parse(ORG[i, 4].ToString()); }
+                        if (double.Parse(ORG[i, 5].ToString()) < 0) { NRG[i4, 5] = -double.Parse(ORG[i, 5].ToString()); }
                         NRG[i4, 6] = "=F" + (i4 + 1).ToString();
 
                         //第10、11列
-                        NRG[i4, 10] = -double.Parse(ORG[i, 7].ToString());
+                        NRG[i4, 10] = -double.Parse(ORG[i, 8].ToString());
                         NRG[i4, 11] = "=K" + (i4 + 1).ToString();
 
                         i4 += 1;
                     }
-                    else if(double.Parse(ORG[i, 4].ToString()) < 0)
+                    else if(double.Parse(ORG[i, 5].ToString()) < 0)
                     {
                         //读入前3列
                         for (int i1 = 0; i1 < 4; i1++)
                         {
-                            NRG[i4, i1] = ORG[i, i1];
+                            NRG[i4, i1] = ORG[i, i1 + 1];
                         }
 
                         //第5、6列
-                        NRG[i4, 5] = -double.Parse(ORG[i, 4].ToString());
+                        NRG[i4, 5] = -double.Parse(ORG[i, 5].ToString());
                         NRG[i4, 6] = "=F" + (i4 + 1).ToString();
 
                         i4 += 1;

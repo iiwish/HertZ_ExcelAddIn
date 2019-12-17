@@ -363,7 +363,7 @@ namespace HertZ_ExcelAddIn
             //释放数组
             ORG = null;
 
-            ExcelApp.Visible = false;//关闭Excel视图刷新
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
             //调整格式
             WST.Range["A1:I1"].Interior.Color = Color.LightGray;
             //按科目层级修改颜色
@@ -409,7 +409,7 @@ namespace HertZ_ExcelAddIn
             //隐藏[显示]列
             WST.Columns["H:H"].Hidden = true;
 
-            ExcelApp.Visible = true;//打开Excel视图刷新
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
             WST.Tab.Color = 3;//设置tab颜色为红色
         }
 
@@ -548,7 +548,6 @@ namespace HertZ_ExcelAddIn
             if (ColumnNumber != 0)
             { 
                 FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 9);
-                NRG[0, 8] = "[" + NRG[0, 8].ToString() + "]";
             }
             else
             {
@@ -556,31 +555,62 @@ namespace HertZ_ExcelAddIn
             }
             ColumnName.Clear();
 
+            //删除期初借贷余均为零的行
+            DialogResult dr = MessageBox.Show("是否删除期初借贷余均为零的行？" , "请选择", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                //释放数组
+                ORG = null;
+                ORG = NRG;
+                NRG = null;
+                NRG = new object[AllRows, 9];
+
+                for (int i1 = 0; i1 < 9; i1++)
+                {
+                    NRG[0, i1] = ORG[0, i1];
+                }
+
+                int i3 = 1;
+                for (int i = 1; i < AllRows; i++)
+                {
+                    if ( FunC.TD(ORG[i, 4]) != 0d || FunC.TD(ORG[i, 5]) != 0d || FunC.TD(ORG[i, 6]) != 0d || FunC.TD(ORG[i, 7]) != 0d)
+                    {
+                        for (int i1 = 0; i1 < 9; i1++)
+                        {
+                            NRG[i3, i1] = ORG[i, i1];
+                        }
+                        i3 += 1;
+                    }
+                }
+            }
+
             //删除sheet中的原始数据
             WST.Range["A:" + FunC.CName(AllColumns)].Delete();
 
             //写入数据
             WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
-
+            
             //释放数组
             ORG = null;
-            ORG = NRG;
             NRG = null;
+            AllRows = FunC.AllRows();
+            //重新将表格读入数组ORG
+            ORG = WST.Range["A1:I" + AllRows.ToString()].Value2;
 
             //对一级科目去重
             List<string> SheetsName0 = new List<string> { "[一级科目]" };
-            for (int i = 1; i < AllRows; i++)
+            for (int i = 2; i <= AllRows; i++)
             {
                 try
                 {
-                    if (ORG[i, 2].ToString() != SheetsName0[SheetsName0.Count - 1])
+                    if (ORG[i, 3].ToString() != SheetsName0[SheetsName0.Count - 1])
                     {
-                        SheetsName0.Add(ORG[i, 2].ToString());
+                        SheetsName0.Add(ORG[i, 3].ToString());
                     }
                 }
                 catch(NullReferenceException)
                 {
-                    MessageBox.Show("一级科目列第" + (i + 1).ToString() + "行存在空值，请检查");
+                    MessageBox.Show("一级科目列第" + i.ToString() + "行存在空值，请检查");
                     ORG = null;
                     return;
                 }
@@ -612,20 +642,20 @@ namespace HertZ_ExcelAddIn
             }
 
             //是否修改贷方往来款发生额方向和贷方发生额方向
-            DialogResult dr = MessageBox.Show("是否修改贷方科目以及贷方发生额列的正负号？"+ Environment.NewLine + "如果是SAP导出的往来款，请选择“是”", "请选择", MessageBoxButtons.YesNo);
+            dr = MessageBox.Show("是否修改贷方科目以及贷方发生额列的正负号？"+ Environment.NewLine + "如果是SAP导出的往来款，请选择“是”", "请选择", MessageBoxButtons.YesNo);
             if (dr == DialogResult.Yes)
             {
-                for (int i = 1; i < AllRows; i++)
+                for (int i = 2; i <= AllRows; i++)
                 {
-                    if (SheetsName[ORG[i,2].ToString()] == "贷")
+                    if (SheetsName[ORG[i,3].ToString()] == "贷")
                     {
-                        ORG[i, 4] = -double.Parse(ORG[i, 4].ToString());
-                        ORG[i, 7] = -double.Parse(ORG[i, 7].ToString());
+                        ORG[i, 5] = -double.Parse(ORG[i, 5].ToString());
+                        ORG[i, 8] = -double.Parse(ORG[i, 8].ToString());
                     }
                 }
             }
 
-            ExcelApp.Visible = false;//关闭Excel视图刷新
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
 
             //应收账款表
             if (!FunC.AddCASheet(ORG, AllRows, "应收账款", "应付账款")) { return; }
@@ -640,7 +670,7 @@ namespace HertZ_ExcelAddIn
             //其他应付款表
             if (!FunC.AddCASheet(ORG, AllRows, "其他应付款", "其他应收款")) { return; }
 
-            ExcelApp.Visible = true;//打开Excel视图刷新
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
 
         }
 
@@ -863,12 +893,12 @@ namespace HertZ_ExcelAddIn
             }
 
             //检查指定列是否有非数字内容
-            ExcelApp.Visible = false;//关闭Excel视图刷新
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
             FunC.ColorNotNum(FunC.CName(ColumnNumber2) + "2:" + FunC.CName(ColumnNumber2) + AllRows);
             FunC.ColorNotNum(FunC.CName(ColumnNumber3) + "2:" + FunC.CName(ColumnNumber3) + AllRows);
             FunC.ColorNotNum(FunC.CName(ColumnNumber4) + "2:" + FunC.CName(ColumnNumber4) + AllRows);
             FunC.ColorNotNum(FunC.CName(ColumnNumber5) + "2:" + FunC.CName(ColumnNumber5) + AllRows);
-            ExcelApp.Visible = true;//打开Excel视图刷新
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
             //改表头
             for (int i = 1;i <= 6; i++)
             {
@@ -1063,7 +1093,7 @@ namespace HertZ_ExcelAddIn
             //将所选列的赋值至数组
             NRG = WST.Range[SelectColomn2 + "1:" + SelectColomn2 + AllRows].Value2;
 
-            ExcelApp.Visible = false;//关闭Excel视图刷新
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
 
             AllRows = Math.Max(ORG.GetLength(0), NRG.GetLength(0));
             ARG = new string[AllRows, 2];
@@ -1176,9 +1206,14 @@ namespace HertZ_ExcelAddIn
                 WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
             }
 
-            ExcelApp.Visible = true;//打开Excel视图刷新
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
         }
 
+        //检查非数字单元格
+        private void CheckNum_Click(object sender, RibbonControlEventArgs e)
+        {
+
+        }
 
         //版本信息
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
@@ -1190,15 +1225,5 @@ namespace HertZ_ExcelAddIn
             InfoForm.Show();
         }
 
-        private void CheckNum_Click(object sender, RibbonControlEventArgs e)
-        {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
-            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
-            
-
-            ExcelApp.Visible = false;//关闭Excel视图刷新
-            FunC.ColorNotNum();
-            ExcelApp.Visible = true;//关闭Excel视图刷新
-        }
     }
 }

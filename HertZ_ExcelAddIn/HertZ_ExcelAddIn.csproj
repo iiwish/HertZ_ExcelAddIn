@@ -33,10 +33,10 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>C:\aaa\hertz\</PublishUrl>
-    <InstallUrl>http://hertzexcel.oss-cn-beijing.aliyuncs.com/HertZ/</InstallUrl>
+    <PublishUrl>ftp://ftpgetapp.hertzexcel.com/</PublishUrl>
+    <InstallUrl>http://getapp.hertzexcel.com/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>0.0.0.7</ApplicationVersion>
+    <ApplicationVersion>0.0.0.5</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -244,7 +244,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="HertZ_CA.pfx" />
+    <None Include="HeWish.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -301,10 +301,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>HertZ_CA.pfx</ManifestKeyFile>
+    <ManifestKeyFile>HeWish.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>34876A497B0EF874624150FE7143B38507803723</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>9612E574947ED616C014DDCA91EAA2591B0470F1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>HZlogo32.ico</ApplicationIcon>
