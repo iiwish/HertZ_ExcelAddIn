@@ -14,8 +14,13 @@ namespace HertZ_ExcelAddIn
     {
         private Excel.Application ExcelApp;
         private Excel.Worksheet WST;
+
+        //引用函数模块
         private readonly FunCtion FunC = new FunCtion();
-        
+
+        //判断浮点数是否等于0的参数
+        public const double PRECISION = 0.0001d;
+
         private void HertZRibbon_Load(object sender, RibbonUIEventArgs e)
         {
             //清除后台没关干净的excel软件
@@ -690,25 +695,18 @@ namespace HertZ_ExcelAddIn
             //目标新数组NRG
             object[,] NRG;
 
-            //输入科目名称
-            try
+            //选择科目名称
+            using (var form = new SelectCA())
             {
-                ProjectName = ExcelApp.InputBox(Prompt: "请输入账龄表对应的往来科目名称", Type: 2);
-            }
-            catch
-            {
-                return;
-            }
-
-            //检查输入的是不是往来款科目
-            if (ProjectName.Contains("应收") || ProjectName.Contains("预收") || ProjectName.Contains("应付") || ProjectName.Contains("预付"))
-            {
-                if (ProjectName.Contains("款项")) { ProjectName.Replace("款项", "账款"); }
-            }
-            else
-            {
-                MessageBox.Show("请检查输入的科目名称是否正确");
-                return;
+                var result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    ProjectName = form.ReturnValue;
+                }
+                else
+                {
+                    return;
+                }
             }
 
             //检查科目名称是否有效
@@ -717,7 +715,7 @@ namespace HertZ_ExcelAddIn
                 MessageBox.Show("请将上年账龄表与加工完的往来款表放在同一工作簿");
                 return;
             }
-            else if(ExcelApp.Sheets[ProjectName].Range["A1"] != "[客户编号]")
+            else if(ExcelApp.Sheets[ProjectName].Range["A1"].Value.ToString() != "[客户编号]")
             {
                 MessageBox.Show("请先加工往来款");
                 return;
@@ -737,6 +735,7 @@ namespace HertZ_ExcelAddIn
 
             AllRows = FunC.AllRows();
             AllColumns = FunC.AllColumns();
+            if (AllRows < 2) { return; }
 
             //将表格读入数组ORG
             ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
@@ -751,7 +750,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //选择[客户名称]或[客户编号]列，做为引用的依据
-            ColumnName = new List<string> { "[客户名称]或[客户编号]列" };
+            ColumnName = new List<string> { "[客户名称]或[客户编号]" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 1);
@@ -763,6 +762,7 @@ namespace HertZ_ExcelAddIn
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
+            if (!FunC.IsNumColumn(NRG, 1, 1, AllRows)) { return; }
             NRG[0, 1] = ColumnName[0];
             ColumnName.Clear();
 
@@ -771,38 +771,43 @@ namespace HertZ_ExcelAddIn
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 3);
+            if (!FunC.IsNumColumn(NRG, 2, 1, AllRows)) { return; }
             NRG[0, 2] = ColumnName[0];
             ColumnName.Clear();
 
             //选择账龄[1-2年]列
-            ColumnName = new List<string> { "[1-2年]", "1-2年" };
+            ColumnName = new List<string> { "[1-2年]", "1-2年", "1~2年" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 4);
+            if (!FunC.IsNumColumn(NRG, 3, 1, AllRows)) { return; }
             NRG[0, 3] = ColumnName[0];
             ColumnName.Clear();
 
             //选择账龄[2-3年]列
-            ColumnName = new List<string> { "[2-3年]", "2-3年" };
+            ColumnName = new List<string> { "[2-3年]", "2-3年", "2~3年" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 5);
+            if (!FunC.IsNumColumn(NRG, 4, 1, AllRows)) { return; }
             NRG[0, 4] = ColumnName[0];
             ColumnName.Clear();
 
             //选择账龄[3-4年]列
-            ColumnName = new List<string> { "[3-4年]", "3-4年" };
+            ColumnName = new List<string> { "[3-4年]", "3-4年", "3~4年" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+            if (!FunC.IsNumColumn(NRG, 5, 1, AllRows)) { return; }
             NRG[0, 5] = ColumnName[0];
             ColumnName.Clear();
 
             //选择账龄[4-5年]列
-            ColumnName = new List<string> { "[4-5年]", "4-5年" };
+            ColumnName = new List<string> { "[4-5年]", "4-5年", "4~5年" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+            if (!FunC.IsNumColumn(NRG, 6, 1, AllRows)) { return; }
             NRG[0, 6] = ColumnName[0];
             ColumnName.Clear();
 
@@ -811,15 +816,20 @@ namespace HertZ_ExcelAddIn
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 8);
+            if (!FunC.IsNumColumn(NRG, 7, 1, AllRows)) { return; }
             NRG[0, 7] = ColumnName[0];
             ColumnName.Clear();
 
             //借用数组ORG删除NRG中期末余额为0或空值的行
             ORG = new object[AllRows, 8];
-            int i3 = 0;
-            for (int i = 0; i < AllRows; i++)
+            for (int i = 1; i < 8; i++)
             {
-                if(Convert.ToInt32(FunC.TD(NRG[i, 1]).ToString()) != 0)
+                ORG[0, i] = NRG[0, i];
+            }
+            int i3 = 1;
+            for (int i = 1; i < AllRows; i++)
+            {
+                if(Math.Abs(FunC.TD(NRG[i, 1])) > PRECISION)
                 {
                     for (int i1 = 0; i1 < 8; i1++)
                     {
@@ -828,6 +838,7 @@ namespace HertZ_ExcelAddIn
                     i3 += 1;
                 }
             }
+
             NRG = null;
             NRG = new object[i3, 9];
             for (int i = 0; i < i3; i++)
@@ -837,7 +848,15 @@ namespace HertZ_ExcelAddIn
                     NRG[i, i1] = ORG[i, i1];
                 }
             }
-            
+
+
+            //检查余额行
+            if (i3 == 1)
+            {
+                MessageBox.Show("余额表中未发现余额大于零的行，请检查并重新开始");
+                return;
+            }
+
             //选中第二个工作表
             WST2.Select();
 
@@ -846,9 +865,10 @@ namespace HertZ_ExcelAddIn
             AllColumns = FunC.AllColumns();
 
             //将表格读入数组ORG
-            ORG = WST2.Range["A1:" + FunC.CName(AllColumns + 7) + AllRows.ToString()].Value2;
+            ORG = WST2.Range["A1:" + FunC.CName(AllColumns + 7) + AllRows].Value2;
 
             //找对应的列号
+            int ColumnNumber1 = 0;//客户编号列或客户名称列
             int ColumnNumber2 = 0;//期初审定数
             int ColumnNumber3 = 0;//期末审定数
             int ColumnNumber4 = 0;//本期借方
@@ -866,7 +886,7 @@ namespace HertZ_ExcelAddIn
             {
                 if(ORG[1,i].ToString() == ColumnName[ColumnNumber])
                 {
-                    ColumnNumber = i;
+                    ColumnNumber1 = i;
                 }
                 else if(ORG[1, i].ToString() == ColumnName[2])
                 {
@@ -886,19 +906,19 @@ namespace HertZ_ExcelAddIn
                 }
             }
             //检查是否匹配成功
-            if(ColumnNumber2 == 0 || ColumnNumber3 == 0 || ColumnNumber4 == 0 || ColumnNumber5 == 0)
+            if(ColumnNumber1 == 0 || ColumnNumber2 == 0 || ColumnNumber3 == 0 || ColumnNumber4 == 0 || ColumnNumber5 == 0)
             {
                 MessageBox.Show("未匹配到[期初审定数]、[期末审定数]、[本期借方]或[本期贷方]列，请检查并重新开始");
                 return;
             }
 
-            //检查指定列是否有非数字内容
-            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
-            FunC.ColorNotNum(FunC.CName(ColumnNumber2) + "2:" + FunC.CName(ColumnNumber2) + AllRows);
-            FunC.ColorNotNum(FunC.CName(ColumnNumber3) + "2:" + FunC.CName(ColumnNumber3) + AllRows);
-            FunC.ColorNotNum(FunC.CName(ColumnNumber4) + "2:" + FunC.CName(ColumnNumber4) + AllRows);
-            FunC.ColorNotNum(FunC.CName(ColumnNumber5) + "2:" + FunC.CName(ColumnNumber5) + AllRows);
-            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
+            ////检查指定列是否有非数字内容
+            //ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+            //FunC.ColorNotNum(FunC.CName(ColumnNumber2) + "2:" + FunC.CName(ColumnNumber2) + AllRows);
+            //FunC.ColorNotNum(FunC.CName(ColumnNumber3) + "2:" + FunC.CName(ColumnNumber3) + AllRows);
+            //FunC.ColorNotNum(FunC.CName(ColumnNumber4) + "2:" + FunC.CName(ColumnNumber4) + AllRows);
+            //FunC.ColorNotNum(FunC.CName(ColumnNumber5) + "2:" + FunC.CName(ColumnNumber5) + AllRows);
+            //ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
             //改表头
             for (int i = 1;i <= 6; i++)
             {
@@ -908,7 +928,7 @@ namespace HertZ_ExcelAddIn
             for (int i = 2;i <= AllRows; i++)
             {
                 //如果期末余额为0，则账龄为0
-                if(Convert.ToInt32(FunC.TD(ORG[i,ColumnNumber3]).ToString()) == 0 )
+                if(Math.Abs(FunC.TD(ORG[i,ColumnNumber3])) <= PRECISION)
                 {
                     for(int i1 = 1; i1 <= 6; i1++)
                     {
@@ -916,7 +936,7 @@ namespace HertZ_ExcelAddIn
                     }
                 }
                 //如果期初余额为0，则账龄为[1年以内]
-                else if(Convert.ToInt32(FunC.TD(ORG[i, ColumnNumber2]).ToString()) == 0 )
+                else if(Math.Abs(FunC.TD(ORG[i, ColumnNumber2])) <= PRECISION)
                 {
                     ORG[i, AllColumns + 1] = ORG[i, ColumnNumber3];
                     for (int i1 = 2; i1 <= 6; i1++)
@@ -948,25 +968,25 @@ namespace HertZ_ExcelAddIn
                     for (int i1 = 1; i1 < i3; i1++)
                     {
                         //如果不匹配，直接下一个
-                        if (Math.Abs(FunC.TD(ORG[i, ColumnNumber2]) - FunC.TD(NRG[i1,1])) > 0.005 || ORG[i, ColumnNumber].ToString() != NRG[i1, 0].ToString())
+                        if (Math.Abs(FunC.TD(ORG[i, ColumnNumber2]) - FunC.TD(NRG[i1,1])) > PRECISION || ORG[i, ColumnNumber1].ToString() != NRG[i1, 0].ToString())
                         {
-                            break;
+                            continue;
                         }
                         //检查是否被匹配过，如果被匹配过直接下一个，防止出现同一供应商多个余额相等的情况
                         if (NRG[i1, 8] != null)
                         {
                             ORG[i, AllColumns + 1] = "请手动计算该供应商的账龄";
-                            break;
+                            continue;
                         }
                         
                         NRG[i1, 8] = 1;
                         //检查本期发生额，如果为0则平移账龄
-                        if (Convert.ToInt32(FunC.TD(ORG[i, ColumnNumber4]).ToString()) == 0 && Convert.ToInt32(FunC.TD(ORG[i, ColumnNumber5]).ToString()) == 0)
+                        if (Math.Abs(FunC.TD(ORG[i, ColumnNumber4])) > PRECISION && Math.Abs(FunC.TD(ORG[i, ColumnNumber5])) > PRECISION)
                         {
                             ORG[i, AllColumns + 1] = 0;
                             for (int i2 = 2; i2 <= 5; i2++)
                             {
-                                ORG[i, AllColumns + i2] = NRG[i1, i2];
+                                ORG[i, AllColumns + i2] = FunC.TD(NRG[i1, i2]);
                             }
                             ORG[i, AllColumns + 6] = FunC.TD(NRG[i1, 6]) + FunC.TD(NRG[i1, 7]);
                         }
@@ -1009,9 +1029,8 @@ namespace HertZ_ExcelAddIn
                 }
 
                 //最后增加一列验证列
-                ORG[i, AllColumns + 7] = "=ABS(" + FunC.CName(ColumnNumber3) + i + "-sum(" + FunC.CName(AllColumns + 1) + i + ":" + FunC.CName(AllColumns + 6) + i + ")<0.01";
+                ORG[i, AllColumns + 7] = "=ABS(" + FunC.CName(ColumnNumber3) + i + "-sum(" + FunC.CName(AllColumns + 1) + i + ":" + FunC.CName(AllColumns + 6) + i + "))<0.01";
             }
-
 
             //赋值
             WST2.Range["A1:" + FunC.CName(AllColumns + 7) + AllRows].Value2 = ORG;

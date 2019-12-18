@@ -508,7 +508,7 @@ namespace HertZ_ExcelAddIn
             double returnValue = 0d;
             if (Value == null)
             {
-                return 0d;
+                return Math.Round(returnValue, 2);
             }
             string inputValue = Value.ToString();
             double.TryParse(inputValue, out returnValue);
