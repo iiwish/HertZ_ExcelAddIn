@@ -48,9 +48,9 @@
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
             this.Tool = this.Factory.CreateRibbonGroup();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
+            this.CheckNum = this.Factory.CreateRibbonButton();
             this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
-            this.CheckNum = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -199,6 +199,15 @@
             this.CompareTwoColumns.SuperTip = "选择两列进行对比，对两列中不同的数据用黄色标注，要求两列需在同一sheet中";
             this.CompareTwoColumns.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CompareTwoColumns_Click);
             // 
+            // CheckNum
+            // 
+            this.CheckNum.Label = "检查数字";
+            this.CheckNum.Name = "CheckNum";
+            this.CheckNum.OfficeImageId = "ConditionalFormattingBottomNItems";
+            this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
+            this.CheckNum.ShowImage = true;
+            this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
+            // 
             // VersionGroup
             // 
             this.VersionGroup.Items.Add(this.VersionInfo);
@@ -214,15 +223,6 @@
             this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
-            // 
-            // CheckNum
-            // 
-            this.CheckNum.Label = "检查数字";
-            this.CheckNum.Name = "CheckNum";
-            this.CheckNum.OfficeImageId = "ConditionalFormattingBottomNItems";
-            this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
-            this.CheckNum.ShowImage = true;
-            this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
             // 
             // HertZRibbon
             // 
