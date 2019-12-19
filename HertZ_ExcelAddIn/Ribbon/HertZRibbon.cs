@@ -1231,7 +1231,7 @@ namespace HertZ_ExcelAddIn
         //检查非数字单元格
         private void CheckNum_Click(object sender, RibbonControlEventArgs e)
         {
-
+            //test
         }
 
         //版本信息
