@@ -36,7 +36,7 @@
     <PublishUrl>ftp://ftpgetapp.hertzexcel.com/</PublishUrl>
     <InstallUrl>http://getapp.hertzexcel.com/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>0.0.0.5</ApplicationVersion>
+    <ApplicationVersion>0.0.0.6</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
