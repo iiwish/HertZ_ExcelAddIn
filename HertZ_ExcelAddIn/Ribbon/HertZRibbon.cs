@@ -1007,7 +1007,6 @@ namespace HertZ_ExcelAddIn
                                 ORG[i, AllColumns + 5] = Math.Min(Math.Max(FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, ColumnNumber4]) - FunC.TD(NRG[i1, 2]) - FunC.TD(NRG[i1, 3]) - FunC.TD(NRG[i1, 4]), 0), FunC.TD(NRG[i1, 5]));
                                 //5年以上
                                 ORG[i, AllColumns + 6] = FunC.TD(ORG[i, ColumnNumber3]) - FunC.TD(ORG[i, AllColumns + 1]) - FunC.TD(ORG[i, AllColumns + 2]) - FunC.TD(ORG[i, AllColumns + 3]) - FunC.TD(ORG[i, AllColumns + 4]) - FunC.TD(ORG[i, AllColumns + 5]);
-
                             }
                             else
                             {
@@ -1028,6 +1027,14 @@ namespace HertZ_ExcelAddIn
                     }
                 }
 
+                //规范数据
+                ORG[i, AllColumns + 1] = FunC.TD(ORG[i, AllColumns + 1]);
+                ORG[i, AllColumns + 2] = FunC.TD(ORG[i, AllColumns + 2]);
+                ORG[i, AllColumns + 3] = FunC.TD(ORG[i, AllColumns + 3]);
+                ORG[i, AllColumns + 4] = FunC.TD(ORG[i, AllColumns + 4]);
+                ORG[i, AllColumns + 5] = FunC.TD(ORG[i, AllColumns + 5]);
+                ORG[i, AllColumns + 6] = FunC.TD(ORG[i, AllColumns + 6]);
+
                 //最后增加一列验证列
                 ORG[i, AllColumns + 7] = "=ABS(" + FunC.CName(ColumnNumber3) + i + "-sum(" + FunC.CName(AllColumns + 1) + i + ":" + FunC.CName(AllColumns + 6) + i + "))<0.01";
             }
@@ -1041,6 +1048,9 @@ namespace HertZ_ExcelAddIn
             //设置首行颜色为灰色
             rg = WST2.Range["A1:" + FunC.CName(AllColumns + 7) + "1"];
             rg.Interior.ColorIndex = 15;
+            //设置数字格式
+            rg = WST2.Range[FunC.CName(AllColumns + 1 ) +"2:" + FunC.CName(AllColumns + 7) + "1"];
+            rg.NumberFormatLocal = "#,##0.00 ";
 
         }
 
