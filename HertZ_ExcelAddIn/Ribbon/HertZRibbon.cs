@@ -657,6 +657,7 @@ namespace HertZ_ExcelAddIn
                         ORG[i, 5] = -double.Parse(ORG[i, 5].ToString());
                         ORG[i, 8] = -double.Parse(ORG[i, 8].ToString());
                     }
+                    ORG[i, 7] = -double.Parse(ORG[i, 7].ToString());
                 }
             }
 
@@ -1054,6 +1055,54 @@ namespace HertZ_ExcelAddIn
 
         }
 
+        //生成函证
+        private void Confirmation_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            int AllRows;
+            int AllColumns;
+            //主键，关联各往来款表用
+            string PrKey;
+
+            //原始表格数组NRG
+            object[,] NRG;
+            NRG = new object[5000, 4];
+
+            //选择用编号还是列名作为主键
+            using (var form = new SelectKeyN())
+            {
+                var result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    PrKey = form.ReturnValue;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            //定义往来款字典
+            Dictionary<string, string> KeyDic = new Dictionary<string, string>{};
+
+            //将往来款中标注函证的key列加入字典
+            KeyDic = FunC.ConfirmationAddPrKey("应收账款", PrKey, KeyDic);
+            KeyDic = FunC.ConfirmationAddPrKey("预付账款", PrKey, KeyDic);
+            KeyDic = FunC.ConfirmationAddPrKey("其他应收款", PrKey, KeyDic);
+            KeyDic = FunC.ConfirmationAddPrKey("应付账款", PrKey, KeyDic);
+            KeyDic = FunC.ConfirmationAddPrKey("预收账款", PrKey, KeyDic);
+            KeyDic = FunC.ConfirmationAddPrKey("其他应付款", PrKey, KeyDic);
+
+            //检查KeyDic是否为空
+            if(KeyDic.Count == 0) { return; }
+
+            //为各往来款表函证列添加[补]并读取到数组
+
+
+        }
+
         //往来款加工设置
         private void CurrentAccountSetting_Click(object sender, RibbonControlEventArgs e)
         {
@@ -1241,7 +1290,7 @@ namespace HertZ_ExcelAddIn
         //检查非数字单元格
         private void CheckNum_Click(object sender, RibbonControlEventArgs e)
         {
-            //test
+            
         }
 
         //版本信息
@@ -1254,5 +1303,6 @@ namespace HertZ_ExcelAddIn
             InfoForm.Show();
         }
 
+        
     }
 }

@@ -208,7 +208,7 @@
             this.OrderCheckBox.Text = "加工时将余额表按照科目编码重新排序";
             this.OrderCheckBox.UseVisualStyleBackColor = true;
             // 
-            // BAJSettingForm
+            // BAJSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -218,7 +218,8 @@
             this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.SubjectCodeGroupBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "BAJSettingForm";
+            this.Name = "BAJSetting";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "账表加工设置";
             this.Load += new System.EventHandler(this.BAJSettingForm_Load);
             this.SubjectCodeGroupBox.ResumeLayout(false);

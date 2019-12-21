@@ -246,6 +246,9 @@
     <EmbeddedResource Include="MyForm\TableProcessing\SelectCA.resx">
       <DependentUpon>SelectCA.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MyForm\TableProcessing\SelectKeyN.resx">
+      <DependentUpon>SelectKeyN.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="HeWish.pfx" />
     <None Include="packages.config" />
@@ -263,6 +266,12 @@
     </Compile>
     <Compile Include="MyForm\TableProcessing\SelectCA.Designer.cs">
       <DependentUpon>SelectCA.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MyForm\TableProcessing\SelectKeyN.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MyForm\TableProcessing\SelectKeyN.Designer.cs">
+      <DependentUpon>SelectKeyN.cs</DependentUpon>
     </Compile>
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>

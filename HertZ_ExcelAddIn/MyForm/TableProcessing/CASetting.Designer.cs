@@ -268,6 +268,7 @@
             this.Controls.Add(this.ConfirmationSetting);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CASetting";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "往来款项加工设置";
             this.Load += new System.EventHandler(this.CASetting_Load);
             this.ConfirmationSetting.ResumeLayout(false);

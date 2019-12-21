@@ -550,5 +550,135 @@ namespace HertZ_ExcelAddIn
                 WST.Range[CellsStr.Remove(0, 2)].Interior.Color = Color.Yellow;
             }
         }
+
+        /// <summary>
+        ///生成函证表功能中，将抽取的函证加入字典keyDic
+        /// </summary>
+        /// <param name="SheetName"></param>
+        /// <param name="PrKey"></param>
+        /// <param name="KeyDic"></param>
+        /// <returns></returns>
+        public Dictionary<string, string> ConfirmationAddPrKey(string SheetName,string PrKey,Dictionary<string, string> KeyDic)
+        {
+            if (!SheetExist(SheetName)) { return KeyDic; }
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets[SheetName];
+            WST.Select();
+            int AllRows1 = AllRows();
+            int AllColumns1 = AllColumns();
+            //主键列号
+            int ColumnNumber1 = 0;
+            //[函证]列号
+            int ColumnNumber2 = 0;
+
+            //将表格读入数组ORG
+            object[,] ORG = WST.Range["A1:" + CName(AllColumns1) + AllRows1.ToString()].Value2;
+
+            //寻找key列和函证列
+            for (int i = 1; i <= AllColumns1; i++)
+            {
+                if (ORG[1, i].ToString() == PrKey)
+                {
+                    ColumnNumber1 = i;
+                }
+                else if (ORG[1, i].ToString() == "[函证]")
+                {
+                    ColumnNumber2 = i;
+                }
+            }
+            //如果找到了[函证]列和主键列
+            if (ColumnNumber1 != 0 && ColumnNumber2 != 0)
+            {
+                for (int i = 2; i <= AllRows1; i++)
+                {
+                    if (ORG[i, ColumnNumber2] != null && ORG[i, ColumnNumber1] != null)
+                    {
+                        if (ORG[i, ColumnNumber2].ToString() == "函")
+                        {
+                            KeyDic.Add(ORG[i, ColumnNumber1].ToString(), "函");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(SheetName + "表中未发现" + PrKey + "列或[函证]列，请检查");
+            }
+            return KeyDic;
+        }
+    
+        /// <summary>
+        /// 生成函证表功能中，补充同一客户不同科目的函证
+        /// </summary>
+        /// <param name="SheetName"></param>
+        /// <param name="PrKey"></param>
+        /// <param name="KeyDic"></param>
+        /// <param name="NRG"></param>
+        /// <returns></returns>
+        public object[,] ConfirmationAddCon(string SheetName, string PrKey, Dictionary<string, string> KeyDic,object[,] NRG)
+        {
+            if (!SheetExist(SheetName)) { return NRG; }
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets[SheetName];
+            WST.Select();
+            int AllRows1 = AllRows();
+            int AllColumns1 = AllColumns();
+            int ColumnNumber1 = 0;//key
+            int ColumnNumber2 = 0;//[函证]
+
+            int ColumnNumber3 = 0;//客户名称或者客户编号（与key相反的另一个）
+            int ColumnNumber4 = 0;//往来明细科目
+            int ColumnNumber5 = 0;//审定期末余额
+
+            //赋值ColumnName3
+            string ColumnName3;
+            if (PrKey == "客户编号")
+            {
+                ColumnName3 = "客户名称";
+            }
+            else
+            {
+                ColumnName3 = "客户编号";
+            }
+
+
+            //将表格读入数组ORG
+            object[,] ORG = WST.Range["A1:" + CName(AllColumns1) + AllRows1.ToString()].Value2;
+
+            //寻找指定列号
+            for (int i = 1; i <= AllColumns1; i++)
+            {
+                if (ORG[1, i].ToString() == PrKey)
+                {
+                    ColumnNumber1 = i;
+                }
+                else if (ORG[1, i].ToString() == "[函证]")
+                {
+                    ColumnNumber2 = i;
+                }
+                else if (ORG[1, i].ToString() == ColumnName3)
+                {
+                    ColumnNumber3 = i;
+                }
+                else if (ORG[1, i].ToString() == "[明细科目]")
+                {
+                    ColumnNumber4 = i;
+                }
+                else if (ORG[1, i].ToString() == "[期末审定数]")
+                {
+                    ColumnNumber5 = i;
+                }
+            }
+            //如果找到了[函证]列和主键列
+            if (ColumnNumber1 != 0 && ColumnNumber2 != 0)
+            {
+                
+            }
+            else
+            {
+                MessageBox.Show(SheetName + "表中未发现" + PrKey + "列或[函证]列，请检查");
+            }
+
+
+            return NRG;
+        }
     }
 }
