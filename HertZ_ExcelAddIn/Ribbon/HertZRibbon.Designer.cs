@@ -45,6 +45,7 @@
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
             this.AgeOfAccount = this.Factory.CreateRibbonButton();
             this.Confirmation = this.Factory.CreateRibbonButton();
+            this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
             this.Tool = this.Factory.CreateRibbonGroup();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
@@ -135,6 +136,7 @@
             this.CurrentAccount.Items.Add(this.EditCurrentAccount);
             this.CurrentAccount.Items.Add(this.AgeOfAccount);
             this.CurrentAccount.Items.Add(this.Confirmation);
+            this.CurrentAccount.Items.Add(this.ConfirmationWord);
             this.CurrentAccount.Items.Add(this.CurrentAccountSetting);
             this.CurrentAccount.Label = "往来款";
             this.CurrentAccount.Name = "CurrentAccount";
@@ -165,13 +167,21 @@
             // 
             // Confirmation
             // 
-            this.Confirmation.Label = "生成函证";
+            this.Confirmation.Label = "生成函证列表";
             this.Confirmation.Name = "Confirmation";
-            this.Confirmation.OfficeImageId = "SignatureInsertMenu";
+            this.Confirmation.OfficeImageId = "FieldChooser";
             this.Confirmation.ScreenTip = "点击生成word询证函";
             this.Confirmation.ShowImage = true;
             this.Confirmation.SuperTip = "根据各往来款的抽函情况补充同一公司未抽中的款项，并生成word函证";
             this.Confirmation.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.Confirmation_Click);
+            // 
+            // ConfirmationWord
+            // 
+            this.ConfirmationWord.Label = "生成Word函证";
+            this.ConfirmationWord.Name = "ConfirmationWord";
+            this.ConfirmationWord.OfficeImageId = "SignatureInsertMenu";
+            this.ConfirmationWord.ShowImage = true;
+            this.ConfirmationWord.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ConfirmationWord_Click);
             // 
             // CurrentAccountSetting
             // 
@@ -262,6 +272,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup Tool;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CompareTwoColumns;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CheckNum;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ConfirmationWord;
     }
 
     partial class ThisRibbonCollection

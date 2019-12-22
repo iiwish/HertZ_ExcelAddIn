@@ -74,9 +74,9 @@
             this.ConfirmationSetting.Controls.Add(this.AccountingFirmName);
             this.ConfirmationSetting.Controls.Add(this.label1);
             this.ConfirmationSetting.Font = new System.Drawing.Font("微软雅黑 Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ConfirmationSetting.Location = new System.Drawing.Point(137, 45);
+            this.ConfirmationSetting.Location = new System.Drawing.Point(130, 45);
             this.ConfirmationSetting.Name = "ConfirmationSetting";
-            this.ConfirmationSetting.Size = new System.Drawing.Size(524, 390);
+            this.ConfirmationSetting.Size = new System.Drawing.Size(560, 390);
             this.ConfirmationSetting.TabIndex = 3;
             this.ConfirmationSetting.TabStop = false;
             this.ConfirmationSetting.Text = "函证信息设置";
@@ -85,7 +85,7 @@
             // 
             this.Leading.Location = new System.Drawing.Point(354, 329);
             this.Leading.Name = "Leading";
-            this.Leading.Size = new System.Drawing.Size(145, 39);
+            this.Leading.Size = new System.Drawing.Size(177, 39);
             this.Leading.TabIndex = 19;
             // 
             // label9
@@ -119,7 +119,7 @@
             // 
             this.Telephone.Location = new System.Drawing.Point(354, 273);
             this.Telephone.Name = "Telephone";
-            this.Telephone.Size = new System.Drawing.Size(145, 39);
+            this.Telephone.Size = new System.Drawing.Size(177, 39);
             this.Telephone.TabIndex = 15;
             // 
             // label7
@@ -153,7 +153,7 @@
             // 
             this.AuditDeadline.Location = new System.Drawing.Point(354, 219);
             this.AuditDeadline.Name = "AuditDeadline";
-            this.AuditDeadline.Size = new System.Drawing.Size(145, 39);
+            this.AuditDeadline.Size = new System.Drawing.Size(177, 39);
             this.AuditDeadline.TabIndex = 11;
             // 
             // label5
@@ -187,7 +187,7 @@
             // 
             this.ReplyAddress.Location = new System.Drawing.Point(127, 158);
             this.ReplyAddress.Name = "ReplyAddress";
-            this.ReplyAddress.Size = new System.Drawing.Size(372, 39);
+            this.ReplyAddress.Size = new System.Drawing.Size(404, 39);
             this.ReplyAddress.TabIndex = 7;
             // 
             // label3
@@ -205,7 +205,7 @@
             this.Auditee.Location = new System.Drawing.Point(149, 99);
             this.Auditee.MaxLength = 100;
             this.Auditee.Name = "Auditee";
-            this.Auditee.Size = new System.Drawing.Size(350, 39);
+            this.Auditee.Size = new System.Drawing.Size(382, 39);
             this.Auditee.TabIndex = 5;
             // 
             // label2
@@ -223,7 +223,7 @@
             this.AccountingFirmName.Location = new System.Drawing.Point(101, 38);
             this.AccountingFirmName.MaxLength = 100;
             this.AccountingFirmName.Name = "AccountingFirmName";
-            this.AccountingFirmName.Size = new System.Drawing.Size(398, 39);
+            this.AccountingFirmName.Size = new System.Drawing.Size(430, 39);
             this.AccountingFirmName.TabIndex = 1;
             // 
             // label1
@@ -250,7 +250,7 @@
             // CancelBtn
             // 
             this.CancelBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CancelBtn.Location = new System.Drawing.Point(511, 467);
+            this.CancelBtn.Location = new System.Drawing.Point(540, 467);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(150, 50);
             this.CancelBtn.TabIndex = 5;

@@ -1085,6 +1085,8 @@ namespace HertZ_ExcelAddIn
                 }
             }
 
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
             //定义往来款字典
             Dictionary<string, string> KeyDic = new Dictionary<string, string>{};
 
@@ -1097,7 +1099,7 @@ namespace HertZ_ExcelAddIn
             KeyDic = FunC.ConfirmationAddPrKey("其他应付款", PrKey, KeyDic);
 
             //检查KeyDic是否为空
-            if(KeyDic.Count == 0) { return; }
+            if(KeyDic.Count == 0) { MessageBox.Show("未发现抽函信息，请检查"); return; }
 
             //为各往来款表函证列添加[补]并读取到数组
             NRG = FunC.ConfirmationAddCon("应收账款", PrKey, KeyDic, NRG);
@@ -1128,9 +1130,8 @@ namespace HertZ_ExcelAddIn
 
             FunC.NewSheet("发函清单");//创建发函清单表
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
-            WST.Range["A1:E" + TempNRG.GetLength(0)].Value2 = TempNRG;//赋值函证清单
-            TempNRG = null;
-
+            WST.Range["A1:F" + TempNRG.GetLength(0)].Value2 = TempNRG;//赋值函证清单
+            
             //重新定义数组，按公司名称做表
             NRG = new object[KeyDic.Count, 11];
             //定义关键列数组
@@ -1155,13 +1156,15 @@ namespace HertZ_ExcelAddIn
             for (int i = 1; i < NRG.GetLength(0); i++)
             {
                 NRG[i, 0] = KeyDicArr[i];
-                NRG[i, 1] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,I$1)";
-                NRG[i, 2] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,J$1)";
-                NRG[i, 3] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,K$1)";
-                NRG[i, 4] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,L$1)";
-                NRG[i, 5] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,M$1)";
-                NRG[i, 6] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,N$1)";
+                NRG[i, 1] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,I$1)";
+                NRG[i, 2] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,J$1)";
+                NRG[i, 3] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,K$1)";
+                NRG[i, 4] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,L$1)";
+                NRG[i, 5] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,M$1)";
+                NRG[i, 6] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,N$1)";
             }
+
+            TempNRG = null;
 
             NRG[0, 0] = "客户名称";
             NRG[0, 1] = "应收账款";
@@ -1193,10 +1196,14 @@ namespace HertZ_ExcelAddIn
 
             NRG = null;
 
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
         }
 
-        //生成函证word
+        //生成word函证
+        private void ConfirmationWord_Click(object sender, RibbonControlEventArgs e)
+        {
 
+        }
 
         //往来款加工设置
         private void CurrentAccountSetting_Click(object sender, RibbonControlEventArgs e)

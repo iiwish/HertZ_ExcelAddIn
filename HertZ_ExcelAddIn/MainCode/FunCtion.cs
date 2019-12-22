@@ -576,7 +576,7 @@ namespace HertZ_ExcelAddIn
             //寻找key列和函证列
             for (int i = 1; i <= AllColumns1; i++)
             {
-                if (ORG[1, i].ToString() == PrKey)
+                if (ORG[1, i].ToString() == "[" + PrKey +"]")
                 {
                     ColumnNumber1 = i;
                 }
@@ -632,11 +632,11 @@ namespace HertZ_ExcelAddIn
             string ColumnName3;
             if (PrKey == "客户编号")
             {
-                ColumnName3 = "客户名称";
+                ColumnName3 = "[客户名称]";
             }
             else
             {
-                ColumnName3 = "客户编号";
+                ColumnName3 = "[客户编号]";
             }
 
 
@@ -646,7 +646,7 @@ namespace HertZ_ExcelAddIn
             //寻找指定列号
             for (int i = 1; i <= AllColumns1; i++)
             {
-                if (ORG[1, i].ToString() == PrKey)
+                if (ORG[1, i].ToString() == "[" + PrKey + "]")
                 {
                     ColumnNumber1 = i;
                 }
@@ -667,27 +667,36 @@ namespace HertZ_ExcelAddIn
                     ColumnNumber5 = i;
                 }
             }
+            //审定余额列
+            if (ColumnNumber5 == 0)
+            {
+                MessageBox.Show(SheetName + "表中未发现[期末审定数]列，请检查");
+                return NRG;
+            }
+
             //如果找到了主键列和[函证]列
             if (ColumnNumber1 != 0 && ColumnNumber2 != 0)
             {
                 int i3 = int.Parse(NRG[0, 0].ToString());
                 for (int i = 2; i <= AllRows1; i++)
                 {
-                    if(ORG[i, ColumnNumber2].ToString() == "补")
+                    if(ORG[i, ColumnNumber2] != null && ORG[i, ColumnNumber2].ToString() == "补")
                     {
                         ORG[i, ColumnNumber2] = null;
                     }
 
-                    if (KeyDic.ContainsKey(ORG[i, ColumnNumber1].ToString()))
+                    if (ORG[i, ColumnNumber1]  != null && KeyDic.ContainsKey(ORG[i, ColumnNumber1].ToString()))
                     {
-                        if (ORG[i, ColumnNumber2].ToString() != "函")
+                        if(ORG[i, ColumnNumber2] != null && ORG[i, ColumnNumber2].ToString() == "函")
                         {
-                            ORG[i, ColumnNumber2] = "补";
-                            NRG[i3, 5] = "补";
+                            NRG[i3, 5] = "函"; 
                         }
                         else
                         {
-                            NRG[i3, 5] = "函";
+                            ORG[i, ColumnNumber2] = "补";
+                            //如果审定余额为0，则提前进行下一个循环
+                            if (Math.Abs(TD(ORG[i, ColumnNumber5])) < 0.001d) { continue; }
+                            NRG[i3, 5] = "补";
                         }
 
                         if (PrKey == "客户编号")
@@ -722,7 +731,7 @@ namespace HertZ_ExcelAddIn
             }
             else
             {
-                MessageBox.Show(SheetName + "表中未发现" + PrKey + "列或[函证]列，请检查");
+                MessageBox.Show(SheetName + "表中未发现[" + PrKey + "]列或[函证]列，请检查");
             }
 
 
