@@ -614,7 +614,7 @@ namespace HertZ_ExcelAddIn
         /// <param name="KeyDic"></param>
         /// <param name="NRG"></param>
         /// <returns></returns>
-        public object[,] ConfirmationAddCon(string SheetName, string PrKey, Dictionary<string, string> KeyDic,object[,] NRG)
+        public object[,] ConfirmationAddCon(string SheetName, string PrKey, Dictionary<string, string> KeyDic, object[,] NRG)
         {
             if (!SheetExist(SheetName)) { return NRG; }
             WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets[SheetName];
@@ -667,10 +667,58 @@ namespace HertZ_ExcelAddIn
                     ColumnNumber5 = i;
                 }
             }
-            //如果找到了[函证]列和主键列
+            //如果找到了主键列和[函证]列
             if (ColumnNumber1 != 0 && ColumnNumber2 != 0)
             {
-                
+                int i3 = int.Parse(NRG[0, 0].ToString());
+                for (int i = 2; i <= AllRows1; i++)
+                {
+                    if(ORG[i, ColumnNumber2].ToString() == "补")
+                    {
+                        ORG[i, ColumnNumber2] = null;
+                    }
+
+                    if (KeyDic.ContainsKey(ORG[i, ColumnNumber1].ToString()))
+                    {
+                        if (ORG[i, ColumnNumber2].ToString() != "函")
+                        {
+                            ORG[i, ColumnNumber2] = "补";
+                            NRG[i3, 5] = "补";
+                        }
+                        else
+                        {
+                            NRG[i3, 5] = "函";
+                        }
+
+                        if (PrKey == "客户编号")
+                        {
+                            NRG[i3, 0] = ORG[i, ColumnNumber1];
+                            NRG[i3, 1] = ORG[i, ColumnNumber3];
+                        }
+                        else
+                        {
+                            NRG[i3, 0] = ORG[i, ColumnNumber3];
+                            NRG[i3, 1] = ORG[i, ColumnNumber1];
+                        }
+
+                        if (ColumnNumber4 != 0) { NRG[i3, 3] = ORG[i, ColumnNumber4]; }
+                        if (ColumnNumber5 != 0) { NRG[i3, 4] = ORG[i, ColumnNumber5]; }
+                        NRG[i3, 2] = SheetName;
+
+                        if (i3 < 5999)
+                        {
+                            i3 += 1;
+                        }
+                        else
+                        {
+                            MessageBox.Show("设置为最多支持6000行函证，如有更大需求请自行修改代码");
+                            return NRG;
+                        }
+                    }
+                }
+
+                NRG[0, 0] = i3;
+                WST.Range["A1:" + CName(AllColumns1) + AllRows1.ToString()].Value2 = ORG;
             }
             else
             {

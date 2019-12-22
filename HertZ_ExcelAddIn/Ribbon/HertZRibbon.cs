@@ -1055,20 +1055,21 @@ namespace HertZ_ExcelAddIn
 
         }
 
-        //生成函证
+        //生成函证列表
         private void Confirmation_Click(object sender, RibbonControlEventArgs e)
         {
             ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
-            int AllRows;
-            int AllColumns;
             //主键，关联各往来款表用
             string PrKey;
 
-            //原始表格数组NRG
+            //存放函证信息的数组NRG
             object[,] NRG;
-            NRG = new object[5000, 4];
+            NRG = new object[6000, 6];//暂时设置为6000行，太多可能会比较慢
+            NRG[0, 0] = 1;
+            //临时数组
+            object[,] TempNRG;
 
             //选择用编号还是列名作为主键
             using (var form = new SelectKeyN())
@@ -1099,9 +1100,103 @@ namespace HertZ_ExcelAddIn
             if(KeyDic.Count == 0) { return; }
 
             //为各往来款表函证列添加[补]并读取到数组
+            NRG = FunC.ConfirmationAddCon("应收账款", PrKey, KeyDic, NRG);
+            NRG = FunC.ConfirmationAddCon("预付账款", PrKey, KeyDic, NRG);
+            NRG = FunC.ConfirmationAddCon("其他应收款", PrKey, KeyDic, NRG);
+            NRG = FunC.ConfirmationAddCon("应付账款", PrKey, KeyDic, NRG);
+            NRG = FunC.ConfirmationAddCon("预收账款", PrKey, KeyDic, NRG);
+            NRG = FunC.ConfirmationAddCon("其他应付款", PrKey, KeyDic, NRG);
 
+            TempNRG = new object[int.Parse(NRG[0,0].ToString()),6];
+
+            for (int i = 1;i < int.Parse(NRG[0, 0].ToString()); i++)
+            {
+                for (int i1 = 0;i1 < 6; i1++)
+                {
+                    TempNRG[i, i1] = NRG[i, i1];
+                }
+            }
+            //清空数组
+            NRG = null;
+
+            TempNRG[0, 0] = "[客户编号]";
+            TempNRG[0, 1] = "[客户名称]";
+            TempNRG[0, 2] = "[科目名称]";
+            TempNRG[0, 3] = "[明细科目]";
+            TempNRG[0, 4] = "[审定期末余额]";
+            TempNRG[0, 5] = "[函证]";
+
+            FunC.NewSheet("发函清单");//创建发函清单表
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            WST.Range["A1:E" + TempNRG.GetLength(0)].Value2 = TempNRG;//赋值函证清单
+            TempNRG = null;
+
+            //重新定义数组，按公司名称做表
+            NRG = new object[KeyDic.Count, 11];
+            //定义关键列数组
+            object[] KeyDicArr;
+            //将客户名称存入数组
+            if (PrKey == "客户编号")
+            {
+                for(int i =1;i < TempNRG.GetLength(0); i++)
+                {
+                    if(KeyDic[TempNRG[i, 0].ToString()] == "函")
+                    {
+                        KeyDic[TempNRG[i, 0].ToString()] = TempNRG[i, 1].ToString();
+                    }
+                }
+
+                KeyDicArr = KeyDic.Values.ToArray();
+            }
+            else
+            {
+                KeyDicArr = KeyDic.Keys.ToArray();
+            }
+            for (int i = 1; i < NRG.GetLength(0); i++)
+            {
+                NRG[i, 0] = KeyDicArr[i];
+                NRG[i, 1] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,I$1)";
+                NRG[i, 2] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,J$1)";
+                NRG[i, 3] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,K$1)";
+                NRG[i, 4] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,L$1)";
+                NRG[i, 5] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,M$1)";
+                NRG[i, 6] = "SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,N$1)";
+            }
+
+            NRG[0, 0] = "客户名称";
+            NRG[0, 1] = "应收账款";
+            NRG[0, 2] = "预付账款";
+            NRG[0, 3] = "其他应收款";
+            NRG[0, 4] = "应付账款";
+            NRG[0, 5] = "预收账款";
+            NRG[0, 6] = "其他应付款";
+            NRG[0, 7] = "邮编";
+            NRG[0, 8] = "联系地址";
+            NRG[0, 9] = "联系人";
+            NRG[0, 10] = "联系电话";
+
+            Excel.Range rg = WST.Range["H1:R" + NRG.GetLength(0)];//定义有效区域
+            rg.Value2 = NRG;//赋值函证清单
+
+            //加框线
+            rg.Borders.LineStyle = 1;
+            //自动列宽
+            rg.EntireColumn.AutoFit();
+            //设置数字格式
+            WST.Range["I2:N" + NRG.GetLength(0)].NumberFormatLocal = "#,##0.00 ";
+            //首行颜色设置为灰色
+            rg = WST.Range["H1:R1"];
+            rg.Interior.ColorIndex = 15;
+            //冻结行和列
+            ExcelApp.ActiveWindow.SplitRow = 1;
+            ExcelApp.ActiveWindow.FreezePanes = true;
+
+            NRG = null;
 
         }
+
+        //生成函证word
+
 
         //往来款加工设置
         private void CurrentAccountSetting_Click(object sender, RibbonControlEventArgs e)
