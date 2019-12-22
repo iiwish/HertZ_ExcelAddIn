@@ -592,7 +592,7 @@ namespace HertZ_ExcelAddIn
                 {
                     if (ORG[i, ColumnNumber2] != null && ORG[i, ColumnNumber1] != null)
                     {
-                        if (ORG[i, ColumnNumber2].ToString() == "函")
+                        if (ORG[i, ColumnNumber2].ToString() == "函" && !KeyDic.ContainsKey(ORG[i, ColumnNumber1].ToString()))
                         {
                             KeyDic.Add(ORG[i, ColumnNumber1].ToString(), "函");
                         }

@@ -1133,7 +1133,7 @@ namespace HertZ_ExcelAddIn
             WST.Range["A1:F" + TempNRG.GetLength(0)].Value2 = TempNRG;//赋值函证清单
             
             //重新定义数组，按公司名称做表
-            NRG = new object[KeyDic.Count, 11];
+            NRG = new object[KeyDic.Count+1, 11];
             //定义关键列数组
             object[] KeyDicArr;
             //将客户名称存入数组
@@ -1155,13 +1155,13 @@ namespace HertZ_ExcelAddIn
             }
             for (int i = 1; i < NRG.GetLength(0); i++)
             {
-                NRG[i, 0] = KeyDicArr[i];
-                NRG[i, 1] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,I$1)";
-                NRG[i, 2] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,J$1)";
-                NRG[i, 3] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,K$1)";
-                NRG[i, 4] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,L$1)";
-                NRG[i, 5] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,M$1)";
-                NRG[i, 6] = "=SUMIFS($E:$E,$B:$B,$H" + i + ",$C:$C,N$1)";
+                NRG[i, 0] = KeyDicArr[i-1];
+                NRG[i, 1] = "=SUMIFS($E:$E,$B:$B,$H" + (i + 1) + ",$C:$C,I$1)";
+                NRG[i, 2] = "=SUMIFS($E:$E,$B:$B,$H" + (i + 1) + ",$C:$C,J$1)";
+                NRG[i, 3] = "=SUMIFS($E:$E,$B:$B,$H" + (i + 1) + ",$C:$C,K$1)";
+                NRG[i, 4] = "=SUMIFS($E:$E,$B:$B,$H" + (i + 1) + ",$C:$C,L$1)";
+                NRG[i, 5] = "=SUMIFS($E:$E,$B:$B,$H" + (i + 1) + ",$C:$C,M$1)";
+                NRG[i, 6] = "=SUMIFS($E:$E,$B:$B,$H" + (i + 1) + ",$C:$C,N$1)";
             }
 
             TempNRG = null;
