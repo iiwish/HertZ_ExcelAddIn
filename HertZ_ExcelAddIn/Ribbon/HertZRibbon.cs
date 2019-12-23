@@ -1392,7 +1392,13 @@ namespace HertZ_ExcelAddIn
         //检查非数字单元格
         private void CheckNum_Click(object sender, RibbonControlEventArgs e)
         {
-            
+            ExcelApp = Globals.ThisAddIn.Application;//(Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            Excel.Range rg = ExcelApp.Selection;
+            object[,] ORG = rg.Value2;
+            string rgTostring = FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + ORG.GetLength(1) - 1) + (rg.Row + ORG.GetLength(0) - 1);
+            ORG = null;
+            FunC.ColorNotNum(rgTostring);
         }
 
         //版本信息
