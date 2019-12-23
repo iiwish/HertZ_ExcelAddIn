@@ -180,6 +180,7 @@
             this.ConfirmationWord.Label = "生成Word函证";
             this.ConfirmationWord.Name = "ConfirmationWord";
             this.ConfirmationWord.OfficeImageId = "SignatureInsertMenu";
+            this.ConfirmationWord.ScreenTip = "点击生成Word函证";
             this.ConfirmationWord.ShowImage = true;
             this.ConfirmationWord.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ConfirmationWord_Click);
             // 

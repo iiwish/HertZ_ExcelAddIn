@@ -5,8 +5,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
 using Microsoft.Office.Tools.Ribbon;
 using System.Drawing;
+using System.IO;
+using System.Threading;
 
 namespace HertZ_ExcelAddIn
 {
@@ -14,6 +17,7 @@ namespace HertZ_ExcelAddIn
     {
         private Excel.Application ExcelApp;
         private Excel.Worksheet WST;
+        
 
         //引用函数模块
         private readonly FunCtion FunC = new FunCtion();
@@ -1202,7 +1206,240 @@ namespace HertZ_ExcelAddIn
         //生成word函证
         private void ConfirmationWord_Click(object sender, RibbonControlEventArgs e)
         {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            
+            int AllRows;
+            int AllColumns;
+            int ColumnNum = 0;
+            //原始表格数组ORG
+            object[,] ORG;
+            //目标新数组NRG
+            object[,] NRG;
 
+            //选中发函清单表并继续
+            if (FunC.SelectSheet("发函清单") == false) { return; };
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["发函清单"];
+            WST.Select();
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
+
+            //将表格读入数组ORG
+            ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+            
+            //将列名读入List
+            List<string> OName = new List<string> { };
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                if (ORG[1, i] != null)
+                {
+                    OName.Add(ORG[1, i].ToString());
+                }
+                else
+                {
+                    OName.Add("0");
+                }
+            }
+
+            //查找客户名称列
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                if (OName[i - 1] == "客户名称")
+                {
+                    ColumnNum = i;
+                    break;
+                }
+            }
+
+            //创建目标新数组NRG
+            if (ColumnNum == 0) { MessageBox.Show("未发现客户名称列，请检查");return; }
+            NRG = new object[FunC.AllRows(FunC.CName(ColumnNum)), 9];
+
+            //查找指定列
+            int ColumnNum1 = 0;//应收账款
+            int ColumnNum2 = 0;//预付账款
+            int ColumnNum3 = 0;//其他应收款
+            int ColumnNum4 = 0;//应付账款
+            int ColumnNum5 = 0;//预收账款
+            int ColumnNum6 = 0;//其他应付款
+
+            //查找往来款列
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                if (OName[i - 1] == "应收账款")
+                {
+                    ColumnNum1 = i;
+                }
+                else if (OName[i - 1] == "预付账款")
+                {
+                    ColumnNum2 = i;
+                }
+                else if (OName[i - 1] == "其他应收款")
+                {
+                    ColumnNum3 = i;
+                }
+                else if (OName[i - 1] == "应付账款")
+                {
+                    ColumnNum4 = i;
+                }
+                else if (OName[i - 1] == "预收账款")
+                {
+                    ColumnNum5 = i;
+                }
+                else if (OName[i - 1] == "其他应付款")
+                {
+                    ColumnNum6 = i;
+                }
+            }
+
+            //检查是否有找到往来款列并赋值
+            if(ColumnNum1 != 0 || ColumnNum2 != 0 || ColumnNum3 != 0 || ColumnNum4 != 0 || ColumnNum5 != 0 || ColumnNum6 != 0)
+            {
+                for (int i = 1; i < NRG.GetLength(0); i++)
+                {
+                    NRG[i, 0] = ORG[i + 1, ColumnNum];
+                    if (ColumnNum1 != 0) { NRG[i, 1] = ORG[i + 1, ColumnNum1]; }
+                    if (ColumnNum2 != 0) { NRG[i, 2] = ORG[i + 1, ColumnNum2]; }
+                    if (ColumnNum3 != 0) { NRG[i, 3] = ORG[i + 1, ColumnNum3]; }
+                    if (ColumnNum4 != 0) { NRG[i, 4] = ORG[i + 1, ColumnNum4]; }
+                    if (ColumnNum5 != 0) { NRG[i, 5] = ORG[i + 1, ColumnNum5]; }
+                    if (ColumnNum6 != 0) { NRG[i, 6] = ORG[i + 1, ColumnNum6]; }
+                }
+            }
+            else
+            {
+                MessageBox.Show("未发现往来款列，请检查");
+                return;
+            }
+
+            //获取存放函证的文件夹路径
+            string FolderPath = ExcelApp.ActiveWorkbook.Path;
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            folderDialog.Description = "请选择文件夹存放函证";
+            folderDialog.SelectedPath = FolderPath;
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                FolderPath = folderDialog.SelectedPath;
+            }
+            else
+            {
+                return;
+            }
+
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //读取指定信息
+            //从父节点CurrentAccount中读取配置名为AccountingFirmName的值，作为事务所名称，默认为致同
+            string AccountingFirmName = clsConfig.ReadConfig<string>("CurrentAccount", "AccountingFirmName", "致同会计师事务所（特殊普通合伙）");
+            //从父节点CurrentAccount中读取配置名为Auditee的值，作为被审计单位名称，默认为空
+            string OurCompany = clsConfig.ReadConfig<string>("CurrentAccount", "Auditee", "请修改");
+            //从父节点CurrentAccount中读取配置名为ReplyAddress的值，作为回函地址，默认为致同
+            string ReplyAddress = clsConfig.ReadConfig<string>("CurrentAccount", "ReplyAddress", "北京建外大街22号赛特大厦十五层");
+            //从父节点CurrentAccount中读取配置名为PostalCode的值，作为回函邮编，默认为致同
+            string PostalCode = clsConfig.ReadConfig<string>("CurrentAccount", "PostalCode", "100004");
+            //从父节点CurrentAccount中读取配置名为AuditDeadline的值，作为审计截止日，默认为2019年12月31日
+            string AuditDeadline = clsConfig.ReadConfig<string>("CurrentAccount", "AuditDeadline", "2019年12月31日");
+            //从父节点CurrentAccount中读取配置名为Contact的值，作为联系人名称，默认为空
+            string Contact = clsConfig.ReadConfig<string>("CurrentAccount", "Contact", "请修改");
+            //从父节点CurrentAccount中读取配置名为Telephone的值，作为联系电话，默认为空
+            string Telephone = clsConfig.ReadConfig<string>("CurrentAccount", "Telephone", "请修改");
+            //从父节点CurrentAccount中读取配置名为Department的值，作为部门，默认为空
+            string Department = clsConfig.ReadConfig<string>("CurrentAccount", "Department", "请修改");
+            //从父节点CurrentAccount中读取配置名为Leading的值，作为部门负责人，默认为空
+            string Leading = clsConfig.ReadConfig<string>("CurrentAccount", "Leading", "请修改");
+
+            if (Directory.Exists(FolderPath + "\\" + OurCompany))//如果存在就删除文件夹
+            {
+                try
+                {
+                    DirectoryInfo subdir = new DirectoryInfo(FolderPath + "\\" + OurCompany);
+                    subdir.Delete(true);
+                }
+                catch
+                {
+                    MessageBox.Show("选定目录存在同名文件夹，请先关闭文件夹中的文件，删除文件夹后重试！");
+                    return;
+                }
+            }
+            
+            Directory.CreateDirectory(FolderPath + "\\" + OurCompany);
+
+            Word.Application WordApp = new Word.Application(); //初始化
+            WordApp.Visible = false;//使文档不可见
+            Word.Document WordDoc;
+
+            //在我的文档创建模板文件夹
+            if (!Directory.Exists(strPath + "\\HertZTemplate"))//如果不存在就创建文件夹
+            {
+                Directory.CreateDirectory(strPath + "\\HertZTemplate");
+            }
+            //将模板提取出来
+            if (!File.Exists(strPath + "\\HertZTemplate\\往来询证函模板.dotx"))
+            {
+                byte[] sampleCA = Properties.Resources.往来询证函模板; //取出Resources中的往来询证函模板
+                FileStream outputExcelFile = new FileStream(strPath + "\\HertZTemplate\\往来询证函模板.dotx", FileMode.Create, FileAccess.Write); //存到我的文档
+                outputExcelFile.Write(sampleCA, 0, sampleCA.Length);
+                outputExcelFile.Close();
+            }
+
+            //第8列做函证编号，第9列做word名称
+            for (int i = 1; i < NRG.GetLength(0); i++)
+            {
+                //如果客户名称列为空则跳过
+                if(NRG[i, 0] == null){ break;}
+                //如果合计为空则跳过
+                if(Math.Abs(FunC.TD(NRG[i, 1])+ FunC.TD(NRG[i, 2])+ FunC.TD(NRG[i, 3]) + FunC.TD(NRG[i, 4])+ FunC.TD(NRG[i, 5]) + FunC.TD(NRG[i, 6])) < PRECISION) { break; }
+
+                WordDoc = WordApp.Documents.Add(strPath + "\\HertZTemplate\\往来询证函模板.dotx");
+
+                //第8列放文件名
+                NRG[i, 8] = NRG[i, 0];//这里留个坑，如果有重复的客户名称，在NRG第8列加编号区分
+
+                //第七列存放编号
+                if (OurCompany.Length > 3) 
+                {
+                    for (int i1 = 1; i1 < 5; i1++)
+                    {
+                        NRG[i, 7] = NRG[i, 7] + FunC.GetSpellCode(OurCompany.Substring(i1 - 1, 1));
+                    }
+                }
+                else
+                { 
+                    NRG[i, 7] = "HertZ"; 
+                }
+
+                //读取审计截止日做函证编号
+                NRG[i, 7] = AuditDeadline.Substring(0,4) + "-" + NRG[i, 7] + "-" + i;
+
+                List<string> list1 = new List<string> { "Number","Auditee","OurCompany","AccountingFirmName","ReplyAddress"
+                ,"PostalCode","Telephone","Department","Contact","Leading","AuditDeadline","TotalReceivables","Receivable"
+                ,"OtherReceivables","Prepayment","TotalPayables","Payable","OtherPayables","DepositReceived","OtherMatters"
+                };  //保存的是域
+
+                List<string> list2 = new List<string> { NRG[i, 7].ToString(), NRG[i, 8].ToString(), OurCompany , AccountingFirmName , ReplyAddress 
+                ,PostalCode,Telephone,Department,Contact,Leading,AuditDeadline,String.Format("{0:N}",(FunC.TD(NRG[i, 1])+FunC.TD(NRG[i, 3]))),String.Format("{0:N}",FunC.TD(NRG[i, 1]))
+                ,String.Format("{0:N}",FunC.TD(NRG[i, 3])),String.Format("{0:N}",FunC.TD(NRG[i, 2])),String.Format("{0:N}",(FunC.TD(NRG[i, 4])+FunC.TD(NRG[i, 6])))
+                ,String.Format("{0:N}",FunC.TD(NRG[i, 4])),String.Format("{0:N}",FunC.TD(NRG[i, 6])),String.Format("{0:N}",FunC.TD(NRG[i, 5]))," "
+                };  //保存的是要插入的数据
+
+                for(int i1 = 0; i1 < 20; i1++)
+                {
+                    WordDoc.Variables.Add(list1[i1],list2[i1]);
+                }
+
+                //更新域
+                WordDoc.Fields.Update();
+                //另存为
+                WordDoc.SaveAs2(FolderPath + "\\" + OurCompany + "\\" + NRG[i, 8].ToString()+".docx");
+                WordDoc.Close();
+            }
+
+            //WordApp.Visible = true;//使文档可见
+            WordApp.Quit();
+            MessageBox.Show("函证文件生成成功！");
         }
 
         //往来款加工设置
