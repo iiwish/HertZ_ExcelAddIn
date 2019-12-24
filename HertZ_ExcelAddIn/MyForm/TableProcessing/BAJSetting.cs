@@ -48,7 +48,7 @@ namespace HertZ_ExcelAddIn
             SubjectCodeLength6.Text = clsConfig.ReadConfig<string>("BalanceAndJournal", "SubjectCodeLength6", "2");
 
             //从父节点BalanceAndJournal中读取配置名为OrderCheckBox的值，该值为布尔值。默认为true
-            OrderCheckBox.Checked = clsConfig.ReadConfig<bool>("BalanceAndJournal", "OrderCheckBox", true);
+            OrderCheckBox.Checked = clsConfig.ReadConfig<bool>("BalanceAndJournal", "OrderCheckBox", false);
         }
 
         private void ChangeState(object sender, EventArgs e)

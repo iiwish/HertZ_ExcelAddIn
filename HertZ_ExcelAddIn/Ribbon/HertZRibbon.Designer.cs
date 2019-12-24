@@ -182,6 +182,7 @@
             this.ConfirmationWord.OfficeImageId = "SignatureInsertMenu";
             this.ConfirmationWord.ScreenTip = "点击生成Word函证";
             this.ConfirmationWord.ShowImage = true;
+            this.ConfirmationWord.SuperTip = "从模板生成word函证，并存放到指定文件夹";
             this.ConfirmationWord.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ConfirmationWord_Click);
             // 
             // CurrentAccountSetting
