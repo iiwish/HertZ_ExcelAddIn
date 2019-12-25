@@ -46,10 +46,6 @@ namespace HertZ_ExcelAddIn
             //目标新数组NRG
             object[,] NRG;
 
-            //从我的文档读取配置
-            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
-            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
-
             //选中科目余额表并继续
             if (FunC.SelectSheet("余额表") == false) { return; };
             WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["余额表"];
@@ -364,8 +360,11 @@ namespace HertZ_ExcelAddIn
                 }
             }
 
-            //删除sheet中的原始数据
-            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
 
             //排序
             string CodeSing = clsConfig.ReadConfig<string>("BalanceAndJournal", "SubjectCodeSign", ".");
@@ -383,13 +382,17 @@ namespace HertZ_ExcelAddIn
                 Order.Orderby(NRG, new int[] { 9 }, 0);
             }
 
+            
+
+            //删除sheet中的原始数据
+            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
+
             //写入数据
             WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
-
+            
             //释放数组
             ORG = null;
 
-            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
             //调整格式
             WST.Range["A1:I1"].Interior.Color = Color.LightGray;
             //按科目层级修改颜色
@@ -425,11 +428,11 @@ namespace HertZ_ExcelAddIn
             NRG = null;
 
             //设置数字格式
-            WST.Range["E2:K" + AllRows].NumberFormatLocal = "#,##0.00 ";
+            WST.Range["E2:H" + AllRows].NumberFormatLocal = "#,##0.00 ";
             //ABC列靠左显示
             WST.Range["B2:C" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             //设置自动列宽
-            WST.Columns["A:I"].EntireColumn.AutoFit();
+            WST.Columns["B:H"].EntireColumn.AutoFit();
             //筛选[显示]列
             WST.Range["A1:I" + AllRows].AutoFilter(1, 1);
             //隐藏[显示]列
@@ -463,22 +466,20 @@ namespace HertZ_ExcelAddIn
 
             Excel.Worksheet WST2 = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["余额表"];
 
+            ORG = WST2.Range["B1:C1"].Value2;
             //检查余额表是否被加工
-            if (WST2.Range["B1"].ToString() != "[科目编码]" || WST2.Range["C1"].ToString() != "[科目名称]")
+            if (ORG[1,1].ToString() != "[科目编码]" || ORG[1, 2].ToString() != "[科目名称]")
             {
                 MessageBox.Show("请先加工余额表！");
                 return;
             }
+            ORG = null;
 
             WST2.Select();
             //求余额表的行数
             int AllRows2 = FunC.AllRows();
 
-            //从我的文档读取配置
-            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
-            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
-
-            //选中科目余额表并继续
+            //选中序时账并继续
             if (FunC.SelectSheet("序时账") == false) { return; };
             WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["序时账"];
             WST.Select();
@@ -501,6 +502,7 @@ namespace HertZ_ExcelAddIn
             List<string> OName = new List<string> { };
             for (int i = 1; i <= AllColumns; i++)
             {
+                if (ORG[1, i] == null) {break; }
                 OName.Add(ORG[1, i].ToString());
             }
 
@@ -550,18 +552,24 @@ namespace HertZ_ExcelAddIn
             if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 12); }
             ColumnName.Clear();
 
-            //选择[辅助项目]列
-            ColumnName = new List<string> { "[辅助项目2]" };
-            ColumnNumber = FunC.SelectColumn(ColumnName, OName, false);
-            if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 13); }
-            ColumnName.Clear();
+            if (ColumnNumber != 0)
+            {
+                //选择[辅助项目]列
+                ColumnName = new List<string> { "[辅助项目2]" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, false);
+                if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 13); }
+                ColumnName.Clear();
+            }
 
-            //选择[辅助项目]列
-            ColumnName = new List<string> { "[辅助项目3]" };
-            ColumnNumber = FunC.SelectColumn(ColumnName, OName, false);
-            if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 14); }
-            ColumnName.Clear();
-
+            if(ColumnNumber != 0)
+            {
+                //选择[辅助项目]列
+                ColumnName = new List<string> { "[辅助项目3]" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, false);
+                if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 14); }
+                ColumnName.Clear();
+            }
+            
             //判断是否为借贷方向列示
             bool DrAndCr = false;
             ColumnName = new List<string> { "[借方金额]", "[贷方金额]", "借方金额", "贷方金额", "借方发生额", "贷方发生额" };
@@ -572,8 +580,10 @@ namespace HertZ_ExcelAddIn
                     if (ColumnName[i] == OName[i1])
                     {
                         DrAndCr = true;
+                        break;
                     }
                 }
+                if (DrAndCr) { break; }
             }
 
             //如果没有匹配到，弹窗确认
@@ -588,6 +598,32 @@ namespace HertZ_ExcelAddIn
 
             //读取余额表内容
             object[,] ORG2 = WST2.Range["B1:C" + AllRows2].Value2;
+
+            //计算科目长度
+            Dictionary<int, string> CodeLen = new Dictionary<int, string> { };
+            for (int i = 1; i < AllRows; i++)
+            {
+                if(ORG2[i, 1] == null) { continue; }
+                if (CodeLen.Count > 4) { break; }
+                CodeLen.Add(ORG2[i, 1].ToString().Length, ORG2[i, 1].ToString());
+            }
+
+            //字典排序
+            CodeLen = CodeLen.OrderBy(o => o.Key).ToDictionary(o => o.Key, p => p.Value);
+
+            //字典转list
+            int[] CodeList = (from val in CodeLen select val.Key).ToArray<int>();
+            CodeLen.Clear();
+
+            int CodeCount = Math.Min(CodeList.Count(), 4);
+
+            //把科目编码和科目名称存入字典
+            Dictionary<string, string> CodeName = new Dictionary<string, string> { };
+            for (int i = 1; i < AllRows; i++)
+            {
+                if(ORG2[i, 1] == null) { continue; }
+                CodeName.Add(ORG2[i, 1].ToString(), ORG2[i, 2].ToString());
+            }
 
             //选择发生额列
             if (DrAndCr)
@@ -611,30 +647,145 @@ namespace HertZ_ExcelAddIn
                 //计算借贷方向列和科目列
                 for(int i = 1; i < AllRows; i++)
                 {
-                    if(Math.Abs(FunC.TD(NRG[0, 15])) > PRECISION)
+                    NRG[i, 1] = string.Format("=year(C{0})&\"年\"&month(C{0})&\"月\"&D{0}", i+1);
+                    if (Math.Abs(FunC.TD(NRG[i, 15])) > PRECISION)
                     {
-                        NRG[0, 14] = "借方";
+                        NRG[i, 14] = "借方";
+                    }
+                    else if(Math.Abs(FunC.TD(NRG[i, 16])) > PRECISION)
+                    {
+                        NRG[i, 14] = "贷方";
                     }
                     else
                     {
-                        NRG[0, 14] = "贷方";
+                        NRG[i, 14] = "平";
                     }
 
-
+                    //计算1-4级科目
+                    try
+                    {
+                        for (int i1 = 0; i1 < CodeCount; i1++)
+                        {
+                            if(NRG[i, 4].ToString().Length < CodeList[i1]) { continue; }
+                            NRG[i, 5 + i1] = CodeName[NRG[i, 4].ToString().Substring(0, CodeList[i1])];
+                        }
+                    }
+                    catch { }
                 }
-                
 
             }
+            else
+            {
+                //选择[借贷方向]列
+                ColumnName = new List<string> { "[借贷方向]", "[方向]","借贷方向", "借贷" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                if (ColumnNumber == 0) { return; }
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 15);
+                NRG[0, 14] = ColumnName[0];
+                ColumnName.Clear();
 
-            //选择[本期借方]列
-            ColumnName = new List<string> { "[摘要]", "摘要", "凭证文本", "业务说明" };
-            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
-            if (ColumnNumber == 0) { return; }
-            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 11);
-            NRG[0, 10] = ColumnName[0];
-            ColumnName.Clear();
+                //选择金额列
+                ColumnName = new List<string> { "[金额]", "金额", "发生额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
 
-            //计算6、7、8、9列1-4级科目
+                //计算借方、贷方和1-4级科目
+                for (int i = 1; i < AllRows; i++)
+                {
+                    //计算借方金额和贷方金额
+                    if(NRG[i, 14] != null)
+                    {
+                        if (NRG[i, 14].ToString().Contains("借"))
+                        {
+                            NRG[i, 15] = ORG[i + 1, ColumnNumber];
+                        }
+                        else if (NRG[i, 14].ToString().Contains("贷"))
+                        {
+                            NRG[i, 16] = ORG[i + 1, ColumnNumber];
+                        }
+                    }
+
+                    //计算1-4级科目
+                    try
+                    {
+                        for (int i1 = 0; i1 < CodeCount; i1++)
+                        {
+                            if (NRG[i, 4].ToString().Length < CodeList[i1]) { continue; }
+                            NRG[i, 5 + i1] = CodeName[NRG[i, 4].ToString().Substring(0, CodeList[i1])];
+                        }
+                    }
+                    catch { }
+                }
+
+                //加16、17表头
+                NRG[0, 15] = "[借方金额]";
+                NRG[0, 16] = "[贷方金额]";
+            }
+
+            NRG[0, 14] = "[方向]";//命名第15列
+            NRG[0, 5] = "[一级科目]";//命名第6、7、8、9列1-4级科目
+            NRG[0, 6] = "[二级科目]";
+            NRG[0, 7] = "[三级科目]";
+            NRG[0, 8] = "[四级科目]";
+            NRG[0, 17] = "[抽凭]";//命名第18列[抽凭]
+            NRG[0, 1] = "[日期&凭证号]";//命名第18列[抽凭]
+
+
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
+            //删除sheet中的原始数据
+            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
+
+            //赋值
+            WST.Range["A1:R" + AllRows].Value2 = NRG;
+
+            //释放数组
+            ORG = null;
+
+            //调整表格格式
+
+            //首行颜色
+            WST.Range["A1:R1"].Interior.Color = Color.LightGray;
+            //加框线
+            WST.Range["A1:R" + AllRows].Borders.LineStyle = 1;
+            //设置数字格式
+            WST.Range["P2:Q" + AllRows].NumberFormatLocal = "#,##0.00 ";
+            //设置日期格式
+            WST.Range["C2:C" + AllRows].NumberFormatLocal = @"yyyy/m/d";
+            //ABC列靠左显示
+            WST.Range["B2:M" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            //设置自动列宽
+            WST.Columns["B:B"].EntireColumn.AutoFit();
+            WST.Columns["P:Q"].EntireColumn.AutoFit();
+            //隐藏A、D列
+            WST.Columns["A:A"].Hidden = true;
+            WST.Columns["D:D"].Hidden = true;
+
+            //删除未选择的辅助项目列
+            if (NRG[0, 13] == null && NRG[1, 13] == null)
+            {
+                WST.Columns["N:N"].Delete();
+                if (NRG[0, 12] == null && NRG[1, 12] == null)
+                {
+                    WST.Columns["M:M"].Delete();
+                    if (NRG[0, 11] == null && NRG[1, 11] == null)
+                    {
+                        WST.Columns["L:L"].Delete();
+                    }
+                }
+            }
+
+            //释放数组
+            NRG = null;
+
+            //冻结行和列
+            ExcelApp.ActiveWindow.SplitColumn = 2;
+            ExcelApp.ActiveWindow.SplitRow = 1;
+            ExcelApp.ActiveWindow.FreezePanes = true;
+
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
+            WST.Tab.Color = 1;//设置tab颜色为黑色
 
         }
 
