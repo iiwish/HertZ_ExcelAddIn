@@ -745,8 +745,9 @@ namespace HertZ_ExcelAddIn
             NRG[0, 7] = "[三级科目]";
             NRG[0, 8] = "[四级科目]";
             NRG[0, 17] = "[抽凭]";//命名第18列[抽凭]
-            NRG[0, 1] = "[日期&凭证号]";//命名第18列[抽凭]
-
+            NRG[0, 1] = "[日期&凭证号]";//命名第2列
+            NRG[0, 0] = "[辅助]";
+            NRG[AllRows - 1,0] = "1";
 
             ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
 
@@ -808,9 +809,12 @@ namespace HertZ_ExcelAddIn
         //看账功能
         private void CheckBAJ_Click(object sender, RibbonControlEventArgs e)
         {
-            ExcelApp = Globals.ThisAddIn.Application;
-            //双击事件
-            ExcelApp.SheetBeforeDoubleClick += new Excel.AppEvents_SheetBeforeDoubleClickEventHandler(FunC.CheckDoubleClick);
+            if (CheckBAJ.Checked)
+            {
+                ExcelApp = Globals.ThisAddIn.Application;
+                //双击事件
+                ExcelApp.SheetBeforeDoubleClick += new Excel.AppEvents_SheetBeforeDoubleClickEventHandler(FunC.CheckDoubleClick);
+            }
         }
 
         //账表加工设置
@@ -824,7 +828,7 @@ namespace HertZ_ExcelAddIn
         //加工往来款
         private void EditCurrentAccount_Click(object sender, RibbonControlEventArgs e)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
             int AllRows;
@@ -1072,7 +1076,7 @@ namespace HertZ_ExcelAddIn
         //拆分账龄
         private void AgeOfAccount_Click(object sender, RibbonControlEventArgs e)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
             int AllRows;
@@ -1447,7 +1451,7 @@ namespace HertZ_ExcelAddIn
         //生成函证列表
         private void Confirmation_Click(object sender, RibbonControlEventArgs e)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
             //主键，关联各往来款表用
@@ -1847,7 +1851,7 @@ namespace HertZ_ExcelAddIn
             object[,] NRG;//新数组NRG
             string[,] ARG;//计算用数组
 
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             //WBK = ExcelApp.ActiveWorkbook;
 
@@ -2014,7 +2018,7 @@ namespace HertZ_ExcelAddIn
         //检查非数字单元格
         private void CheckNum_Click(object sender, RibbonControlEventArgs e)
         {
-            ExcelApp = Globals.ThisAddIn.Application;//(Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;//Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = ExcelApp.Selection;
             object[,] ORG = rg.Value2;

@@ -56,12 +56,12 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public bool SheetExist(string SheetName)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             bool returnValue;
 
             try
             {
-                String Cell1 = ExcelApp.Worksheets[SheetName].Cells[1,1].Value.ToString();
+                WST = ExcelApp.Worksheets[SheetName];
                 returnValue = true;
             }
             catch (Exception)
@@ -77,7 +77,7 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public bool SelectSheet(string SheetName)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             bool returnValue = false;
 
             if (SheetExist(SheetName) == false)
@@ -104,7 +104,7 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public int AllRows(string ColumnName = "A",int ColumnsTotal = 1)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             int returnValue = 0;
             int StartColumn = CNumber(ColumnName);
@@ -126,7 +126,7 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public int AllColumns(int RowName = 1,int RowsTotal = 1)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = ExcelApp.ActiveSheet;
             int returnValue = 0;
             int NewColumns;
@@ -285,7 +285,7 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public void NewSheet(string SheetName)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             if (SheetExist(SheetName))
             {
                 WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets[SheetName];
@@ -308,7 +308,7 @@ namespace HertZ_ExcelAddIn
         /// <returns></returns>
         public bool AddCASheet(object[,] ORG, int AllRowsC, string AccountName, string OtherName)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             //定义新数组NRG
             object[,] NRG = new object[AllRowsC + 6, 14];
             bool returnValue = true;
@@ -502,7 +502,7 @@ namespace HertZ_ExcelAddIn
         /// <param name="SelectRange"></param>
         public void ColorNotNum(string SelectRange)
         {
-            ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
+            ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = WST.Range[SelectRange];
             object[,] ORG = rg.Value2;
@@ -754,18 +754,161 @@ namespace HertZ_ExcelAddIn
             return CnChar;
         }
 
+        /// <summary>
+        /// CheckBAJ的双击事件
+        /// </summary>
+        /// <param name="Sh"></param>
+        /// <param name="Target"></param>
+        /// <param name="Cancel"></param>
         public void CheckDoubleClick(object Sh,Excel.Range Target, ref bool Cancel)
         {
             WST = (Excel.Worksheet)Sh;
-            if (WST.Name != "余额表" || WST.Name != "序时账") { return; }
+            object[,] rg;
+            Excel.Worksheet WST2;
+
+            int AllRows1 = AllRows("A",2);
+            int AllColumns1 = AllColumns();
+            int ColumnNum = 0;
+            string i3;
+            int i4;
+
+            if (Target.Row > AllRows1 || Target.Row == 1) { return; }
+            if (Target.Column > AllColumns1) { return; }
+            if(Target.Count != 1) { return; }
+
+            //检查是否已加工余额表序时账
             if (WST.Name == "余额表")
             {
-                MessageBox.Show("余额表");
-            }
-            else
-            {
+                if (!SheetExist("序时账"))
+                {
+                    MessageBox.Show("请将序时账放入当前工作簿！");
+                    return;
+                }
+                else
+                {
+                    WST = (Excel.Worksheet)Sh;
+                    rg = WST.Range["A1:B1"].Value2;
+                    if (rg[1, 1] == null || rg[1, 2] == null) { MessageBox.Show("请先加工余额表！"); return; }
+                    if (rg[1, 1].ToString() != "[显示]" || rg[1, 2].ToString() != "[科目编码]")
+                    {
 
+                        MessageBox.Show(rg[1, 1].ToString() + rg[1, 2].ToString() +"请先加工余额表");
+                        return;
+                    }
+                    else
+                    {
+                        //双击列超过第四列，跳转至序时账
+                        if (Target.Column > 4)
+                        {
+                            WST2 = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["序时账"];
+
+                            rg = WST2.Range["A1:E1"].Value2;
+                            if (rg[1, 1] == null || rg[1, 1].ToString() != "[辅助]") { MessageBox.Show("请先加工序时账！"); return; }
+                            for (int i = 1; i < 8; i++)
+                            {
+                                if (rg[1, i] != null && rg[1, i].ToString() == "[科目编码]")
+                                {
+                                    ColumnNum = i;
+                                    break;
+                                }
+                            }
+                            if(ColumnNum == 0) { MessageBox.Show("未发现序时账的[科目编码]列！"); return; }
+
+                            ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+
+                            //取消筛选
+                            if (WST2.AutoFilterMode) { WST2.AutoFilterMode = false; }
+
+                            rg = WST.Range["A1:B" + AllRows1].Value2;
+                            i3 = rg[Target.Row, 2].ToString();
+                            WST2.Select();
+                            AllRows1 = AllRows("A",2);
+                            AllColumns1 = AllColumns();
+                            rg = WST2.Range["A1:A" + AllRows1].Value2;
+
+                            for(int i = 2; i <= AllRows1; i++)
+                            {
+                                rg[i, 1] = string.Format("=Left({0}{1},{2})", CName(ColumnNum), i, i3.Length);
+                            }
+
+
+                            //赋值
+                            WST2.Range["A1:A" + AllRows1].Value2 = rg;
+
+                            //筛选[显示]列
+                            WST2.Range["A1:" + CName(AllColumns1) + AllRows1].AutoFilter(1, i3);
+                        }
+                        else//双击前四列，展开下级科目
+                        {
+                            ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+                            rg = WST.Range["A1:B" + (AllRows1 + 1)].Value2;
+                            rg[AllRows1 + 1, 2] = "1";
+                            if(rg[Target.Row + 1, 2] == null) { return; }
+                            if (rg[Target.Row, 2] == null) { return; }
+                            if (rg[Target.Row + 1, 1] == null) { return; }
+                            i4 = rg[Target.Row+1, 2].ToString().Length;
+                            if (i4 <= rg[Target.Row, 2].ToString().Length)
+                            {
+                                return;
+                            }
+                            
+                            //修改下级科目[显示]列
+                            if (rg[Target.Row+1, 1].ToString() == "0")
+                            {
+                                for (int i = Target.Row + 1; i <= AllRows1; i++)
+                                {
+                                    if (rg[i, 2] == null || rg[i, 2].ToString().Length == i4)
+                                    {
+                                        rg[i, 1] = 1;
+                                    }
+                                    else if (rg[i, 2].ToString().Length < i4)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (int i = Target.Row + 1; i <= AllRows1; i++)
+                                {
+                                    if (rg[i, 2].ToString().Length < i4)
+                                    {
+                                        break;
+                                    }
+                                    rg[i, 1] = 0;
+                                }
+                            }
+                            
+                            //取消筛选
+                            if (WST.AutoFilterMode) { WST.AutoFilterMode = false; }
+
+                            WST.Range["A1:B" + AllRows1].Value2 = rg;
+
+                            //筛选[显示]列
+                            WST.Range["A1:" + CName(AllColumns1) + AllRows1].AutoFilter(1, 1);
+                        }
+                    }
+                }
             }
+            else if(WST.Name == "序时账")
+            {
+                rg = WST.Range["A1:B1"].Value2;
+                if (rg[1, 1] == null || rg[1, 1].ToString() != "[辅助]"){ MessageBox.Show("请先加工序时账"); return; }
+                else if(rg[1,2]==null || rg[1,2].ToString() != "[日期&凭证号]") { MessageBox.Show("请先加工序时账"); return; }
+                
+                ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+
+                //取消筛选
+                if (WST.AutoFilterMode) { WST.AutoFilterMode = false; }
+
+                //筛选[显示]列
+                WST.Range["A1:" + CName(AllColumns1) + AllRows1].AutoFilter(2, WST.Range["B" + Target.Row].Value2);
+            }
+            else { return; }
+
+            Cancel = true;
+
+            ExcelApp.ScreenUpdating = true;//打开屏幕刷新
         }
 
         //希尔排序，未完成
