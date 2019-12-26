@@ -27,8 +27,6 @@ namespace HertZ_ExcelAddIn
 
         private void HertZRibbon_Load(object sender, RibbonUIEventArgs e)
         {
-            //清除后台没关干净的excel软件
-            FunC.ClearBackExcel();
         }
 
         //加工余额表
@@ -63,7 +61,7 @@ namespace HertZ_ExcelAddIn
             //将表格读入数组ORG
             ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
             //创建目标新数组NRG
-            NRG = new object[AllRows, 10];
+            NRG = new object[AllRows, 9];
 
             //将列名读入List
             List<string> OName = new List<string> { };
@@ -362,33 +360,42 @@ namespace HertZ_ExcelAddIn
 
             ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
 
+            //删除sheet中的原始数据
+            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
+
             //从我的文档读取配置
             string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
             ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
 
-            //排序
-            string CodeSing = clsConfig.ReadConfig<string>("BalanceAndJournal", "SubjectCodeSign", ".");
-            int OrderNum;
-            //从我的文档读取配置，如果需要排序
+            //如果需要排序,则排序
             if (clsConfig.ReadConfig<bool>("BalanceAndJournal", "OrderCheckBox", false))
             {
-                //赋值第10列，作为排序基数
-                NRG[0, 9] = 0;
-                for (int i = 1; i < AllRows; i++)
+                //将编码列改为字符串格式
+                for(int i = 1; i < AllRows; i++)
                 {
-                    OrderNum = int.Parse(NRG[i, 1].ToString().Replace("-", "").Replace(CodeSing, ""));
-                    NRG[i, 9] = OrderNum * 1000000000000000 / Math.Pow(10,OrderNum.ToString().Length);
+                    if(NRG[i, 1] == null) { continue; }
+                    NRG[i, 1] = NRG[i, 1].ToString();
                 }
-                Order.Orderby(NRG, new int[] { 9 }, 0);
+
+                //写入数据
+                WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
+
+                //清除排序
+                //WST.Range["A1:I" + AllRows].AutoFilter(1, 1).Sort.SortFields.Clear();
+
+                //排序
+                //WST.Range["A1:I" + AllRows].AutoFilter(1, 1).Sort();
+
+                //取消筛选
+
+
+            }
+            else
+            {
+                //写入数据
+                WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
             }
 
-            
-
-            //删除sheet中的原始数据
-            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
-
-            //写入数据
-            WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
             
             //释放数组
             ORG = null;
@@ -601,10 +608,11 @@ namespace HertZ_ExcelAddIn
 
             //计算科目长度
             Dictionary<int, string> CodeLen = new Dictionary<int, string> { };
-            for (int i = 1; i < AllRows; i++)
+            for (int i = 1; i < AllRows2; i++)
             {
                 if(ORG2[i, 1] == null) { continue; }
                 if (CodeLen.Count > 4) { break; }
+                if (CodeLen.ContainsKey(ORG2[i, 1].ToString().Length)) { continue; }
                 CodeLen.Add(ORG2[i, 1].ToString().Length, ORG2[i, 1].ToString());
             }
 
@@ -619,10 +627,18 @@ namespace HertZ_ExcelAddIn
 
             //把科目编码和科目名称存入字典
             Dictionary<string, string> CodeName = new Dictionary<string, string> { };
-            for (int i = 1; i < AllRows; i++)
+            for (int i = 1; i < AllRows2; i++)
             {
                 if(ORG2[i, 1] == null) { continue; }
-                CodeName.Add(ORG2[i, 1].ToString(), ORG2[i, 2].ToString());
+                if (CodeName.ContainsKey(ORG2[i, 1].ToString())) { continue; }
+                if(ORG2[i, 2] != null)
+                {
+                    CodeName.Add(ORG2[i, 1].ToString(), ORG2[i, 2].ToString());
+                }
+                else
+                {
+                    CodeName.Add(ORG2[i, 1].ToString(), "");
+                }
             }
 
             //选择发生额列
@@ -787,6 +803,14 @@ namespace HertZ_ExcelAddIn
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
             WST.Tab.Color = 1;//设置tab颜色为黑色
 
+        }
+
+        //看账功能
+        private void CheckBAJ_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            //双击事件
+            ExcelApp.SheetBeforeDoubleClick += new Excel.AppEvents_SheetBeforeDoubleClickEventHandler(FunC.CheckDoubleClick);
         }
 
         //账表加工设置
@@ -2009,6 +2033,5 @@ namespace HertZ_ExcelAddIn
             InfoForm.Show();
         }
 
-        
     }
 }

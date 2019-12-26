@@ -52,6 +52,7 @@
             this.CheckNum = this.Factory.CreateRibbonButton();
             this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
+            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             this.TableProcessing.Items.Add(this.BalanceAndJournal);
             this.TableProcessing.Items.Add(this.CurrentAccount);
+            this.TableProcessing.Items.Add(this.CheckBAJ);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
             // 
@@ -237,6 +239,14 @@
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
             // 
+            // CheckBAJ
+            // 
+            this.CheckBAJ.Label = "看 账";
+            this.CheckBAJ.Name = "CheckBAJ";
+            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
+            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
+            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -275,6 +285,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CompareTwoColumns;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CheckNum;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ConfirmationWord;
+        internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox CheckBAJ;
     }
 
     partial class ThisRibbonCollection
