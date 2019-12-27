@@ -128,7 +128,7 @@
             this.JournalSheet.Label = "加工序时账";
             this.JournalSheet.Name = "JournalSheet";
             this.JournalSheet.OfficeImageId = "QueryUpdate";
-            this.JournalSheet.ScreenTip = "小熊加班加点更新ing";
+            this.JournalSheet.ScreenTip = "击开始加工序时账";
             this.JournalSheet.ShowImage = true;
             this.JournalSheet.SuperTip = "加工序时账之前需先加工余额表";
             this.JournalSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.JournalSheet_Click);

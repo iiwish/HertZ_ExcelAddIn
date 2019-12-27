@@ -1057,15 +1057,15 @@ namespace HertZ_ExcelAddIn
             ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
 
             //应收账款表
-            if (!FunC.AddCASheet(ORG, AllRows, "应收账款", "应付账款")) { return; }
+            if (!FunC.AddCASheet(ORG, AllRows, "应收账款", "预收账款")) { return; }
             //预付账款表
-            if (!FunC.AddCASheet(ORG, AllRows, "预付账款", "预收账款")) { return; }
+            if (!FunC.AddCASheet(ORG, AllRows, "预付账款", "应付账款")) { return; }
             //其他应收款表
             if (!FunC.AddCASheet(ORG, AllRows, "其他应收款", "其他应付款")) { return; }
             //应付账款表
-            if (!FunC.AddCASheet(ORG, AllRows, "应付账款", "应收账款")) { return; }
+            if (!FunC.AddCASheet(ORG, AllRows, "应付账款", "预付账款")) { return; }
             //预收账款表
-            if (!FunC.AddCASheet(ORG, AllRows, "预收账款", "预付账款")) { return; }
+            if (!FunC.AddCASheet(ORG, AllRows, "预收账款", "应收账款")) { return; }
             //其他应付款表
             if (!FunC.AddCASheet(ORG, AllRows, "其他应付款", "其他应收款")) { return; }
 
