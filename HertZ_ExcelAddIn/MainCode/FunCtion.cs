@@ -80,7 +80,7 @@ namespace HertZ_ExcelAddIn
             ExcelApp = Globals.ThisAddIn.Application;
             bool returnValue = false;
 
-            if (SheetExist(SheetName) == false)
+            if (!SheetExist(SheetName))
             {
                 string msg = "未发现“" + SheetName + "”表，是否将当前工作表重命名为“" + SheetName + "”并继续？";
 

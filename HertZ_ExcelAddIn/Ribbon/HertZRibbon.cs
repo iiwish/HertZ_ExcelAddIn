@@ -806,6 +806,63 @@ namespace HertZ_ExcelAddIn
 
         }
 
+        //生成抽凭清单
+        private void VoucherCheckList_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            int AllRows;
+            int AllColumns;
+            int ColumnNumber;
+            List<string> ColumnName;
+            //原始表格数组ORG
+            object[,] ORG;
+            //目标新数组NRG
+            object[,] NRG;
+
+            //是否删除抽凭清单表格并继续
+            if (FunC.SheetExist("抽凭清单"))
+            {
+                DialogResult dr = MessageBox.Show("已存在“抽凭清单”工作表，是否删除并继续？", "请选择", MessageBoxButtons.YesNo);
+                if (dr != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            FunC.NewSheet("抽凭清单");
+
+            //选中科目余额表并继续
+            if (FunC.SelectSheet("余额表") == false) { return; };
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["余额表"];
+            WST.Select();
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
+
+            //规范原始数据
+            if (FunC.RangeIsStandard() == false)
+            {
+                MessageBox.Show("请规范数据格式，保证数据内容不超出首行和首列");
+                return;
+            }
+
+            //将表格读入数组ORG
+            ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+            //创建目标新数组NRG
+            NRG = new object[AllRows, 9];
+
+            ORG = WST.Range["B1:C1"].Value2;
+            //检查余额表是否被加工
+            if (ORG[1, 1].ToString() != "[科目编码]" || ORG[1, 2].ToString() != "[科目名称]")
+            {
+                MessageBox.Show("请先加工余额表！");
+                return;
+            }
+            ORG = null;
+
+        }
+
         //看账功能
         private void CheckBAJ_Click(object sender, RibbonControlEventArgs e)
         {
@@ -2037,5 +2094,6 @@ namespace HertZ_ExcelAddIn
             InfoForm.Show();
         }
 
+        
     }
 }

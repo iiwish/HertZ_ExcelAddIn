@@ -128,7 +128,7 @@
             this.JournalSheet.Label = "加工序时账";
             this.JournalSheet.Name = "JournalSheet";
             this.JournalSheet.OfficeImageId = "QueryUpdate";
-            this.JournalSheet.ScreenTip = "击开始加工序时账";
+            this.JournalSheet.ScreenTip = "点击开始加工序时账";
             this.JournalSheet.ShowImage = true;
             this.JournalSheet.SuperTip = "加工序时账之前需先加工余额表";
             this.JournalSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.JournalSheet_Click);
@@ -142,6 +142,7 @@
             this.VoucherCheckList.ScreenTip = "小熊加班加点更新ing";
             this.VoucherCheckList.ShowImage = true;
             this.VoucherCheckList.SuperTip = "根据抽凭比例自动补全抽凭，可在“设置”中修改默认配置";
+            this.VoucherCheckList.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VoucherCheckList_Click);
             // 
             // BalanceAndJournalSetting
             // 
