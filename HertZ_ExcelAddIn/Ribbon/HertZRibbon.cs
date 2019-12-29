@@ -778,6 +778,7 @@ namespace HertZ_ExcelAddIn
             //隐藏A、D列
             WST.Columns["A:A"].Hidden = true;
             WST.Columns["D:D"].Hidden = true;
+            FunC.AddData(WST.Range["R2:R" + AllRows], "抽,补,");
 
             //删除未选择的辅助项目列
             if (NRG[0, 13] == null && NRG[1, 13] == null)
@@ -814,8 +815,8 @@ namespace HertZ_ExcelAddIn
 
             int AllRows;
             int AllColumns;
-            int ColumnNumber;
-            List<string> ColumnName;
+            int ColumnNumber1 = 0;
+            int ColumnNumber2 = 0;
             //原始表格数组ORG
             object[,] ORG;
             //目标新数组NRG
@@ -831,11 +832,9 @@ namespace HertZ_ExcelAddIn
                 }
             }
 
-            FunC.NewSheet("抽凭清单");
-
             //选中科目余额表并继续
-            if (FunC.SelectSheet("余额表") == false) { return; };
-            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["余额表"];
+            if (FunC.SelectSheet("序时账") == false) { return; };
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["序时账"];
             WST.Select();
             AllRows = FunC.AllRows();
             AllColumns = FunC.AllColumns();
@@ -849,17 +848,124 @@ namespace HertZ_ExcelAddIn
 
             //将表格读入数组ORG
             ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
-            //创建目标新数组NRG
-            NRG = new object[AllRows, 9];
+            
 
-            ORG = WST.Range["B1:C1"].Value2;
-            //检查余额表是否被加工
-            if (ORG[1, 1].ToString() != "[科目编码]" || ORG[1, 2].ToString() != "[科目名称]")
+            //查找[日期&凭证号]和[抽凭]列
+            for(int i = 1; i <= AllColumns; i++)
             {
-                MessageBox.Show("请先加工余额表！");
+                if (ORG[1, i] != null)
+                {
+                    if(ORG[1, i].ToString() == "[日期&凭证号]")
+                    {
+                        ColumnNumber1 = i;
+                    }
+                    else if(ORG[1, i].ToString() == "[抽凭]")
+                    {
+                        ColumnNumber2 = i;
+                    }
+                }
+            }
+
+            //判断是否查找到指定列
+            if(ColumnNumber1 == 0 || ColumnNumber2 == 0)
+            {
+                MessageBox.Show("未找到[日期&凭证号]列或[抽凭]列，请加工序时账后重试");
                 return;
             }
+
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
+            //新建字典存放抽到的凭证号
+            Dictionary<string, string> KeyDic = new Dictionary<string, string> { };
+
+            //将函证信息存入字典
+            for (int i = 2; i <= AllRows; i++)
+            {
+                if(ORG[i, ColumnNumber2] != null)
+                {
+                    if (ORG[i, ColumnNumber2].ToString() == "抽")
+                    {
+                        if (ORG[i, ColumnNumber1] !=null && !KeyDic.ContainsKey(ORG[i, ColumnNumber1].ToString()))
+                        {
+                            KeyDic.Add(ORG[i, ColumnNumber1].ToString(), "抽");
+                        }
+                    }
+                    else if(ORG[i, ColumnNumber2].ToString() == "补")
+                    {
+                        ORG[i, ColumnNumber2] = null;
+                    }
+                }
+            }
+
+            //创建目标新数组NRG
+            NRG = new object[AllRows, 1];
+            NRG[0, 0] = "[抽凭]";
+
+            //往数组写入抽凭列
+            for (int i = 2; i <= AllRows; i++)
+            { 
+                if(ORG[i, ColumnNumber1] != null && KeyDic.ContainsKey(ORG[i, ColumnNumber1].ToString()))
+                {
+                    if (ORG[i, ColumnNumber2] != null)
+                    {
+                        if (ORG[i, ColumnNumber2].ToString() == "抽")
+                        {
+                            NRG[i, 0] = "抽";
+                        }
+                        else
+                        {
+                            ORG[i, ColumnNumber2] = "补";
+                            NRG[i, 0] = "补";
+                        }
+                    }
+                    else
+                    {
+                        ORG[i, ColumnNumber2] = "补";
+                        NRG[i, 0] = "补";
+                    }
+                }
+            }
+
+            //赋值给序时账的抽凭列
+            WST.Range[string.Format("{0}1:{0}{1}",FunC.CName(AllColumns), AllRows)].Value2 = NRG;
+            NRG = null;
+
+            //新建抽凭清单表
+            FunC.NewSheet("抽凭清单");
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2 = ORG;
             ORG = null;
+            //调整表格格式
+
+            //首行颜色
+            WST.Range["A1:R1"].Interior.Color = Color.LightGray;
+            //加框线
+            WST.Range["A1:" + FunC.CName(AllColumns) + AllRows].Borders.LineStyle = 1;
+            //设置数字格式
+            WST.Range[string.Format("{0}2:{1}{2}", FunC.CName(ColumnNumber2 - 2), FunC.CName(ColumnNumber2 - 1),AllRows)].NumberFormatLocal = "#,##0.00 ";
+            //设置日期格式
+            WST.Range["C2:C" + AllRows].NumberFormatLocal = @"yyyy/m/d";
+            //ABC列靠左显示
+            WST.Range["B2:M" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            //设置自动列宽
+            WST.Columns["B:B"].EntireColumn.AutoFit();
+            WST.Columns[string.Format("{0}:{1}", FunC.CName(ColumnNumber2-2), FunC.CName(ColumnNumber2 - 1))].EntireColumn.AutoFit();
+            //隐藏A、D列
+            WST.Columns["A:A"].Hidden = true;
+            WST.Columns["D:D"].Hidden = true;
+
+            //冻结行和列
+            ExcelApp.ActiveWindow.SplitColumn = 2;
+            ExcelApp.ActiveWindow.SplitRow = 1;
+            ExcelApp.ActiveWindow.FreezePanes = true;
+
+            //筛选[抽凭]列并删除
+            WST.Range["A1:"+ FunC.CName(AllColumns) + AllRows].AutoFilter(ColumnNumber2, "");
+            WST.Range["A2:A" + AllRows].Select();
+            ExcelApp.Selection.EntireRow.Delete();
+            WST.AutoFilterMode = false;//取消筛选
+
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
 
         }
 

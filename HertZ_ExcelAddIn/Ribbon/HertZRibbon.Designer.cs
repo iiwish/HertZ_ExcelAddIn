@@ -36,9 +36,6 @@
         {
             this.HertZTab = this.Factory.CreateRibbonTab();
             this.TableProcessing = this.Factory.CreateRibbonGroup();
-            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
-            this.Tool = this.Factory.CreateRibbonGroup();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.BalanceAndJournal = this.Factory.CreateRibbonMenu();
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
@@ -50,8 +47,11 @@
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
+            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
+            this.Tool = this.Factory.CreateRibbonGroup();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
@@ -75,27 +75,6 @@
             this.TableProcessing.Items.Add(this.CheckBAJ);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
-            // 
-            // CheckBAJ
-            // 
-            this.CheckBAJ.Label = "看 账";
-            this.CheckBAJ.Name = "CheckBAJ";
-            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
-            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
-            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
-            // 
-            // Tool
-            // 
-            this.Tool.Items.Add(this.CompareTwoColumns);
-            this.Tool.Items.Add(this.CheckNum);
-            this.Tool.Label = "实用工具";
-            this.Tool.Name = "Tool";
-            // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Items.Add(this.VersionInfo);
-            this.VersionGroup.Label = "更多";
-            this.VersionGroup.Name = "VersionGroup";
             // 
             // BalanceAndJournal
             // 
@@ -219,6 +198,21 @@
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
+            // CheckBAJ
+            // 
+            this.CheckBAJ.Label = "看 账";
+            this.CheckBAJ.Name = "CheckBAJ";
+            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
+            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
+            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Items.Add(this.CheckNum);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
             // CompareTwoColumns
             // 
             this.CompareTwoColumns.Label = "对比两列";
@@ -237,6 +231,12 @@
             this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
             this.CheckNum.ShowImage = true;
             this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
+            // 
+            // VersionGroup
+            // 
+            this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Label = "更多";
+            this.VersionGroup.Name = "VersionGroup";
             // 
             // VersionInfo
             // 
