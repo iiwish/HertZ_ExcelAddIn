@@ -380,14 +380,14 @@ namespace HertZ_ExcelAddIn
                 //写入数据
                 WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
 
-                //清除排序
-                //WST.Range["A1:I" + AllRows].AutoFilter(1, 1).Sort.SortFields.Clear();
+                //清除筛选
+                //if (WST.AutoFilterMode) { WST.AutoFilterMode = false; }
 
                 //排序
                 //WST.Range["A1:I" + AllRows].AutoFilter(1, 1).Sort();
 
                 //取消筛选
-
+                //WST.AutoFilterMode = false;
 
             }
             else
@@ -446,7 +446,7 @@ namespace HertZ_ExcelAddIn
             WST.Columns["A:A"].Hidden = true;
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
-            WST.Tab.Color = 3;//设置tab颜色为红色
+            WST.Tab.Color = Color.Red;//设置tab颜色为红色
         }
 
         //加工序时账
@@ -803,7 +803,7 @@ namespace HertZ_ExcelAddIn
             ExcelApp.ActiveWindow.FreezePanes = true;
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
-            WST.Tab.Color = 1;//设置tab颜色为黑色
+            WST.Tab.Color = Color.Black;//设置tab颜色为黑色
 
         }
 
@@ -938,7 +938,7 @@ namespace HertZ_ExcelAddIn
             //调整表格格式
 
             //首行颜色
-            WST.Range["A1:R1"].Interior.Color = Color.LightGray;
+            WST.Range[string.Format("A1:{0}1", FunC.CName(AllColumns))].Interior.Color = Color.LightGray;
             //加框线
             WST.Range["A1:" + FunC.CName(AllColumns) + AllRows].Borders.LineStyle = 1;
             //设置数字格式
@@ -949,7 +949,7 @@ namespace HertZ_ExcelAddIn
             WST.Range["B2:M" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             //设置自动列宽
             WST.Columns["B:B"].EntireColumn.AutoFit();
-            WST.Columns[string.Format("{0}:{1}", FunC.CName(ColumnNumber2-2), FunC.CName(ColumnNumber2 - 1))].EntireColumn.AutoFit();
+            WST.Columns[string.Format("{0}:{1}", FunC.CName(ColumnNumber2-2), FunC.CName(ColumnNumber2))].EntireColumn.AutoFit();
             //隐藏A、D列
             WST.Columns["A:A"].Hidden = true;
             WST.Columns["D:D"].Hidden = true;
@@ -972,11 +972,22 @@ namespace HertZ_ExcelAddIn
         //看账功能
         private void CheckBAJ_Click(object sender, RibbonControlEventArgs e)
         {
+            ExcelApp = Globals.ThisAddIn.Application;
             if (CheckBAJ.Checked)
             {
-                ExcelApp = Globals.ThisAddIn.Application;
                 //双击事件
                 ExcelApp.SheetBeforeDoubleClick += new Excel.AppEvents_SheetBeforeDoubleClickEventHandler(FunC.CheckDoubleClick);
+            }
+            else
+            {
+                try
+                {
+                    ExcelApp.SheetBeforeDoubleClick -= new Excel.AppEvents_SheetBeforeDoubleClickEventHandler(FunC.CheckDoubleClick);
+                }
+                catch
+                {
+
+                }
             }
         }
 
@@ -1233,6 +1244,12 @@ namespace HertZ_ExcelAddIn
             if (!FunC.AddCASheet(ORG, AllRows, "其他应付款", "其他应收款")) { return; }
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
+
+        }
+
+        //抵消双边挂账
+        private void OffsetBalance_Click(object sender, RibbonControlEventArgs e)
+        {
 
         }
 

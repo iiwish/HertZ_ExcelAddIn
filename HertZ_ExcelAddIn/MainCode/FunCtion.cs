@@ -791,7 +791,6 @@ namespace HertZ_ExcelAddIn
                     if (rg[1, 1] == null || rg[1, 2] == null) { MessageBox.Show("请先加工余额表！"); return; }
                     if (rg[1, 1].ToString() != "[显示]" || rg[1, 2].ToString() != "[科目编码]")
                     {
-
                         MessageBox.Show(rg[1, 1].ToString() + rg[1, 2].ToString() +"请先加工余额表");
                         return;
                     }
@@ -897,12 +896,61 @@ namespace HertZ_ExcelAddIn
                 else if(rg[1,2]==null || rg[1,2].ToString() != "[日期&凭证号]") { MessageBox.Show("请先加工序时账"); return; }
                 
                 ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+                i3 = WST.Range["B" + Target.Row].Value2;
+
+                if (!SheetExist("联查凭证"))
+                {
+                    object[,] ORG = WST.Range["A1:" + CName(AllColumns1) +AllRows1].Value2;
+                    NewSheet("联查凭证");
+                    WST2 = (Excel.Worksheet)ExcelApp.ActiveSheet;
+                    WST2.Range["A1:" + CName(AllColumns1) + AllRows1].Value2 = ORG;
+                    
+                    //调整表格格式
+
+                    //首行颜色
+                    WST2.Range[string.Format("A1:{0}1", CName(AllColumns1))].Interior.Color = Color.LightGray;
+                    //加框线
+                    WST2.Range["A1:" + CName(AllColumns1) + AllRows1].Borders.LineStyle = 1;
+                    //设置数字格式
+                    for(int i = 1; i < AllColumns1; i++)
+                    {
+                        if(ORG[1,i] != null && ORG[1, i].ToString() == "[借方金额]")
+                        {
+                            WST2.Range[string.Format("{0}2:{1}{2}", CName(i), CName(i + 1), AllRows1)].NumberFormatLocal = "#,##0.00 ";
+                            break;
+                        }
+                    }
+                   
+                    //设置日期格式
+                    WST2.Range["C2:C" + AllRows1].NumberFormatLocal = @"yyyy/m/d";
+                    //ABC列靠左显示
+                    WST2.Range["B2:M" + AllRows1].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+                    //设置自动列宽
+                    WST2.Columns["B:B"].EntireColumn.AutoFit();
+                    WST2.Columns[string.Format("{0}:{1}", CName(AllColumns1 - 2), CName(AllColumns1))].EntireColumn.AutoFit();
+                    //隐藏A、D列
+                    WST2.Columns["A:A"].Hidden = true;
+                    WST2.Columns["D:D"].Hidden = true;
+
+                    ORG = null;
+
+                    //冻结行和列
+                    ExcelApp.ActiveWindow.SplitColumn = 2;
+                    ExcelApp.ActiveWindow.SplitRow = 1;
+                    ExcelApp.ActiveWindow.FreezePanes = true;
+                    WST2.Tab.Color = Color.Blue;
+                }
+                else
+                {
+                    WST2 = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["联查凭证"];
+                    WST2.Select();
+                }
 
                 //取消筛选
-                if (WST.AutoFilterMode) { WST.AutoFilterMode = false; }
+                if (WST2.AutoFilterMode) { WST2.AutoFilterMode = false; }
 
                 //筛选[显示]列
-                WST.Range["A1:" + CName(AllColumns1) + AllRows1].AutoFilter(2, WST.Range["B" + Target.Row].Value2);
+                WST2.Range["A1:" + CName(AllColumns1) + AllRows1].AutoFilter(2, i3);
             }
             else { return; }
 
