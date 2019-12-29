@@ -1,6 +1,6 @@
 # 赫兹：审计用Excel工具包
 
-开发中，尚未完结。
+开发中，尚未完结。[安装说明](https://www.jianshu.com/p/030f411f9e19) [使用说明文集](https://www.jianshu.com/nb/41200586)
 
 该工具包原使用vba开发，已停止开发[请点这里查看](https://gitee.com/HeZhe_N/HertZ)
 
