@@ -18,7 +18,6 @@ namespace HertZ_ExcelAddIn
         private Excel.Application ExcelApp;
         private Excel.Worksheet WST;
         
-
         //引用函数模块
         private readonly FunCtion FunC = new FunCtion();
 
@@ -2021,6 +2020,52 @@ namespace HertZ_ExcelAddIn
             CASetting.Show();
         }
 
+        //填充空单元格
+        private void AutoFillInTheBlanks_Click(object sender, RibbonControlEventArgs e)
+        {
+            int AllRows;
+            int Allcolumns;
+            int StartColumn;
+            object[,] ORG;//原始数组ORG
+            object[,] NRG;//新数组NRG
+
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取选中区域
+            Excel.Range rg = ExcelApp.Selection;
+            if(rg.Count == 1) { return; }
+            ORG = rg.Value2;
+            Allcolumns = ORG.GetLength(1);
+            //取所选区域的前后3列最大行数
+            StartColumn = Math.Max(1, rg.Column - 3);
+            AllRows = FunC.AllRows(FunC.CName(StartColumn), Allcolumns + 6);
+            AllRows = Math.Min(AllRows, ORG.GetLength(0));
+            NRG = new object[AllRows, Allcolumns];
+
+            for(int i = 1; i <= Allcolumns; i++)
+            {
+                NRG[0, i - 1] = ORG[1, i];
+                for (int i1 = 2; i1 <= AllRows; i1++)
+                {
+                    if(ORG[i1, i] != null)
+                    {
+                        NRG[i1 - 1, i - 1] = ORG[i1, i];
+                    }
+                    else
+                    {
+                        NRG[i1 - 1, i - 1] = NRG[i1 - 2, i - 1];
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORG = null;
+            NRG = null;
+        }
+
         //对比两列数
         private void CompareTwoColumns_Click(object sender, RibbonControlEventArgs e)
         {
@@ -2195,12 +2240,111 @@ namespace HertZ_ExcelAddIn
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
         }
 
+        //另存为xlsx文件
+        private void Exportxlsx_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            string OFullName = ExcelApp.ActiveWorkbook.FullName;
+            string NFullName;
+            //检查是否为xlsx文件
+            if(Path.GetExtension(OFullName).Substring(1).ToLower() != "xls") { return; }
+
+            NFullName = Path.Combine(Path.GetDirectoryName(OFullName), Path.GetFileNameWithoutExtension(OFullName) + ".xlsx");
+            //检查是否已存在xlsx文件
+            if (File.Exists(NFullName))
+            {
+                DialogResult dr = MessageBox.Show("当前路径已存在同名工作表，是否删除并继续？", "请选择", MessageBoxButtons.YesNo);
+                if (dr != DialogResult.Yes){ return; }
+                try
+                {
+                    File.Delete(NFullName);
+                }
+                catch
+                {
+                    MessageBox.Show("删除文件失败！请关闭文件后重试");
+                    return;
+                }
+            }
+
+            //另存为
+            ExcelApp.ActiveWorkbook.SaveAs(NFullName);
+
+            //删除文件
+            File.Delete(OFullName);
+        }
+
+        //修改正负号
+        private void ChangeSign_Click(object sender, RibbonControlEventArgs e)
+        {
+            //int AllRows;
+            //int Allcolumns;
+            //object[,] ORG;//原始数组ORG
+            //object[,] NRG;//新数组NRG
+
+            //ExcelApp = Globals.ThisAddIn.Application;
+            //WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            ////读取选中区域
+            //Excel.Range rg = ExcelApp.Selection;
+
+            ////如果只选中一个单元格
+            //if (rg.Count == 1) 
+            //{ 
+            //    if (rg.Value2 != null && rg.Text != "0" && FunC.IsNumber(rg.Text)) 
+            //    { 
+            //        rg.Value2 = -double.Parse(rg.Text); 
+            //    }
+            //    else
+            //    {
+            //        return;
+            //    }
+            //}
+
+            //ORG = rg.Value2;
+            //Allcolumns = ORG.GetLength(1);
+            //AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            //AllRows = Math.Min(AllRows, ORG.GetLength(0));
+            //NRG = new object[AllRows, Allcolumns];
+
+            //for (int i = 1; i <= Allcolumns; i++)
+            //{
+            //    for (int i1 = 1; i1 <= AllRows; i1++)
+            //    {
+            //        if (ORG[i1, i] != null && FunC.IsNumber(ORG[i1, i].ToString()))
+            //        {
+            //            //if(Math.Abs(double.Parse(ORG[i1, i].ToString())) < 0.00000001d)
+            //            //{
+            //            //    NRG[i1 - 1, i - 1] = 0;
+            //            //}
+            //            //else
+            //            //{
+            //            //    NRG[i1 - 1, i - 1] = -double.Parse(ORG[i1, i].ToString());
+            //            //}
+            //        }
+            //    }
+            //}
+
+            ////赋值
+            //WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            //ORG = null;
+            //NRG = null;
+        }
+
         //检查非数字单元格
         private void CheckNum_Click(object sender, RibbonControlEventArgs e)
         {
             ExcelApp = Globals.ThisAddIn.Application;//Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = ExcelApp.Selection;
+            if(rg.Count == 1) 
+            {
+                if(rg.Value2 != null && !FunC.IsNumber(rg.Value2))
+                {
+                    WST.Range[FunC.CName(rg.Column) + rg.Row].Interior.Color = Color.Yellow;
+                }
+                return;
+            }
             object[,] ORG = rg.Value2;
             string rgTostring = FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + ORG.GetLength(1) - 1) + (rg.Row + ORG.GetLength(0) - 1);
             ORG = null;

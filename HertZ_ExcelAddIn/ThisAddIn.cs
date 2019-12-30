@@ -43,7 +43,7 @@ namespace HertZ_ExcelAddIn
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
             string msg = "HertZ_ExcelAddin已更新" + Environment.NewLine + "当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "新增功能：生成抽凭表");
+            MessageBox.Show(msg + "新增功能：填充空行、存为xlsx" + Environment.NewLine + "更新频率降低为每天检查一次");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

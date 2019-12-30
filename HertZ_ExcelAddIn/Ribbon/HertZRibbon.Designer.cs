@@ -36,9 +36,6 @@
         {
             this.HertZTab = this.Factory.CreateRibbonTab();
             this.TableProcessing = this.Factory.CreateRibbonGroup();
-            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
-            this.Tool = this.Factory.CreateRibbonGroup();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.BalanceAndJournal = this.Factory.CreateRibbonMenu();
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
@@ -47,13 +44,19 @@
             this.CurrentAccount = this.Factory.CreateRibbonMenu();
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
             this.AgeOfAccount = this.Factory.CreateRibbonButton();
+            this.OffsetBalance = this.Factory.CreateRibbonButton();
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
+            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
+            this.Tool = this.Factory.CreateRibbonGroup();
+            this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
+            this.Exportxlsx = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
-            this.OffsetBalance = this.Factory.CreateRibbonButton();
+            this.ChangeSign = this.Factory.CreateRibbonSplitButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -76,27 +79,6 @@
             this.TableProcessing.Items.Add(this.CheckBAJ);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
-            // 
-            // CheckBAJ
-            // 
-            this.CheckBAJ.Label = "看 账";
-            this.CheckBAJ.Name = "CheckBAJ";
-            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
-            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
-            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
-            // 
-            // Tool
-            // 
-            this.Tool.Items.Add(this.CompareTwoColumns);
-            this.Tool.Items.Add(this.CheckNum);
-            this.Tool.Label = "实用工具";
-            this.Tool.Name = "Tool";
-            // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Items.Add(this.VersionInfo);
-            this.VersionGroup.Label = "更多";
-            this.VersionGroup.Name = "VersionGroup";
             // 
             // BalanceAndJournal
             // 
@@ -140,9 +122,9 @@
             this.VoucherCheckList.Label = "生成抽凭表";
             this.VoucherCheckList.Name = "VoucherCheckList";
             this.VoucherCheckList.OfficeImageId = "CreateQueryFromWizard";
-            this.VoucherCheckList.ScreenTip = "小熊加班加点更新ing";
+            this.VoucherCheckList.ScreenTip = "从序时账生成抽凭表";
             this.VoucherCheckList.ShowImage = true;
-            this.VoucherCheckList.SuperTip = "根据抽凭比例自动补全抽凭，可在“设置”中修改默认配置";
+            this.VoucherCheckList.SuperTip = "补充同一凭证的其余发生额";
             this.VoucherCheckList.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VoucherCheckList_Click);
             // 
             // BalanceAndJournalSetting
@@ -191,6 +173,15 @@
             this.AgeOfAccount.SuperTip = "需要先将上一年度往来款及账龄粘到一张表里，并将这张表放到加工完的本年度往来款表中";
             this.AgeOfAccount.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AgeOfAccount_Click);
             // 
+            // OffsetBalance
+            // 
+            this.OffsetBalance.Label = "抵消双边挂账";
+            this.OffsetBalance.Name = "OffsetBalance";
+            this.OffsetBalance.OfficeImageId = "ReviewCombineRevisions";
+            this.OffsetBalance.ScreenTip = "小熊加班加点开发ing";
+            this.OffsetBalance.ShowImage = true;
+            this.OffsetBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OffsetBalance_Click);
+            // 
             // Confirmation
             // 
             this.Confirmation.Label = "生成发函清单";
@@ -221,6 +212,33 @@
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
+            // CheckBAJ
+            // 
+            this.CheckBAJ.Label = "看 账";
+            this.CheckBAJ.Name = "CheckBAJ";
+            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
+            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
+            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.AutoFillInTheBlanks);
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Items.Add(this.Exportxlsx);
+            this.Tool.Items.Add(this.ChangeSign);
+            this.Tool.Items.Add(this.CheckNum);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
+            // AutoFillInTheBlanks
+            // 
+            this.AutoFillInTheBlanks.Label = "填充空行";
+            this.AutoFillInTheBlanks.Name = "AutoFillInTheBlanks";
+            this.AutoFillInTheBlanks.OfficeImageId = "MergeCellsAcross";
+            this.AutoFillInTheBlanks.ScreenTip = "填充所选列的空单元格";
+            this.AutoFillInTheBlanks.ShowImage = true;
+            this.AutoFillInTheBlanks.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AutoFillInTheBlanks_Click);
+            // 
             // CompareTwoColumns
             // 
             this.CompareTwoColumns.Label = "对比两列";
@@ -231,6 +249,15 @@
             this.CompareTwoColumns.SuperTip = "选择两列进行对比，对两列中不同的数据用黄色标注，要求两列需在同一sheet中";
             this.CompareTwoColumns.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CompareTwoColumns_Click);
             // 
+            // Exportxlsx
+            // 
+            this.Exportxlsx.Label = "存为xlsx";
+            this.Exportxlsx.Name = "Exportxlsx";
+            this.Exportxlsx.OfficeImageId = "ExportExcel";
+            this.Exportxlsx.ScreenTip = "将xls文件另存为xlsx格式并删除原文件";
+            this.Exportxlsx.ShowImage = true;
+            this.Exportxlsx.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.Exportxlsx_Click);
+            // 
             // CheckNum
             // 
             this.CheckNum.Label = "检查数字";
@@ -239,6 +266,12 @@
             this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
             this.CheckNum.ShowImage = true;
             this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
+            // 
+            // VersionGroup
+            // 
+            this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Label = "更多";
+            this.VersionGroup.Name = "VersionGroup";
             // 
             // VersionInfo
             // 
@@ -250,14 +283,14 @@
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
             // 
-            // OffsetBalance
+            // ChangeSign
             // 
-            this.OffsetBalance.Label = "抵消双边挂账";
-            this.OffsetBalance.Name = "OffsetBalance";
-            this.OffsetBalance.OfficeImageId = "ReviewCombineRevisions";
-            this.OffsetBalance.ScreenTip = "小熊加班加点开发ing";
-            this.OffsetBalance.ShowImage = true;
-            this.OffsetBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OffsetBalance_Click);
+            this.ChangeSign.Label = "正负";
+            this.ChangeSign.Name = "ChangeSign";
+            this.ChangeSign.OfficeImageId = "PivotPlusMinusButtonsShowHide";
+            this.ChangeSign.ScreenTip = "小熊加班加点开发ing";
+            this.ChangeSign.SuperTip = "改变所选内容的正负号";
+            this.ChangeSign.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ChangeSign_Click);
             // 
             // HertZRibbon
             // 
@@ -299,6 +332,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ConfirmationWord;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox CheckBAJ;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton OffsetBalance;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton AutoFillInTheBlanks;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton Exportxlsx;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton ChangeSign;
     }
 
     partial class ThisRibbonCollection
