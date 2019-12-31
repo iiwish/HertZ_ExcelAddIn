@@ -2036,7 +2036,11 @@ namespace HertZ_ExcelAddIn
             Excel.Range rg = ExcelApp.Selection;
             if(rg.Count == 1) { return; }
             ORG = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
             Allcolumns = ORG.GetLength(1);
+            Allcolumns = Math.Min(Allcolumns, FunC.AllColumns(rg.Row));
+
             //取所选区域的前后3列最大行数
             StartColumn = Math.Max(1, rg.Column - 3);
             AllRows = FunC.AllRows(FunC.CName(StartColumn), Allcolumns + 6);
@@ -2276,59 +2280,68 @@ namespace HertZ_ExcelAddIn
         //修改正负号
         private void ChangeSign_Click(object sender, RibbonControlEventArgs e)
         {
-            //int AllRows;
-            //int Allcolumns;
-            //object[,] ORG;//原始数组ORG
-            //object[,] NRG;//新数组NRG
+            int AllRows;
+            int Allcolumns;
+            object[,] ORG;//原始数组ORG
+            object[,] NRG;//新数组NRG
+            string TempStr;
 
-            //ExcelApp = Globals.ThisAddIn.Application;
-            //WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
-            ////读取选中区域
-            //Excel.Range rg = ExcelApp.Selection;
+            //读取选中区域
+            Excel.Range rg = ExcelApp.Selection;
 
-            ////如果只选中一个单元格
-            //if (rg.Count == 1) 
-            //{ 
-            //    if (rg.Value2 != null && rg.Text != "0" && FunC.IsNumber(rg.Text)) 
-            //    { 
-            //        rg.Value2 = -double.Parse(rg.Text); 
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
-            //}
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Value2 != null && rg.Text != "0" && FunC.IsNumber(rg.Text))
+                {
+                    TempStr = rg.Formula;
+                    if (TempStr.Substring(0, 1) == "=")
+                    {
 
-            //ORG = rg.Value2;
-            //Allcolumns = ORG.GetLength(1);
-            //AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
-            //AllRows = Math.Min(AllRows, ORG.GetLength(0));
-            //NRG = new object[AllRows, Allcolumns];
+                    }
+                    else
+                    {
+                        rg.Value2 = -double.Parse(rg.Text);
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
 
-            //for (int i = 1; i <= Allcolumns; i++)
-            //{
-            //    for (int i1 = 1; i1 <= AllRows; i1++)
-            //    {
-            //        if (ORG[i1, i] != null && FunC.IsNumber(ORG[i1, i].ToString()))
-            //        {
-            //            //if(Math.Abs(double.Parse(ORG[i1, i].ToString())) < 0.00000001d)
-            //            //{
-            //            //    NRG[i1 - 1, i - 1] = 0;
-            //            //}
-            //            //else
-            //            //{
-            //            //    NRG[i1 - 1, i - 1] = -double.Parse(ORG[i1, i].ToString());
-            //            //}
-            //        }
-            //    }
-            //}
+            ORG = rg.Formula;
+            Allcolumns = ORG.GetLength(1);
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            AllRows = Math.Min(AllRows, ORG.GetLength(0));
+            NRG = new object[AllRows, Allcolumns];
 
-            ////赋值
-            //WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+            for (int i = 1; i <= Allcolumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    if (ORG[i1, i] != null && FunC.IsNumber(ORG[i1, i].ToString()))
+                    {
+                        if (Math.Abs(double.Parse(ORG[i1, i].ToString())) < 0.00000001d)
+                        {
+                            NRG[i1 - 1, i - 1] = 0;
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = -double.Parse(ORG[i1, i].ToString());
+                        }
+                    }
+                }
+            }
 
-            //ORG = null;
-            //NRG = null;
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORG = null;
+            NRG = null;
         }
 
         //检查非数字单元格

@@ -959,6 +959,80 @@ namespace HertZ_ExcelAddIn
             ExcelApp.ScreenUpdating = true;//打开屏幕刷新
         }
 
+        /// <summary>
+        /// 判断公式是否需要增加括号
+        /// </summary>
+        /// <param name="FormulaStr"></param>
+        /// <returns></returns>
+        public bool AddParen(string FormulaStr)
+        {
+            bool returnValue = true;
+            string headStr;
+            string InAParenStr;
+            int TempInt = FormulaStr.IndexOf("(");
+
+            if (FormulaStr.Substring(0,2) == "=-")
+            {
+                headStr = FormulaStr.Substring(0, 2);
+                FormulaStr = FormulaStr.Substring(2);
+            }
+            else
+            {
+                headStr = "=";
+                FormulaStr = FormulaStr.Substring(1);
+            }
+
+            //如果包含括号
+            if (TempInt != -1)
+            {
+                int StartInt = 0;
+                //取去掉最外层括号的值
+                InAParenStr = FormulaStr.Substring(TempInt + 1, FormulaStr.LastIndexOf(")")- TempInt - 1);
+                
+                //如果内侧括号不能成对出现，就加括号
+                foreach(char c in InAParenStr)
+                {
+                    if (c == '(') { StartInt += 1; }
+                    else if (c == ')')
+                    {
+                        if (StartInt == 0) { return true; }
+                        else { StartInt -= 1; }
+                    }
+                }
+
+                //第一个左括号前的字符串
+                if(TempInt != 0) 
+                { 
+                    InAParenStr = FormulaStr.Substring(0, TempInt);
+                    if (InAParenStr.IndexOf("+") != -1 || InAParenStr.IndexOf("-") != -1)
+                    {
+                        returnValue = true;
+                    }
+                }
+
+                //最后一个右括号后的字符串
+                TempInt = FormulaStr.LastIndexOf(")");
+                if (TempInt != FormulaStr.Length-1)
+                {
+                    InAParenStr = FormulaStr.Substring(TempInt+1);
+                    if (InAParenStr.IndexOf("+") != -1 || InAParenStr.IndexOf("-") != -1)
+                    {
+                        returnValue = true;
+                    }
+                }
+
+            }
+            else
+            {
+                if (FormulaStr.IndexOf("+") == -1 && FormulaStr.IndexOf("-") == -1)
+                {
+                    returnValue = false;
+                }
+            }
+
+            return returnValue;
+        }
+
         //希尔排序，未完成
         public object[,] OrderBy(object[,] OriginalArr, int i)
         {
