@@ -966,28 +966,26 @@ namespace HertZ_ExcelAddIn
         /// <returns></returns>
         public bool AddParen(string FormulaStr)
         {
-            bool returnValue = true;
-            string headStr;
+            bool returnValue = false;
             string InAParenStr;
-            int TempInt = FormulaStr.IndexOf("(");
 
             if (FormulaStr.Substring(0,2) == "=-")
             {
-                headStr = FormulaStr.Substring(0, 2);
                 FormulaStr = FormulaStr.Substring(2);
             }
             else
             {
-                headStr = "=";
                 FormulaStr = FormulaStr.Substring(1);
             }
+
+            int TempInt = FormulaStr.IndexOf("(");
 
             //如果包含括号
             if (TempInt != -1)
             {
                 int StartInt = 0;
                 //取去掉最外层括号的值
-                InAParenStr = FormulaStr.Substring(TempInt + 1, FormulaStr.LastIndexOf(")")- TempInt - 1);
+                InAParenStr = FormulaStr.Substring(TempInt+1, FormulaStr.LastIndexOf(")")- TempInt-1);
                 
                 //如果内侧括号不能成对出现，就加括号
                 foreach(char c in InAParenStr)
@@ -1006,7 +1004,7 @@ namespace HertZ_ExcelAddIn
                     InAParenStr = FormulaStr.Substring(0, TempInt);
                     if (InAParenStr.IndexOf("+") != -1 || InAParenStr.IndexOf("-") != -1)
                     {
-                        returnValue = true;
+                        return true;
                     }
                 }
 
@@ -1017,16 +1015,17 @@ namespace HertZ_ExcelAddIn
                     InAParenStr = FormulaStr.Substring(TempInt+1);
                     if (InAParenStr.IndexOf("+") != -1 || InAParenStr.IndexOf("-") != -1)
                     {
-                        returnValue = true;
+                        return true;
                     }
                 }
 
             }
             else
             {
-                if (FormulaStr.IndexOf("+") == -1 && FormulaStr.IndexOf("-") == -1)
+                //如果出现加减运算就加括号
+                if (FormulaStr.IndexOf("+") != -1 || FormulaStr.IndexOf("-") != -1)
                 {
-                    returnValue = false;
+                    return true;
                 }
             }
 

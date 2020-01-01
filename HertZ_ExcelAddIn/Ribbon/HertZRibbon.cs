@@ -2033,7 +2033,15 @@ namespace HertZ_ExcelAddIn
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
             //读取选中区域
-            Excel.Range rg = ExcelApp.Selection;
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
             if(rg.Count == 1) { return; }
             ORG = rg.Value2;
 
@@ -2280,59 +2288,145 @@ namespace HertZ_ExcelAddIn
         //修改正负号
         private void ChangeSign_Click(object sender, RibbonControlEventArgs e)
         {
-            int AllRows;
-            int Allcolumns;
-            object[,] ORG;//原始数组ORG
-            object[,] NRG;//新数组NRG
-            string TempStr;
-
             ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
+            string TempStr;
+
             //读取选中区域
-            Excel.Range rg = ExcelApp.Selection;
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
 
             //如果只选中一个单元格
             if (rg.Count == 1)
             {
-                if (rg.Value2 != null && rg.Text != "0" && FunC.IsNumber(rg.Text))
+                if (rg.Text != null && rg.Text != "0" && FunC.IsNumber(rg.Text))
                 {
                     TempStr = rg.Formula;
                     if (TempStr.Substring(0, 1) == "=")
                     {
-
+                        if (FunC.AddParen(TempStr))
+                        {
+                            rg.Formula = "=-(" + TempStr.Substring(1) + ")";
+                        }
+                        else
+                        {
+                            if(TempStr.Substring(1, 1) == "-")
+                            {
+                                if(TempStr.Substring(2, 1) == "(" && TempStr.Substring(TempStr.Length -1) == ")")
+                                {
+                                    try
+                                    {
+                                        rg.Formula = "=" + TempStr.Substring(3, TempStr.Length - 4);
+                                    }
+                                    catch
+                                    {
+                                        rg.Formula = "=" + TempStr.Substring(2);
+                                    }
+                                }
+                                else
+                                {
+                                    rg.Formula = "=" + TempStr.Substring(2);
+                                }
+                            }
+                            else
+                            {
+                                rg.Formula = "=-" + TempStr.Substring(1);
+                            }
+                        }
                     }
                     else
                     {
                         rg.Value2 = -double.Parse(rg.Text);
                     }
                 }
-                else
-                {
-                    return;
-                }
+                return;
             }
 
-            ORG = rg.Formula;
-            Allcolumns = ORG.GetLength(1);
+            //如果选中了一个区域
+            int AllRows;
+            int Allcolumns;
+            object[,] ORGf;//原始数组ORGf 读取公式
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGf = rg.Formula;
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            Allcolumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column))+10);//坑
+            Allcolumns = Math.Min(Allcolumns, ORGv.GetLength(1));
+
+            //限制行数
+
             AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
-            AllRows = Math.Min(AllRows, ORG.GetLength(0));
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+
+            //定义新数组
             NRG = new object[AllRows, Allcolumns];
 
             for (int i = 1; i <= Allcolumns; i++)
             {
                 for (int i1 = 1; i1 <= AllRows; i1++)
                 {
-                    if (ORG[i1, i] != null && FunC.IsNumber(ORG[i1, i].ToString()))
+                    //如果非空且是数字
+                    if (ORGv[i1, i] != null && FunC.IsNumber(ORGv[i1, i].ToString()))
                     {
-                        if (Math.Abs(double.Parse(ORG[i1, i].ToString())) < 0.00000001d)
+                        if (Math.Abs(double.Parse(ORGv[i1, i].ToString())) < PRECISION)
                         {
-                            NRG[i1 - 1, i - 1] = 0;
+                            NRG[i1 - 1, i - 1] = ORGf[i1, i];
                         }
                         else
                         {
-                            NRG[i1 - 1, i - 1] = -double.Parse(ORG[i1, i].ToString());
+                            TempStr = ORGf[i1, i].ToString();
+                            if (TempStr.Substring(0,1) == "=")
+                            {
+                                if(FunC.AddParen(TempStr))
+                                {
+                                    NRG[i1 - 1, i - 1] = "=-(" + TempStr.Substring(1) + ")";
+                                }
+                                else
+                                {
+                                    if (TempStr.Substring(1, 1) == "-")
+                                    {
+                                        if (TempStr.Substring(2, 1) == "(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                                        {
+                                            try
+                                            {
+                                                NRG[i1 - 1, i - 1] = "=" + TempStr.Substring(3, TempStr.Length - 4);
+                                            }
+                                            catch
+                                            {
+                                                NRG[i1 - 1, i - 1] = "=" + TempStr.Substring(2);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            NRG[i1 - 1, i - 1] = "=" + TempStr.Substring(2);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        NRG[i1 - 1, i - 1] = "=-" + TempStr.Substring(1);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                NRG[i1 - 1, i - 1] = -double.Parse(ORGv[i1, i].ToString());
+                            }
                         }
+                    }
+                    else
+                    {
+                        NRG[i1 - 1, i - 1] = ORGf[i1, i];
                     }
                 }
             }
@@ -2340,7 +2434,343 @@ namespace HertZ_ExcelAddIn
             //赋值
             WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
 
-            ORG = null;
+            ORGf = null;
+            ORGv = null;
+            NRG = null;
+        }
+
+        //加Round
+        private void RoundButton_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Round中读取配置名为Num的值，默认为2
+            int RoundNum = clsConfig.ReadConfig<int>("Round", "Num", 2);
+
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            string TempStr;
+            string HeadStr;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //改选区格式
+            TempStr = "#,##0.00";
+            if (RoundNum > 2) 
+            { 
+                for(int i =3;i<= RoundNum; i++)
+                {
+                    TempStr += "0";
+                }
+            }
+            rg.NumberFormatLocal = TempStr;
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Text != null && FunC.IsNumber(rg.Text))
+                {
+                    TempStr = rg.Formula;
+                    if (TempStr.Substring(0, 1) == "=")
+                    {
+                        if (FunC.AddParen(TempStr))
+                        {
+                            rg.Formula = "=ROUND(" + TempStr.Substring(1) + ","+ RoundNum + ")";
+                        }
+                        else
+                        {
+                            if (TempStr.Substring(0, 2) == "=-")
+                            {
+                                TempStr = TempStr.Substring(2);
+                                HeadStr = "=-";
+                            }
+                            else
+                            {
+                                TempStr = TempStr.Substring(1);
+                                HeadStr = "=";
+                            }
+
+                            if (TempStr.Substring(0, 1) == "(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                            {
+                                rg.Formula = HeadStr + "ROUND" + TempStr.Substring(0,TempStr.Length-1) + "," + RoundNum + ")";
+                            }
+                            else if (TempStr.Length > 6 && TempStr.Substring(0, 6) == "ROUND(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                            {
+                                rg.Formula = HeadStr + TempStr.Substring(0, TempStr.LastIndexOf(',') + 1) + RoundNum + ")";
+                            }
+                            else
+                            {
+                                rg.Formula = HeadStr + "ROUND(" + TempStr + "," + RoundNum + ")";
+                            }
+                            
+                        }
+                    }
+                    else
+                    {
+                        rg.Value2 = "=ROUND(" + rg.Formula+ "," + RoundNum + ")";
+                    }
+                }
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int Allcolumns;
+            object[,] ORGf;//原始数组ORGf 读取公式
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGf = rg.Formula;
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            Allcolumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10);//坑
+            Allcolumns = Math.Min(Allcolumns, ORGv.GetLength(1));
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+
+            //定义新数组
+            NRG = new object[AllRows, Allcolumns];
+
+            for (int i = 1; i <= Allcolumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    //如果非空且是数字
+                    if (ORGv[i1, i] != null && FunC.IsNumber(ORGv[i1, i].ToString()))
+                    {
+                        TempStr = ORGf[i1, i].ToString();
+                        if (TempStr.Substring(0, 1) == "=")
+                        {
+
+                            if (FunC.AddParen(TempStr))
+                            {
+                                NRG[i1 - 1, i - 1] = "=ROUND(" + TempStr.Substring(1) + "," + RoundNum + ")";
+                            }
+                            else
+                            {
+                                if (TempStr.Substring(0, 2) == "=-")
+                                {
+                                    TempStr = TempStr.Substring(2);
+                                    HeadStr = "=-";
+                                }
+                                else
+                                {
+                                    TempStr = TempStr.Substring(1);
+                                    HeadStr = "=";
+                                }
+
+                                if (TempStr.Substring(0, 1) == "(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                                {
+                                    NRG[i1 - 1, i - 1] = HeadStr + "ROUND" + TempStr.Substring(0, TempStr.Length - 1) + "," + RoundNum + ")";
+                                }
+                                else if (TempStr.Length > 6 && TempStr.Substring(0, 6) == "ROUND(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                                {
+                                    NRG[i1 - 1, i - 1] = HeadStr + TempStr.Substring(0, TempStr.LastIndexOf(',') + 1) + RoundNum + ")";
+                                }
+                                else
+                                {
+                                    NRG[i1 - 1, i - 1] = HeadStr + "ROUND(" + TempStr + "," + RoundNum + ")";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = "=ROUND(" + TempStr + "," + RoundNum + ")"; 
+                        }
+                    }
+                    else
+                    {
+                        NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGf = null;
+            ORGv = null;
+            NRG = null;
+        }
+
+        //设置小数位数
+        private void RoundSetting_Click(object sender, RibbonControlEventArgs e)
+        {
+            Form RoundSetting = new RoundSetting
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            RoundSetting.Show();
+        }
+
+        //去除Round函数
+        private void NoRound_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            string TempStr;
+            string HeadStr;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Text != null && FunC.IsNumber(rg.Text))
+                {
+                    TempStr = rg.Formula;
+                    if (TempStr.Substring(0, 1) == "=")
+                    {
+                        if (!FunC.AddParen(TempStr))
+                        {
+                            if (TempStr.Substring(0, 2) == "=-")
+                            {
+                                TempStr = TempStr.Substring(2);
+                                HeadStr = "=-";
+                            }
+                            else
+                            {
+                                TempStr = TempStr.Substring(1);
+                                HeadStr = "=";
+                            }
+
+                            if (TempStr.Length > 6 && TempStr.Substring(0, 6) == "ROUND(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                            {
+                                TempStr = TempStr.Substring(6, TempStr.LastIndexOf(',')-6);
+                                if (FunC.IsNumber(TempStr))
+                                {
+                                    rg.Value2 = TempStr;
+                                }
+                                else
+                                {
+                                    if (FunC.AddParen("=" + TempStr) && HeadStr == "=-")
+                                    {
+                                        rg.Formula = HeadStr + "(" + TempStr + ")";
+                                    }
+                                    else
+                                    {
+                                        rg.Formula = HeadStr + TempStr;
+                                    }
+                                    rg.Formula = HeadStr + TempStr;
+                                }
+                            }
+                        }
+                    }
+                }
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int Allcolumns;
+            object[,] ORGf;//原始数组ORGf 读取公式
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGf = rg.Formula;
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            Allcolumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10);//坑
+            Allcolumns = Math.Min(Allcolumns, ORGv.GetLength(1));
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+
+            //定义新数组
+            NRG = new object[AllRows, Allcolumns];
+
+            for (int i = 1; i <= Allcolumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    //如果非空且是数字
+                    if (ORGv[i1, i] != null && FunC.IsNumber(ORGv[i1, i].ToString()))
+                    {
+                        TempStr = ORGf[i1, i].ToString();
+                        if (TempStr.Substring(0, 1) == "=" && !FunC.AddParen(TempStr))
+                        {
+                            if (TempStr.Substring(0, 2) == "=-")
+                            {
+                                TempStr = TempStr.Substring(2);
+                                HeadStr = "=-";
+                            }
+                            else
+                            {
+                                TempStr = TempStr.Substring(1);
+                                HeadStr = "=";
+                            }
+
+                            if (TempStr.Length > 6 && TempStr.Substring(0, 6) == "ROUND(" && TempStr.Substring(TempStr.Length - 1) == ")")
+                            {
+                                TempStr = TempStr.Substring(6, TempStr.LastIndexOf(',') - 6);
+                                if (FunC.IsNumber(TempStr))
+                                {
+                                    NRG[i1 - 1, i - 1] = TempStr;
+                                }
+                                else
+                                {
+                                    if(FunC.AddParen("=" + TempStr) && HeadStr == "=-")
+                                    {
+                                        NRG[i1 - 1, i - 1] = HeadStr +"("+ TempStr+")";
+                                    }
+                                    else
+                                    {
+                                        NRG[i1 - 1, i - 1] = HeadStr + TempStr;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                            }
+                            
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                        }
+                    }
+                    else
+                    {
+                        NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGf = null;
+            ORGv = null;
             NRG = null;
         }
 

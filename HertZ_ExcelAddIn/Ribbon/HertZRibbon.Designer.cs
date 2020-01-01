@@ -36,6 +36,9 @@
         {
             this.HertZTab = this.Factory.CreateRibbonTab();
             this.TableProcessing = this.Factory.CreateRibbonGroup();
+            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
+            this.Tool = this.Factory.CreateRibbonGroup();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.BalanceAndJournal = this.Factory.CreateRibbonMenu();
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
@@ -48,15 +51,15 @@
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
-            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
-            this.Tool = this.Factory.CreateRibbonGroup();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.Exportxlsx = this.Factory.CreateRibbonButton();
+            this.ChangeSign = this.Factory.CreateRibbonButton();
+            this.RoundButton = this.Factory.CreateRibbonSplitButton();
+            this.RoundSetting = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
-            this.ChangeSign = this.Factory.CreateRibbonSplitButton();
+            this.NoRound = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -79,6 +82,31 @@
             this.TableProcessing.Items.Add(this.CheckBAJ);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
+            // 
+            // CheckBAJ
+            // 
+            this.CheckBAJ.Label = "看 账";
+            this.CheckBAJ.Name = "CheckBAJ";
+            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
+            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
+            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.AutoFillInTheBlanks);
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Items.Add(this.Exportxlsx);
+            this.Tool.Items.Add(this.ChangeSign);
+            this.Tool.Items.Add(this.RoundButton);
+            this.Tool.Items.Add(this.CheckNum);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
+            // VersionGroup
+            // 
+            this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Label = "更多";
+            this.VersionGroup.Name = "VersionGroup";
             // 
             // BalanceAndJournal
             // 
@@ -212,24 +240,6 @@
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
-            // CheckBAJ
-            // 
-            this.CheckBAJ.Label = "看 账";
-            this.CheckBAJ.Name = "CheckBAJ";
-            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
-            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
-            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
-            // 
-            // Tool
-            // 
-            this.Tool.Items.Add(this.AutoFillInTheBlanks);
-            this.Tool.Items.Add(this.CompareTwoColumns);
-            this.Tool.Items.Add(this.Exportxlsx);
-            this.Tool.Items.Add(this.ChangeSign);
-            this.Tool.Items.Add(this.CheckNum);
-            this.Tool.Label = "实用工具";
-            this.Tool.Name = "Tool";
-            // 
             // AutoFillInTheBlanks
             // 
             this.AutoFillInTheBlanks.Label = "填充空行";
@@ -258,6 +268,34 @@
             this.Exportxlsx.ShowImage = true;
             this.Exportxlsx.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.Exportxlsx_Click);
             // 
+            // ChangeSign
+            // 
+            this.ChangeSign.Label = "正负转换";
+            this.ChangeSign.Name = "ChangeSign";
+            this.ChangeSign.OfficeImageId = "PivotPlusMinusButtonsShowHide";
+            this.ChangeSign.ScreenTip = "改变所选单元格内容的正负号";
+            this.ChangeSign.ShowImage = true;
+            this.ChangeSign.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ChangeSign_Click);
+            // 
+            // RoundButton
+            // 
+            this.RoundButton.Items.Add(this.RoundSetting);
+            this.RoundButton.Items.Add(this.NoRound);
+            this.RoundButton.Label = "小数";
+            this.RoundButton.Name = "RoundButton";
+            this.RoundButton.OfficeImageId = "R";
+            this.RoundButton.ScreenTip = "为所选内容加Round";
+            this.RoundButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RoundButton_Click);
+            // 
+            // RoundSetting
+            // 
+            this.RoundSetting.Label = "设置";
+            this.RoundSetting.Name = "RoundSetting";
+            this.RoundSetting.OfficeImageId = "AddInManager";
+            this.RoundSetting.ScreenTip = "设置保留的小数位数";
+            this.RoundSetting.ShowImage = true;
+            this.RoundSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RoundSetting_Click);
+            // 
             // CheckNum
             // 
             this.CheckNum.Label = "检查数字";
@@ -266,12 +304,6 @@
             this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
             this.CheckNum.ShowImage = true;
             this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
-            // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Items.Add(this.VersionInfo);
-            this.VersionGroup.Label = "更多";
-            this.VersionGroup.Name = "VersionGroup";
             // 
             // VersionInfo
             // 
@@ -283,14 +315,13 @@
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
             // 
-            // ChangeSign
+            // NoRound
             // 
-            this.ChangeSign.Label = "正负";
-            this.ChangeSign.Name = "ChangeSign";
-            this.ChangeSign.OfficeImageId = "PivotPlusMinusButtonsShowHide";
-            this.ChangeSign.ScreenTip = "小熊加班加点开发ing";
-            this.ChangeSign.SuperTip = "改变所选内容的正负号";
-            this.ChangeSign.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ChangeSign_Click);
+            this.NoRound.Label = "去Round";
+            this.NoRound.Name = "NoRound";
+            this.NoRound.ScreenTip = "去除所选单元格的Round函数";
+            this.NoRound.ShowImage = true;
+            this.NoRound.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NoRound_Click);
             // 
             // HertZRibbon
             // 
@@ -334,7 +365,10 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton OffsetBalance;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton AutoFillInTheBlanks;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton Exportxlsx;
-        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton ChangeSign;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ChangeSign;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton RoundButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton RoundSetting;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton NoRound;
     }
 
     partial class ThisRibbonCollection
