@@ -60,6 +60,8 @@
             this.VersionInfo = this.Factory.CreateRibbonButton();
             this.NoRound = this.Factory.CreateRibbonButton();
             this.DateFormate = this.Factory.CreateRibbonButton();
+            this.TenThousand = this.Factory.CreateRibbonSplitButton();
+            this.NoTenThousand = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -98,6 +100,7 @@
             this.Tool.Items.Add(this.Exportxlsx);
             this.Tool.Items.Add(this.ChangeSign);
             this.Tool.Items.Add(this.RoundButton);
+            this.Tool.Items.Add(this.TenThousand);
             this.Tool.Items.Add(this.CheckNum);
             this.Tool.Items.Add(this.DateFormate);
             this.Tool.Label = "实用工具";
@@ -324,6 +327,24 @@
             this.DateFormate.ShowImage = true;
             this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
             // 
+            // TenThousand
+            // 
+            this.TenThousand.Items.Add(this.NoTenThousand);
+            this.TenThousand.Label = "万元";
+            this.TenThousand.Name = "TenThousand";
+            this.TenThousand.OfficeImageId = "T";
+            this.TenThousand.ScreenTip = "将所选区域单元格内容除以一万";
+            this.TenThousand.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TenThousand_Click);
+            // 
+            // NoTenThousand
+            // 
+            this.NoTenThousand.Label = "乘一万";
+            this.NoTenThousand.Name = "NoTenThousand";
+            this.NoTenThousand.OfficeImageId = "Delete";
+            this.NoTenThousand.ScreenTip = "去除万元格式的公式";
+            this.NoTenThousand.ShowImage = true;
+            this.NoTenThousand.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NoTenThousand_Click);
+            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -370,6 +391,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton RoundSetting;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton NoRound;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton DateFormate;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton TenThousand;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton NoTenThousand;
     }
 
     partial class ThisRibbonCollection

@@ -43,7 +43,7 @@ namespace HertZ_ExcelAddIn
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
             string msg = "HertZ_ExcelAddin已更新" + Environment.NewLine + "当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "新增功能：正负转换、Round、去Round、日期格式");
+            MessageBox.Show(msg + "新增功能：正负转换、Round、去Round、日期格式和万元格式");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

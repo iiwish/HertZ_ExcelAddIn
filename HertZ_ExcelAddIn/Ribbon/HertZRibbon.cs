@@ -2853,6 +2853,273 @@ namespace HertZ_ExcelAddIn
             }
         }
 
+        //万元格式
+        private void TenThousand_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            string TempStr;
+            string HeadStr;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Text != null && FunC.IsNumber(rg.Text))
+                {
+                    TempStr = rg.Formula;
+                    if (TempStr.Substring(0, 1) == "=")
+                    {
+                        if (!FunC.AddParen(TempStr))
+                        {
+                            rg.Formula = TempStr + "/10000";
+                        }
+                        else
+                        {
+                            rg.Formula = "=(" + TempStr.Substring(1) + ")/10000";
+                        }
+                    }
+                    else
+                    {
+                        if(rg.Text != "0") { rg.Formula = double.Parse(TempStr) / 10000; }
+                    }
+                }
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGf;//原始数组ORGf 读取公式
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGf = rg.Formula;
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            //定义新数组
+            NRG = new object[AllRows, AllColumns];
+
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    //如果非空且是数字
+                    if (ORGv[i1, i] != null  && FunC.IsNumber(ORGv[i1, i].ToString()))
+                    {
+                        TempStr = ORGf[i1, i].ToString();
+                        if (TempStr.Substring(0, 1) == "=")
+                        {
+                            if (!FunC.AddParen(TempStr))
+                            {
+                                NRG[i1 - 1, i - 1] = TempStr + "/10000";
+                            }
+                            else
+                            {
+                                NRG[i1 - 1, i - 1] = "=(" + TempStr.Substring(1) + ")/10000";
+                            }
+                        }
+                        else
+                        {
+                            if(ORGv[i1, i].ToString() != "0")
+                            {
+                                NRG[i1 - 1, i - 1] = double.Parse(ORGv[i1, i].ToString()) / 10000;
+                            }
+                            else
+                            {
+                                NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGf = null;
+            ORGv = null;
+            NRG = null;
+        }
+
+        //乘一万，去除万元格式
+        private void NoTenThousand_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            string TempStr;
+            string HeadStr;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Text != null && FunC.IsNumber(rg.Text))
+                {
+                    TempStr = rg.Formula;
+                    if (TempStr.Substring(0, 1) == "=")
+                    {
+                        if (!FunC.AddParen(TempStr))
+                        {
+                            if(TempStr.Length > 7 && TempStr.Substring(TempStr.Length-6) == "/10000")
+                            {
+                                if(TempStr.Substring(1,1) == "(" && TempStr.Substring(TempStr.Length - 7, 1) == ")")
+                                {
+                                    rg.Formula = "=" + TempStr.Substring(2, TempStr.Length - 9);
+                                }
+                                else
+                                {
+                                    TempStr = TempStr.Substring(0, TempStr.Length - 6);
+                                    if (FunC.IsNumber(TempStr.Substring(1)))
+                                    {
+                                        rg.Formula = TempStr.Substring(1);
+                                    }
+                                    else
+                                    {
+                                        rg.Formula = TempStr;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                rg.Formula = TempStr + "*10000";
+                            }
+                        }
+                        else
+                        {
+                            rg.Formula = "=(" + TempStr.Substring(1) + ")*10000";
+                        }
+                    }
+                    else
+                    {
+                        rg.Formula = double.Parse(TempStr) * 10000;
+                    }
+                }
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGf;//原始数组ORGf 读取公式
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGf = rg.Formula;
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            //定义新数组
+            NRG = new object[AllRows, AllColumns];
+
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    //如果非空且是数字
+                    if (ORGv[i1, i] != null  && FunC.IsNumber(ORGv[i1, i].ToString()))
+                    {
+                        TempStr = ORGf[i1, i].ToString();
+                        if (TempStr.Substring(0, 1) == "=")
+                        {
+                            if (!FunC.AddParen(TempStr))
+                            {
+                                if (TempStr.Length > 7 && TempStr.Substring(TempStr.Length - 6) == "/10000")
+                                {
+                                    if (TempStr.Substring(1, 1) == "(" && TempStr.Substring(TempStr.Length - 7, 1) == ")")
+                                    {
+                                        NRG[i1 - 1, i - 1] = "=" + TempStr.Substring(2, TempStr.Length - 9);
+                                    }
+                                    else
+                                    {
+                                        TempStr = TempStr.Substring(0, TempStr.Length - 6);
+                                        if (FunC.IsNumber(TempStr.Substring(1)))
+                                        {
+                                            NRG[i1 - 1, i - 1] = TempStr.Substring(1);
+                                        }
+                                        else
+                                        {
+                                            NRG[i1 - 1, i - 1] = TempStr;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    NRG[i1 - 1, i - 1] = TempStr + "*10000";
+                                }
+                            }
+                            else
+                            {
+                                NRG[i1 - 1, i - 1] = "=(" + TempStr.Substring(1) + ")*10000";
+                            }
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = double.Parse(ORGv[i1, i].ToString()) * 10000;
+                        }
+                    }
+                    else
+                    {
+                        NRG[i1 - 1, i - 1] = ORGf[i1, i];
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGf = null;
+            ORGv = null;
+            NRG = null;
+        }
+
         //版本信息
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
         {
