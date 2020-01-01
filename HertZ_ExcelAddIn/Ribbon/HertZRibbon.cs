@@ -2024,7 +2024,7 @@ namespace HertZ_ExcelAddIn
         private void AutoFillInTheBlanks_Click(object sender, RibbonControlEventArgs e)
         {
             int AllRows;
-            int Allcolumns;
+            int AllColumns;
             int StartColumn;
             object[,] ORG;//原始数组ORG
             object[,] NRG;//新数组NRG
@@ -2046,16 +2046,19 @@ namespace HertZ_ExcelAddIn
             ORG = rg.Value2;
 
             //限制列数，防止选择整行时多余的计算
-            Allcolumns = ORG.GetLength(1);
-            Allcolumns = Math.Min(Allcolumns, FunC.AllColumns(rg.Row));
+            AllColumns = ORG.GetLength(1);
+            AllColumns = Math.Min(AllColumns, FunC.AllColumns(rg.Row) - rg.Column + 1);
+            AllColumns = Math.Max(1, AllColumns);
 
             //取所选区域的前后3列最大行数
             StartColumn = Math.Max(1, rg.Column - 3);
-            AllRows = FunC.AllRows(FunC.CName(StartColumn), Allcolumns + 6);
+            AllRows = FunC.AllRows(FunC.CName(StartColumn), AllColumns + 6) - rg.Row +1;
             AllRows = Math.Min(AllRows, ORG.GetLength(0));
-            NRG = new object[AllRows, Allcolumns];
+            AllRows = Math.Max(1, AllRows);
 
-            for(int i = 1; i <= Allcolumns; i++)
+            NRG = new object[AllRows, AllColumns];
+
+            for(int i = 1; i <= AllColumns; i++)
             {
                 NRG[0, i - 1] = ORG[1, i];
                 for (int i1 = 2; i1 <= AllRows; i1++)
@@ -2072,7 +2075,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //赋值
-            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
 
             ORG = null;
             NRG = null;
@@ -2352,7 +2355,7 @@ namespace HertZ_ExcelAddIn
 
             //如果选中了一个区域
             int AllRows;
-            int Allcolumns;
+            int AllColumns;
             object[,] ORGf;//原始数组ORGf 读取公式
             object[,] ORGv;//原始数组ORGv 读取值
             object[,] NRG;//新数组NRG
@@ -2361,18 +2364,19 @@ namespace HertZ_ExcelAddIn
             ORGv = rg.Value2;
 
             //限制列数，防止选择整行时多余的计算
-            Allcolumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column))+10);//坑
-            Allcolumns = Math.Min(Allcolumns, ORGv.GetLength(1));
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column))+10) - rg.Column +1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
 
             //限制行数
-
-            AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row +1;
             AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
 
             //定义新数组
-            NRG = new object[AllRows, Allcolumns];
+            NRG = new object[AllRows, AllColumns];
 
-            for (int i = 1; i <= Allcolumns; i++)
+            for (int i = 1; i <= AllColumns; i++)
             {
                 for (int i1 = 1; i1 <= AllRows; i1++)
                 {
@@ -2432,7 +2436,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //赋值
-            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
 
             ORGf = null;
             ORGv = null;
@@ -2527,7 +2531,7 @@ namespace HertZ_ExcelAddIn
 
             //如果选中了一个区域
             int AllRows;
-            int Allcolumns;
+            int AllColumns;
             object[,] ORGf;//原始数组ORGf 读取公式
             object[,] ORGv;//原始数组ORGv 读取值
             object[,] NRG;//新数组NRG
@@ -2536,18 +2540,19 @@ namespace HertZ_ExcelAddIn
             ORGv = rg.Value2;
 
             //限制列数，防止选择整行时多余的计算
-            Allcolumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10);//坑
-            Allcolumns = Math.Min(Allcolumns, ORGv.GetLength(1));
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column +1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
 
             //限制行数
-
-            AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns)- rg.Row+1;
             AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
 
             //定义新数组
-            NRG = new object[AllRows, Allcolumns];
+            NRG = new object[AllRows, AllColumns];
 
-            for (int i = 1; i <= Allcolumns; i++)
+            for (int i = 1; i <= AllColumns; i++)
             {
                 for (int i1 = 1; i1 <= AllRows; i1++)
                 {
@@ -2602,7 +2607,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //赋值
-            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
 
             ORGf = null;
             ORGv = null;
@@ -2665,7 +2670,14 @@ namespace HertZ_ExcelAddIn
                                 TempStr = TempStr.Substring(6, TempStr.LastIndexOf(',')-6);
                                 if (FunC.IsNumber(TempStr))
                                 {
-                                    rg.Value2 = TempStr;
+                                    if(HeadStr == "=-")
+                                    {
+                                        rg.Value2 = "-" + TempStr;
+                                    }
+                                    else
+                                    {
+                                        rg.Value2 = TempStr;
+                                    }
                                 }
                                 else
                                 {
@@ -2688,7 +2700,7 @@ namespace HertZ_ExcelAddIn
 
             //如果选中了一个区域
             int AllRows;
-            int Allcolumns;
+            int AllColumns;
             object[,] ORGf;//原始数组ORGf 读取公式
             object[,] ORGv;//原始数组ORGv 读取值
             object[,] NRG;//新数组NRG
@@ -2697,18 +2709,20 @@ namespace HertZ_ExcelAddIn
             ORGv = rg.Value2;
 
             //限制列数，防止选择整行时多余的计算
-            Allcolumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10);//坑
-            Allcolumns = Math.Min(Allcolumns, ORGv.GetLength(1));
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column+1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
 
             //限制行数
 
-            AllRows = FunC.AllRows(FunC.CName(rg.Column), Allcolumns);
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row+1;
             AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
 
             //定义新数组
-            NRG = new object[AllRows, Allcolumns];
+            NRG = new object[AllRows, AllColumns];
 
-            for (int i = 1; i <= Allcolumns; i++)
+            for (int i = 1; i <= AllColumns; i++)
             {
                 for (int i1 = 1; i1 <= AllRows; i1++)
                 {
@@ -2734,7 +2748,14 @@ namespace HertZ_ExcelAddIn
                                 TempStr = TempStr.Substring(6, TempStr.LastIndexOf(',') - 6);
                                 if (FunC.IsNumber(TempStr))
                                 {
-                                    NRG[i1 - 1, i - 1] = TempStr;
+                                    if(HeadStr == "=-")
+                                    {
+                                        NRG[i1 - 1, i - 1] = "-" + TempStr;
+                                    }
+                                    else
+                                    {
+                                        NRG[i1 - 1, i - 1] = TempStr;
+                                    }
                                 }
                                 else
                                 {
@@ -2767,7 +2788,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //赋值
-            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + Allcolumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
 
             ORGf = null;
             ORGv = null;
@@ -2788,10 +2809,48 @@ namespace HertZ_ExcelAddIn
                 }
                 return;
             }
-            object[,] ORG = rg.Value2;
-            string rgTostring = FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + ORG.GetLength(1) - 1) + (rg.Row + ORG.GetLength(0) - 1);
-            ORG = null;
+
+            //限制列数，防止选择整行时多余的计算
+            int AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, rg.Columns.Count);
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+            int AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, rg.Rows.Count);
+            AllRows = Math.Max(1, AllRows);
+
+            string rgTostring = FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns -1 ) + (rg.Row + AllRows-1);
+            rg = null;
             FunC.ColorNotNum(rgTostring);
+        }
+
+        //日期格式
+        private void DateFormate_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;//Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            Excel.Range rg = ExcelApp.Selection;
+
+            //限制列数，防止选择整行时多余的计算
+            int AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, rg.Columns.Count);
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+            int AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, rg.Rows.Count);
+            AllRows = Math.Max(1, AllRows);
+
+            int[] myField = { 1, 5 };
+            for (int i = rg.Column;i< rg.Column + AllColumns; i++)
+            {
+                try
+                {
+                    WST.Range[FunC.CName(i) + rg.Row + ":" + FunC.CName(i) + (rg.Row + AllRows - 1)].TextToColumns(DataType: Excel.XlTextParsingType.xlDelimited, TextQualifier: Excel.XlTextQualifier.xlTextQualifierDoubleQuote, ConsecutiveDelimiter: false, FieldInfo: myField, TrailingMinusNumbers: true);
+                }
+                catch{}
+            }
         }
 
         //版本信息

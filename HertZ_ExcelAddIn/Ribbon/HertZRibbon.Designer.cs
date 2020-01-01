@@ -47,7 +47,6 @@
             this.CurrentAccount = this.Factory.CreateRibbonMenu();
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
             this.AgeOfAccount = this.Factory.CreateRibbonButton();
-            this.OffsetBalance = this.Factory.CreateRibbonButton();
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
@@ -60,6 +59,7 @@
             this.CheckNum = this.Factory.CreateRibbonButton();
             this.VersionInfo = this.Factory.CreateRibbonButton();
             this.NoRound = this.Factory.CreateRibbonButton();
+            this.DateFormate = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -99,6 +99,7 @@
             this.Tool.Items.Add(this.ChangeSign);
             this.Tool.Items.Add(this.RoundButton);
             this.Tool.Items.Add(this.CheckNum);
+            this.Tool.Items.Add(this.DateFormate);
             this.Tool.Label = "实用工具";
             this.Tool.Name = "Tool";
             // 
@@ -170,7 +171,6 @@
             // 
             this.CurrentAccount.Items.Add(this.EditCurrentAccount);
             this.CurrentAccount.Items.Add(this.AgeOfAccount);
-            this.CurrentAccount.Items.Add(this.OffsetBalance);
             this.CurrentAccount.Items.Add(this.Confirmation);
             this.CurrentAccount.Items.Add(this.ConfirmationWord);
             this.CurrentAccount.Items.Add(this.CurrentAccountSetting);
@@ -200,15 +200,6 @@
             this.AgeOfAccount.ShowImage = true;
             this.AgeOfAccount.SuperTip = "需要先将上一年度往来款及账龄粘到一张表里，并将这张表放到加工完的本年度往来款表中";
             this.AgeOfAccount.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AgeOfAccount_Click);
-            // 
-            // OffsetBalance
-            // 
-            this.OffsetBalance.Label = "抵消双边挂账";
-            this.OffsetBalance.Name = "OffsetBalance";
-            this.OffsetBalance.OfficeImageId = "ReviewCombineRevisions";
-            this.OffsetBalance.ScreenTip = "小熊加班加点开发ing";
-            this.OffsetBalance.ShowImage = true;
-            this.OffsetBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OffsetBalance_Click);
             // 
             // Confirmation
             // 
@@ -319,9 +310,19 @@
             // 
             this.NoRound.Label = "去Round";
             this.NoRound.Name = "NoRound";
+            this.NoRound.OfficeImageId = "Delete";
             this.NoRound.ScreenTip = "去除所选单元格的Round函数";
             this.NoRound.ShowImage = true;
             this.NoRound.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NoRound_Click);
+            // 
+            // DateFormate
+            // 
+            this.DateFormate.Label = "日期格式";
+            this.DateFormate.Name = "DateFormate";
+            this.DateFormate.OfficeImageId = "ProposeNewTime";
+            this.DateFormate.ScreenTip = "将所选单元格规范为短日期格式";
+            this.DateFormate.ShowImage = true;
+            this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
             // 
             // HertZRibbon
             // 
@@ -362,13 +363,13 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton CheckNum;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ConfirmationWord;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox CheckBAJ;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton OffsetBalance;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton AutoFillInTheBlanks;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton Exportxlsx;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ChangeSign;
         internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton RoundButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton RoundSetting;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton NoRound;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton DateFormate;
     }
 
     partial class ThisRibbonCollection
