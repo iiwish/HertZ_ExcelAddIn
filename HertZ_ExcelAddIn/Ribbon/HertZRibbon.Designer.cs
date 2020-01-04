@@ -36,9 +36,6 @@
         {
             this.HertZTab = this.Factory.CreateRibbonTab();
             this.TableProcessing = this.Factory.CreateRibbonGroup();
-            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
-            this.Tool = this.Factory.CreateRibbonGroup();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.BalanceAndJournal = this.Factory.CreateRibbonMenu();
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
@@ -50,28 +47,40 @@
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
+            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
+            this.Tool = this.Factory.CreateRibbonGroup();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.Exportxlsx = this.Factory.CreateRibbonButton();
             this.ChangeSign = this.Factory.CreateRibbonButton();
             this.RoundButton = this.Factory.CreateRibbonSplitButton();
             this.RoundSetting = this.Factory.CreateRibbonButton();
-            this.CheckNum = this.Factory.CreateRibbonButton();
-            this.VersionInfo = this.Factory.CreateRibbonButton();
             this.NoRound = this.Factory.CreateRibbonButton();
-            this.DateFormate = this.Factory.CreateRibbonButton();
             this.TenThousand = this.Factory.CreateRibbonSplitButton();
             this.NoTenThousand = this.Factory.CreateRibbonButton();
+            this.CheckNum = this.Factory.CreateRibbonButton();
+            this.DateFormate = this.Factory.CreateRibbonButton();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
+            this.VersionInfo = this.Factory.CreateRibbonButton();
+            this.Protect = this.Factory.CreateRibbonGroup();
+            this.ProtectSheet = this.Factory.CreateRibbonButton();
+            this.ProtectBook = this.Factory.CreateRibbonButton();
+            this.ProtectRange = this.Factory.CreateRibbonButton();
+            this.UnlockBook = this.Factory.CreateRibbonButton();
+            this.UnlockSheet = this.Factory.CreateRibbonButton();
+            this.ProtectSetting = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
             this.VersionGroup.SuspendLayout();
+            this.Protect.SuspendLayout();
             this.SuspendLayout();
             // 
             // HertZTab
             // 
             this.HertZTab.Groups.Add(this.TableProcessing);
             this.HertZTab.Groups.Add(this.Tool);
+            this.HertZTab.Groups.Add(this.Protect);
             this.HertZTab.Groups.Add(this.VersionGroup);
             this.HertZTab.Label = "HertZ";
             this.HertZTab.Name = "HertZTab";
@@ -84,33 +93,6 @@
             this.TableProcessing.Items.Add(this.CheckBAJ);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
-            // 
-            // CheckBAJ
-            // 
-            this.CheckBAJ.Label = "看 账";
-            this.CheckBAJ.Name = "CheckBAJ";
-            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
-            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
-            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
-            // 
-            // Tool
-            // 
-            this.Tool.Items.Add(this.AutoFillInTheBlanks);
-            this.Tool.Items.Add(this.CompareTwoColumns);
-            this.Tool.Items.Add(this.Exportxlsx);
-            this.Tool.Items.Add(this.ChangeSign);
-            this.Tool.Items.Add(this.RoundButton);
-            this.Tool.Items.Add(this.TenThousand);
-            this.Tool.Items.Add(this.CheckNum);
-            this.Tool.Items.Add(this.DateFormate);
-            this.Tool.Label = "实用工具";
-            this.Tool.Name = "Tool";
-            // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Items.Add(this.VersionInfo);
-            this.VersionGroup.Label = "更多";
-            this.VersionGroup.Name = "VersionGroup";
             // 
             // BalanceAndJournal
             // 
@@ -234,6 +216,27 @@
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
+            // CheckBAJ
+            // 
+            this.CheckBAJ.Label = "看 账";
+            this.CheckBAJ.Name = "CheckBAJ";
+            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
+            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
+            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.AutoFillInTheBlanks);
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Items.Add(this.Exportxlsx);
+            this.Tool.Items.Add(this.ChangeSign);
+            this.Tool.Items.Add(this.RoundButton);
+            this.Tool.Items.Add(this.TenThousand);
+            this.Tool.Items.Add(this.CheckNum);
+            this.Tool.Items.Add(this.DateFormate);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
             // AutoFillInTheBlanks
             // 
             this.AutoFillInTheBlanks.Label = "填充空行";
@@ -290,25 +293,6 @@
             this.RoundSetting.ShowImage = true;
             this.RoundSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RoundSetting_Click);
             // 
-            // CheckNum
-            // 
-            this.CheckNum.Label = "检查数字";
-            this.CheckNum.Name = "CheckNum";
-            this.CheckNum.OfficeImageId = "ConditionalFormattingBottomNItems";
-            this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
-            this.CheckNum.ShowImage = true;
-            this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
-            // 
-            // VersionInfo
-            // 
-            this.VersionInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.VersionInfo.Image = global::HertZ_ExcelAddIn.Properties.Resources.HertZ_Logo;
-            this.VersionInfo.Label = "版本信息";
-            this.VersionInfo.Name = "VersionInfo";
-            this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
-            this.VersionInfo.ShowImage = true;
-            this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
-            // 
             // NoRound
             // 
             this.NoRound.Label = "去Round";
@@ -317,15 +301,6 @@
             this.NoRound.ScreenTip = "去除所选单元格的Round函数";
             this.NoRound.ShowImage = true;
             this.NoRound.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NoRound_Click);
-            // 
-            // DateFormate
-            // 
-            this.DateFormate.Label = "日期格式";
-            this.DateFormate.Name = "DateFormate";
-            this.DateFormate.OfficeImageId = "ProposeNewTime";
-            this.DateFormate.ScreenTip = "将所选单元格规范为短日期格式";
-            this.DateFormate.ShowImage = true;
-            this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
             // 
             // TenThousand
             // 
@@ -345,6 +320,105 @@
             this.NoTenThousand.ShowImage = true;
             this.NoTenThousand.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NoTenThousand_Click);
             // 
+            // CheckNum
+            // 
+            this.CheckNum.Label = "检查数字";
+            this.CheckNum.Name = "CheckNum";
+            this.CheckNum.OfficeImageId = "ConditionalFormattingBottomNItems";
+            this.CheckNum.ScreenTip = "检查所选单元格是否都是数字，用黄色标注非数字单元格";
+            this.CheckNum.ShowImage = true;
+            this.CheckNum.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckNum_Click);
+            // 
+            // DateFormate
+            // 
+            this.DateFormate.Label = "日期格式";
+            this.DateFormate.Name = "DateFormate";
+            this.DateFormate.OfficeImageId = "ProposeNewTime";
+            this.DateFormate.ScreenTip = "将所选单元格规范为短日期格式";
+            this.DateFormate.ShowImage = true;
+            this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
+            // 
+            // VersionGroup
+            // 
+            this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Label = "更多";
+            this.VersionGroup.Name = "VersionGroup";
+            // 
+            // VersionInfo
+            // 
+            this.VersionInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.VersionInfo.Image = global::HertZ_ExcelAddIn.Properties.Resources.HertZ_Logo;
+            this.VersionInfo.Label = "版本信息";
+            this.VersionInfo.Name = "VersionInfo";
+            this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
+            this.VersionInfo.ShowImage = true;
+            this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
+            // 
+            // Protect
+            // 
+            this.Protect.Items.Add(this.ProtectBook);
+            this.Protect.Items.Add(this.ProtectSheet);
+            this.Protect.Items.Add(this.ProtectRange);
+            this.Protect.Items.Add(this.UnlockBook);
+            this.Protect.Items.Add(this.UnlockSheet);
+            this.Protect.Items.Add(this.ProtectSetting);
+            this.Protect.Label = "保护";
+            this.Protect.Name = "Protect";
+            // 
+            // ProtectSheet
+            // 
+            this.ProtectSheet.Label = "锁定工作表";
+            this.ProtectSheet.Name = "ProtectSheet";
+            this.ProtectSheet.OfficeImageId = "SheetProtect";
+            this.ProtectSheet.ScreenTip = "锁定当前工作表";
+            this.ProtectSheet.ShowImage = true;
+            this.ProtectSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectSheet_Click);
+            // 
+            // ProtectBook
+            // 
+            this.ProtectBook.Label = "锁定工作簿";
+            this.ProtectBook.Name = "ProtectBook";
+            this.ProtectBook.OfficeImageId = "ReviewProtectWorkbook";
+            this.ProtectBook.ScreenTip = "锁定当前工作簿中的全部工作表";
+            this.ProtectBook.ShowImage = true;
+            this.ProtectBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectBook_Click);
+            // 
+            // ProtectRange
+            // 
+            this.ProtectRange.Label = "锁定单元格";
+            this.ProtectRange.Name = "ProtectRange";
+            this.ProtectRange.OfficeImageId = "DatabaseMakeMdeFile";
+            this.ProtectRange.ScreenTip = "锁定选中单元格";
+            this.ProtectRange.ShowImage = true;
+            this.ProtectRange.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectRange_Click);
+            // 
+            // UnlockBook
+            // 
+            this.UnlockBook.Label = "解锁工作簿";
+            this.UnlockBook.Name = "UnlockBook";
+            this.UnlockBook.OfficeImageId = "RecordsDeleteRecord";
+            this.UnlockBook.ScreenTip = "解除当前工作簿中所有工作表的锁定";
+            this.UnlockBook.ShowImage = true;
+            this.UnlockBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnlockBook_Click);
+            // 
+            // UnlockSheet
+            // 
+            this.UnlockSheet.Label = "解锁工作表";
+            this.UnlockSheet.Name = "UnlockSheet";
+            this.UnlockSheet.OfficeImageId = "FrameDelete";
+            this.UnlockSheet.ScreenTip = "解除当前工作表的锁定";
+            this.UnlockSheet.ShowImage = true;
+            this.UnlockSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnlockSheet_Click);
+            // 
+            // ProtectSetting
+            // 
+            this.ProtectSetting.Label = "密码设置";
+            this.ProtectSetting.Name = "ProtectSetting";
+            this.ProtectSetting.OfficeImageId = "AddInManager";
+            this.ProtectSetting.ScreenTip = "设置默认密码";
+            this.ProtectSetting.ShowImage = true;
+            this.ProtectSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectSetting_Click);
+            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -359,6 +433,8 @@
             this.Tool.PerformLayout();
             this.VersionGroup.ResumeLayout(false);
             this.VersionGroup.PerformLayout();
+            this.Protect.ResumeLayout(false);
+            this.Protect.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -393,6 +469,13 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton DateFormate;
         internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton TenThousand;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton NoTenThousand;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup Protect;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ProtectSheet;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ProtectBook;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ProtectRange;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton UnlockBook;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton UnlockSheet;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ProtectSetting;
     }
 
     partial class ThisRibbonCollection

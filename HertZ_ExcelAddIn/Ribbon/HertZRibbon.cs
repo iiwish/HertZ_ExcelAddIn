@@ -2860,7 +2860,6 @@ namespace HertZ_ExcelAddIn
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
             string TempStr;
-            string HeadStr;
 
             //读取选中区域
             Excel.Range rg;
@@ -2975,7 +2974,6 @@ namespace HertZ_ExcelAddIn
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
             string TempStr;
-            string HeadStr;
 
             //读取选中区域
             Excel.Range rg;
@@ -3120,6 +3118,236 @@ namespace HertZ_ExcelAddIn
             NRG = null;
         }
 
+        //锁定全部工作表
+        private void ProtectBook_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Protect中读取配置名为Password的值，默认为Password
+            string Password = clsConfig.ReadConfig<string>("Protect", "Password", "Password");
+
+            ExcelApp = Globals.ThisAddIn.Application;
+
+            foreach (Excel.Worksheet wst in ExcelApp.Worksheets)
+            {
+                wst.Protect(Password);
+            }
+
+            MessageBox.Show("已将所有工作表添加保护！");
+        }
+
+        //锁定当前工作表
+        private void ProtectSheet_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //检查是否已被保护
+            if (WST.ProtectContents) { MessageBox.Show("当前工作表已被锁定！"); return; }
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Protect中读取配置名为Password的值，默认为Password
+            string Password = clsConfig.ReadConfig<string>("Protect", "Password", "Password");
+
+            WST.Protect(Password);
+
+            MessageBox.Show("已为当前工作表添加保护！");
+        }
+
+        //锁定选中单元格
+        private void ProtectRange_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Protect中读取配置名为Password的值，默认为Password
+            string Password = clsConfig.ReadConfig<string>("Protect", "Password", "Password");
+
+            //检查是否已被保护
+            if (WST.ProtectContents)
+            {
+                if ((int)MessageBox.Show("当前单元格已被锁定，是否先解除锁定？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == 1)
+                {
+                    try
+                    {
+                        WST.Unprotect(Password);
+                    }
+                    catch
+                    {
+                        if ((int)MessageBox.Show("密码错误，是否暴力解除锁定？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == 1)
+                        {
+
+                            //强制解锁
+                            try
+                            {
+                                WST.Protect(AllowFiltering: true);
+                                WST.Unprotect();
+                            }
+                            catch
+                            {
+                                MessageBox.Show("暴力解锁失败！"); return;
+                            }
+
+                            //检查是否解锁成功
+                            if (WST.ProtectContents) { MessageBox.Show("暴力解锁失败！"); return; }
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                MessageBox.Show("未选中单元格");
+                return;
+            }
+
+            //加保护
+            WST.Cells.Locked = false;
+            rg.SpecialCells(Excel.XlCellType.xlCellTypeVisible).Locked = true;
+            WST.Protect(Password);
+
+        }
+
+        //解锁当前工作簿中的全部工作表
+        private void UnlockBook_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Protect中读取配置名为Password的值，默认为Password
+            string Password = clsConfig.ReadConfig<string>("Protect", "Password", "Password");
+
+            //解除锁定
+            foreach (Excel.Worksheet wst in ExcelApp.Worksheets)
+            {
+                if (wst.ProtectContents)
+                {
+                    try
+                    {
+                        wst.Unprotect(Password);
+                    }
+                    catch
+                    {
+                        //强制解锁
+                        try
+                        {
+                            wst.Protect(AllowFiltering: true);
+                            wst.Unprotect();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+            }
+
+            MessageBox.Show("解锁完成，请检查！");
+        }
+
+        //解锁当前工作簿
+        private void UnlockSheet_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Protect中读取配置名为Password的值，默认为Password
+            string Password = clsConfig.ReadConfig<string>("Protect", "Password", "Password");
+
+            if (WST.ProtectContents)
+            {
+                try
+                {
+                    WST.Unprotect(Password);
+                    MessageBox.Show("已解除当前工作表锁定！");
+                }
+                catch
+                {
+                    if ((int)MessageBox.Show("密码错误，是否暴力解除锁定？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == 1)
+                    {
+                        //强制解锁
+                        try
+                        {
+                            WST.Protect(AllowFiltering: true);
+                            WST.Unprotect();
+                        }
+                        catch
+                        {
+                            MessageBox.Show("暴力解锁失败！"); return;
+                        }
+
+                        //检查是否解锁成功
+                        if (WST.ProtectContents)
+                        {
+                            MessageBox.Show("暴力解锁失败！");
+                        }
+                        else
+                        {
+                            MessageBox.Show("已解除当前工作表锁定！");
+                        }
+                    }
+                }
+            }
+        }
+
+        //设置密码
+        private void ProtectSetting_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //从父节点Protect中读取配置名为Password的值，默认为Password
+            string Password = clsConfig.ReadConfig<string>("Protect", "Password", "Password");
+
+            //定义Excelapp
+            ExcelApp = Globals.ThisAddIn.Application;
+
+            //输入密码
+            try
+            {
+                string NewPassword = ExcelApp.InputBox("请输入默认密码", "输入密码", Password, Type: 1 + 2);
+
+                if (NewPassword != Password)
+                {
+                    clsConfig.WriteConfig("Protect", "Password", NewPassword);
+                }
+            }
+            catch
+            {
+            }
+        }
+
         //版本信息
         private void VersionInfo_Click(object sender, RibbonControlEventArgs e)
         {
@@ -3131,5 +3359,6 @@ namespace HertZ_ExcelAddIn
         }
 
         
+
     }
 }
