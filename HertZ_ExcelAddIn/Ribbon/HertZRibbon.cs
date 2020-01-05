@@ -448,6 +448,7 @@ namespace HertZ_ExcelAddIn
             WST.Tab.Color = Color.Red;//设置tab颜色为红色
         }
 
+        
         //加工序时账
         private void JournalSheet_Click(object sender, RibbonControlEventArgs e)
         {
@@ -965,6 +966,12 @@ namespace HertZ_ExcelAddIn
             WST.AutoFilterMode = false;//取消筛选
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
+
+        }
+
+        //汇总余额表
+        private void TotalBalance_Click(object sender, RibbonControlEventArgs e)
+        {
 
         }
 
@@ -3359,6 +3366,5 @@ namespace HertZ_ExcelAddIn
         }
 
         
-
     }
 }

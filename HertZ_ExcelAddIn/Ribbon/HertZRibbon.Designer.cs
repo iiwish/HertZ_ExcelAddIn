@@ -60,20 +60,21 @@
             this.NoTenThousand = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
             this.DateFormate = this.Factory.CreateRibbonButton();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
-            this.VersionInfo = this.Factory.CreateRibbonButton();
             this.Protect = this.Factory.CreateRibbonGroup();
-            this.ProtectSheet = this.Factory.CreateRibbonButton();
             this.ProtectBook = this.Factory.CreateRibbonButton();
+            this.ProtectSheet = this.Factory.CreateRibbonButton();
             this.ProtectRange = this.Factory.CreateRibbonButton();
             this.UnlockBook = this.Factory.CreateRibbonButton();
             this.UnlockSheet = this.Factory.CreateRibbonButton();
             this.ProtectSetting = this.Factory.CreateRibbonButton();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
+            this.VersionInfo = this.Factory.CreateRibbonButton();
+            this.TotalBalance = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
-            this.VersionGroup.SuspendLayout();
             this.Protect.SuspendLayout();
+            this.VersionGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // HertZTab
@@ -100,6 +101,7 @@
             this.BalanceAndJournal.Items.Add(this.BalanceSheet);
             this.BalanceAndJournal.Items.Add(this.JournalSheet);
             this.BalanceAndJournal.Items.Add(this.VoucherCheckList);
+            this.BalanceAndJournal.Items.Add(this.TotalBalance);
             this.BalanceAndJournal.Items.Add(this.BalanceAndJournalSetting);
             this.BalanceAndJournal.Label = "账表加工";
             this.BalanceAndJournal.Name = "BalanceAndJournal";
@@ -338,22 +340,6 @@
             this.DateFormate.ShowImage = true;
             this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
             // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Items.Add(this.VersionInfo);
-            this.VersionGroup.Label = "更多";
-            this.VersionGroup.Name = "VersionGroup";
-            // 
-            // VersionInfo
-            // 
-            this.VersionInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.VersionInfo.Image = global::HertZ_ExcelAddIn.Properties.Resources.HertZ_Logo;
-            this.VersionInfo.Label = "版本信息";
-            this.VersionInfo.Name = "VersionInfo";
-            this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
-            this.VersionInfo.ShowImage = true;
-            this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
-            // 
             // Protect
             // 
             this.Protect.Items.Add(this.ProtectBook);
@@ -365,15 +351,6 @@
             this.Protect.Label = "保护";
             this.Protect.Name = "Protect";
             // 
-            // ProtectSheet
-            // 
-            this.ProtectSheet.Label = "锁定工作表";
-            this.ProtectSheet.Name = "ProtectSheet";
-            this.ProtectSheet.OfficeImageId = "SheetProtect";
-            this.ProtectSheet.ScreenTip = "锁定当前工作表";
-            this.ProtectSheet.ShowImage = true;
-            this.ProtectSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectSheet_Click);
-            // 
             // ProtectBook
             // 
             this.ProtectBook.Label = "锁定工作簿";
@@ -382,6 +359,15 @@
             this.ProtectBook.ScreenTip = "锁定当前工作簿中的全部工作表";
             this.ProtectBook.ShowImage = true;
             this.ProtectBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectBook_Click);
+            // 
+            // ProtectSheet
+            // 
+            this.ProtectSheet.Label = "锁定工作表";
+            this.ProtectSheet.Name = "ProtectSheet";
+            this.ProtectSheet.OfficeImageId = "SheetProtect";
+            this.ProtectSheet.ScreenTip = "锁定当前工作表";
+            this.ProtectSheet.ShowImage = true;
+            this.ProtectSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectSheet_Click);
             // 
             // ProtectRange
             // 
@@ -419,6 +405,31 @@
             this.ProtectSetting.ShowImage = true;
             this.ProtectSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectSetting_Click);
             // 
+            // VersionGroup
+            // 
+            this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Label = "更多";
+            this.VersionGroup.Name = "VersionGroup";
+            // 
+            // VersionInfo
+            // 
+            this.VersionInfo.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.VersionInfo.Image = global::HertZ_ExcelAddIn.Properties.Resources.HertZ_Logo;
+            this.VersionInfo.Label = "版本信息";
+            this.VersionInfo.Name = "VersionInfo";
+            this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
+            this.VersionInfo.ShowImage = true;
+            this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
+            // 
+            // TotalBalance
+            // 
+            this.TotalBalance.Label = "汇总余额表";
+            this.TotalBalance.Name = "TotalBalance";
+            this.TotalBalance.OfficeImageId = "DesignXml";
+            this.TotalBalance.ScreenTip = "从末级科目汇总至一级科目";
+            this.TotalBalance.ShowImage = true;
+            this.TotalBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TotalBalance_Click);
+            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -431,10 +442,10 @@
             this.TableProcessing.PerformLayout();
             this.Tool.ResumeLayout(false);
             this.Tool.PerformLayout();
-            this.VersionGroup.ResumeLayout(false);
-            this.VersionGroup.PerformLayout();
             this.Protect.ResumeLayout(false);
             this.Protect.PerformLayout();
+            this.VersionGroup.ResumeLayout(false);
+            this.VersionGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -476,6 +487,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton UnlockBook;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton UnlockSheet;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ProtectSetting;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton TotalBalance;
     }
 
     partial class ThisRibbonCollection
