@@ -972,7 +972,352 @@ namespace HertZ_ExcelAddIn
         //汇总余额表
         private void TotalBalance_Click(object sender, RibbonControlEventArgs e)
         {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
+            int AllRows;
+            int AllColumns;
+            int ColumnNumber;
+            List<string> ColumnName;
+            //原始表格数组ORG
+            object[,] ORG;
+            //目标新数组NRG
+            object[,] NRG;
+
+            //选中科目余额表并继续
+            if (FunC.SelectSheet("余额表") == false) { return; };
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["余额表"];
+            WST.Select();
+            AllRows = FunC.AllRows();
+            AllColumns = FunC.AllColumns();
+
+            //规范原始数据
+            if (FunC.RangeIsStandard() == false)
+            {
+                MessageBox.Show("请规范数据格式，保证数据内容不超出首行和首列");
+                return;
+            }
+
+            //将表格读入数组ORG
+            ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+            //创建目标新数组NRG
+            NRG = new object[AllRows, 9];
+
+            //将列名读入List
+            List<string> OName = new List<string> { };
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                OName.Add(ORG[1, i].ToString());
+            }
+
+            //选择[科目编码]列
+            ColumnName = new List<string> { "[科目编码]", "科目编码", "科目编号", "科目号" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            if (ColumnNumber == 0) { return; }
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
+            NRG[0, 1] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择[科目名称]列
+            ColumnName = new List<string> { "[科目名称]", "科目名称" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 3);
+            if (ColumnNumber == 0) { return; }
+            NRG[0, 2] = ColumnName[0];
+            ColumnName.Clear();
+
+            //自动匹配是否按方向和金额列示
+            ColumnName = new List<string> { "[期初余额]", "期初余额", "期初金额", "审定期初数" };
+            //匹配现有列名和目标列名
+            DialogResult dr = DialogResult.None; //是否以方向和金额列示
+            bool br = false;//是否退出循环
+            for (int i = 1; i <= ColumnName.Count(); i++)
+            {
+                for (int i1 = 1; i1 <= OName.Count(); i1++)
+                {
+                    if (ColumnName[i - 1] == OName[i1 - 1])
+                    {
+                        dr = DialogResult.Yes;
+                        br = true;
+                        break;
+                    }
+                }
+                if (br) { break; }
+            }
+
+            //如果未匹配到余额，自动匹配是否按借贷分别列示余额
+            if (!br)
+            {
+                ColumnName = new List<string> { "[期初借方]", "期初借方", "期初借方金额", "期初借方余额" };
+                //匹配现有列名和目标列名
+                for (int i = 1; i <= ColumnName.Count(); i++)
+                {
+                    for (int i1 = 1; i1 <= OName.Count(); i1++)
+                    {
+                        if (ColumnName[i - 1] == OName[i1 - 1])
+                        {
+                            dr = DialogResult.No;
+                            br = true;
+                            break;
+                        }
+                    }
+                    if (br) { break; }
+                }
+            }
+
+            //如果还没有匹配到，弹出窗口让用户选择
+            if (!br)
+            {
+                //选择期初期末余额列示方式
+                dr = MessageBox.Show("期初期末余额是否按[借贷方向][金额]列示？" + Environment.NewLine + "若分别[借方余额][贷方余额]按列示，请选否", "请选择", MessageBoxButtons.YesNo);
+            }
+
+            if (dr == DialogResult.Yes)
+            {
+                //选择[方向]列,可选列
+                ColumnName = new List<string> { "[方向]", "借贷方向" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, false);
+                if (ColumnNumber != 0) { FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 4); }
+                NRG[0, 3] = ColumnName[0];
+                ColumnName.Clear();
+
+                //选择[期初余额]列
+                ColumnName = new List<string> { "[期初余额]", "期初余额", "期初金额", "期初数", "审定期初数" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 5);
+                if (ColumnNumber == 0) { return; }
+                NRG[0, 4] = ColumnName[0];
+                ColumnName.Clear();
+
+                //选择[期末余额]列
+                ColumnName = new List<string> { "[期末余额]", "期末余额", "期末金额", "期末数", "审定期末数" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 8);
+                if (ColumnNumber == 0) { return; }
+                NRG[0, 7] = ColumnName[0];
+                ColumnName.Clear();
+            }
+            else if (dr == DialogResult.No)
+            {
+                //选择[期初借方]列，先借用NRG的第5列存放数据
+                ColumnName = new List<string> { "[期初借方]", "期初借方", "期初借方金额", "期初借方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //选择[期初贷方]列，先借用NRG的第6列存放数据
+                ColumnName = new List<string> { "[期初贷方]", "期初贷方", "期初贷方金额", "期初贷方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //赋值[方向]列,[期初余额]列
+                NRG[0, 3] = "[方向]";
+                NRG[0, 4] = "[期初余额]";
+                for (int i = 1; i < AllRows; i++)
+                {
+                    //规范[期初借方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 5].ToString()))
+                    {
+                        NRG[i, 5] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 5].ToString()))
+                        {
+                            MessageBox.Show("所选[期初借方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //规范[期初贷方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 6].ToString()))
+                    {
+                        NRG[i, 6] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 6].ToString()))
+                        {
+                            MessageBox.Show("所选[期初贷方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //计算[方向]列
+                    if (FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]) > 0.0001d)
+                    {
+                        NRG[i, 3] = "借";
+                        NRG[i, 4] = FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]);
+                    }
+                    else if (FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]) < -0.0001d)
+                    {
+                        NRG[i, 3] = "贷";
+                        NRG[i, 4] = FunC.TD(NRG[i, 6]) - FunC.TD(NRG[i, 5]);
+                    }
+                    else
+                    {
+                        NRG[i, 2] = "平";
+                    }
+                }
+
+                //选择[期末借方]列，先借用NRG的第5列存放数据
+                ColumnName = new List<string> { "[期末借方]", "期末借方", "期末借方金额", "期末借方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //选择[期末贷方]列，先借用NRG的第6列存放数据
+                ColumnName = new List<string> { "[期末贷方]", "期末贷方", "期末贷方金额", "期末贷方余额" };
+                ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+                FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+                if (ColumnNumber == 0) { return; }
+                ColumnName.Clear();
+
+                //赋值[期末余额]列
+                NRG[0, 7] = "[期末余额]";
+                for (int i = 1; i < AllRows; i++)
+                {
+                    //规范[期末借方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 5].ToString()))
+                    {
+                        NRG[i, 5] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 5].ToString()))
+                        {
+                            MessageBox.Show("所选[期末借方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //规范[期末贷方]列数据
+                    if (string.IsNullOrWhiteSpace(NRG[i, 6].ToString()))
+                    {
+                        NRG[i, 6] = 0;
+                    }
+                    else
+                    {
+                        if (!FunC.IsNumber(NRG[i, 6].ToString()))
+                        {
+                            MessageBox.Show("所选[期初贷方]列,第" + (i + 1) + "行存在非数值内容，请检查");
+                            return;
+                        }
+                    }
+
+                    //计算[期末余额]列
+                    if (NRG[i, 3].ToString() == "借")
+                    {
+                        NRG[i, 7] = Math.Round(FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]), 2);
+                    }
+                    else if (NRG[i, 3].ToString() == "贷")
+                    {
+                        NRG[i, 7] = FunC.TD(NRG[i, 6]) - FunC.TD(NRG[i, 5]);
+                    }
+                    else
+                    {
+                        if (FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]) > 0.00001d)
+                        {
+                            NRG[i, 3] = "借";
+                            NRG[i, 7] = FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]);
+                        }
+                        else if (FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]) < -0.00001d)
+                        {
+                            NRG[i, 3] = "贷";
+                            NRG[i, 7] = FunC.TD(NRG[i, 6]) - FunC.TD(NRG[i, 5]);
+                        }
+                    }
+                }
+
+            }
+            else { return; }
+
+            //选择[本年借方]列
+            ColumnName = new List<string> { "[本年借方]", "本年借方", "本年借方累计", "借方金额累计", "审定借方发生额" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 6);
+            if (ColumnNumber == 0) { return; }
+            NRG[0, 5] = ColumnName[0];
+            ColumnName.Clear();
+
+            //选择[本年贷方]列
+            ColumnName = new List<string> { "[本年贷方]", "本年贷方", "本年贷方累计", "贷方金额累计", "审定贷方发生额" };
+            ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
+            FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 7);
+            if (ColumnNumber == 0) { return; }
+            NRG[0, 6] = ColumnName[0];
+            ColumnName.Clear();
+
+            //规范[科目编码]列
+            //从我的文档读取配置
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            //使用长度区分科目层级
+            Dictionary<int, string> CodeLen = new Dictionary<int, string> { };
+            for (int i = 1; i < AllRows; i++)
+            {
+                try
+                {
+                    CodeLen.Add(NRG[i, 1].ToString().Length, NRG[i, 1].ToString());
+                }
+                catch { }
+            }
+
+            //字典排序
+            CodeLen = CodeLen.OrderBy(o => o.Key).ToDictionary(o => o.Key, p => p.Value);
+
+            //字典转list
+            int[] CodeList = (from val in CodeLen select val.Key).ToArray<int>();
+            CodeLen.Clear();
+
+            //添加科目层级列
+            NRG[0, 8] = "[科目层级]";
+            for (int i = 1; i < AllRows; i++)
+            {
+                for (int i1 = 1; i1 <= CodeList.Count(); i1++)
+                {
+                    if (NRG[i, 1].ToString().Length == CodeList[i1 - 1])
+                    {
+                        NRG[i, 8] = i1;
+                    }
+                }
+            }
+
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
+            //删除sheet中的原始数据
+            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
+
+            //写入数据
+            WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
+            
+            //释放数组
+            ORG = null;
+
+            //释放数组
+            NRG = null;
+
+            //调整格式
+            WST.Range["A1:I1"].Interior.Color = Color.LightGray;
+            
+            //设置数字格式
+            WST.Range["E2:H" + AllRows].NumberFormatLocal = "#,##0.00 ";
+            //ABC列靠左显示
+            WST.Range["B2:C" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            //设置自动列宽
+            WST.Columns["B:H"].EntireColumn.AutoFit();
+            //筛选[显示]列
+            WST.Range["A1:I" + AllRows].AutoFilter(1, 1);
+            //隐藏[显示]列
+            WST.Columns["A:A"].Hidden = true;
+
+            ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
+            
         }
 
         //看账功能

@@ -40,6 +40,7 @@
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
             this.VoucherCheckList = this.Factory.CreateRibbonButton();
+            this.TotalBalance = this.Factory.CreateRibbonButton();
             this.BalanceAndJournalSetting = this.Factory.CreateRibbonButton();
             this.CurrentAccount = this.Factory.CreateRibbonMenu();
             this.EditCurrentAccount = this.Factory.CreateRibbonButton();
@@ -69,7 +70,6 @@
             this.ProtectSetting = this.Factory.CreateRibbonButton();
             this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
-            this.TotalBalance = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -142,6 +142,15 @@
             this.VoucherCheckList.ShowImage = true;
             this.VoucherCheckList.SuperTip = "补充同一凭证的其余发生额";
             this.VoucherCheckList.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VoucherCheckList_Click);
+            // 
+            // TotalBalance
+            // 
+            this.TotalBalance.Label = "汇总余额表";
+            this.TotalBalance.Name = "TotalBalance";
+            this.TotalBalance.OfficeImageId = "DesignXml";
+            this.TotalBalance.ScreenTip = "从末级科目汇总至一级科目";
+            this.TotalBalance.ShowImage = true;
+            this.TotalBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TotalBalance_Click);
             // 
             // BalanceAndJournalSetting
             // 
@@ -420,15 +429,6 @@
             this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
-            // 
-            // TotalBalance
-            // 
-            this.TotalBalance.Label = "汇总余额表";
-            this.TotalBalance.Name = "TotalBalance";
-            this.TotalBalance.OfficeImageId = "DesignXml";
-            this.TotalBalance.ScreenTip = "从末级科目汇总至一级科目";
-            this.TotalBalance.ShowImage = true;
-            this.TotalBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TotalBalance_Click);
             // 
             // HertZRibbon
             // 
