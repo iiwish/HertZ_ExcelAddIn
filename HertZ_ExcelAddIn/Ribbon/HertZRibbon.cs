@@ -1311,10 +1311,7 @@ namespace HertZ_ExcelAddIn
             WST.Range["B2:C" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             //设置自动列宽
             WST.Columns["B:H"].EntireColumn.AutoFit();
-            //筛选[显示]列
-            WST.Range["A1:I" + AllRows].AutoFilter(1, 1);
-            //隐藏[显示]列
-            WST.Columns["A:A"].Hidden = true;
+            
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
             
@@ -2634,7 +2631,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //另存为
-            ExcelApp.ActiveWorkbook.SaveAs(NFullName);
+            ExcelApp.ActiveWorkbook.SaveAs(NFullName, FileFormat:Excel.XlFileFormat.xlOpenXMLWorkbook, CreateBackup:false);
 
             //删除文件
             File.Delete(OFullName);
