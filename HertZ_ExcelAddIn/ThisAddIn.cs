@@ -43,7 +43,7 @@ namespace HertZ_ExcelAddIn
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
             string msg = "HertZ_ExcelAddin已更新" + Environment.NewLine + "当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "新增功能：锁定工作表、单元格；解锁工作表");
+            MessageBox.Show(msg + "修复了 加工往来款表时 数据区域有空单元格时会出错的bug");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

@@ -340,7 +340,7 @@ namespace HertZ_ExcelAddIn
                         NRG[i3, i1] = ORG[i, i1 + 1];
                     }
                     //第5、6列
-                    if (double.Parse(NRG[i3, 4].ToString()) < 0) { NRG[i3, 5] = -double.Parse(NRG[i3, 4].ToString()); }
+                    if (TD(NRG[i3, 4]) < 0) { NRG[i3, 5] = -TD(NRG[i3, 4]); }
                     NRG[i3, 6] = "=E" + (i3 + 1).ToString() + "+F" + (i3 + 1).ToString();
                     //读入7-9列
                     for (int i1 = 7; i1 < 10; i1++)
@@ -348,7 +348,7 @@ namespace HertZ_ExcelAddIn
                         NRG[i3, i1] = ORG[i, i1 - 1];
                     }
                     //第10、11列
-                    if (double.Parse(NRG[i3, 9].ToString()) < 0) { NRG[i3, 10] = -double.Parse(NRG[i3, 9].ToString()); }
+                    if (TD(NRG[i3, 9]) < 0) { NRG[i3, 10] = -TD(NRG[i3, 9]); }
                     NRG[i3, 11] = "=J" + (i3 + 1).ToString() + "+K" + (i3 + 1).ToString();
                     //读入12列
                     NRG[i3, 12] = ORG[i, 9];
@@ -363,7 +363,7 @@ namespace HertZ_ExcelAddIn
                 //取期末余额小于0的对方科目行
                 if (ORG[i, 3].ToString() == OtherName)
                 {
-                    if (double.Parse(ORG[i, 8].ToString()) < 0)
+                    if (TD(ORG[i, 8]) < 0)
                     {
                         //读入前3列
                         for (int i1 = 0; i1 < 4; i1++)
@@ -372,16 +372,16 @@ namespace HertZ_ExcelAddIn
                         }
 
                         //第5、6列
-                        if (double.Parse(ORG[i, 5].ToString()) < 0) { NRG[i4, 5] = -double.Parse(ORG[i, 5].ToString()); }
+                        if (TD(ORG[i, 5]) < 0) { NRG[i4, 5] = -TD(ORG[i, 5]); }
                         NRG[i4, 6] = "=F" + (i4 + 1).ToString();
 
                         //第10、11列
-                        NRG[i4, 10] = -double.Parse(ORG[i, 8].ToString());
+                        NRG[i4, 10] = -TD(ORG[i, 8]);
                         NRG[i4, 11] = "=K" + (i4 + 1).ToString();
 
                         i4 += 1;
                     }
-                    else if(double.Parse(ORG[i, 5].ToString()) < 0)
+                    else if(TD(ORG[i, 5]) < 0)
                     {
                         //读入前3列
                         for (int i1 = 0; i1 < 4; i1++)
@@ -390,7 +390,7 @@ namespace HertZ_ExcelAddIn
                         }
 
                         //第5、6列
-                        NRG[i4, 5] = -double.Parse(ORG[i, 5].ToString());
+                        NRG[i4, 5] = -TD(ORG[i, 5]);
                         NRG[i4, 6] = "=F" + (i4 + 1).ToString();
 
                         i4 += 1;
@@ -488,11 +488,11 @@ namespace HertZ_ExcelAddIn
             double returnValue = 0d;
             if (Value == null)
             {
-                return Math.Round(returnValue, 2);
+                return Math.Round(returnValue, 4);
             }
             string inputValue = Value.ToString();
             double.TryParse(inputValue, out returnValue);
-            returnValue = Math.Round(returnValue, 2);
+            returnValue = Math.Round(returnValue, 4);
             return returnValue;
         }
 

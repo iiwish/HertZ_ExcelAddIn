@@ -972,6 +972,7 @@ namespace HertZ_ExcelAddIn
         //汇总余额表
         private void TotalBalance_Click(object sender, RibbonControlEventArgs e)
         {
+            return;
             ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
@@ -1569,10 +1570,10 @@ namespace HertZ_ExcelAddIn
                 {
                     if (SheetsName[ORG[i,3].ToString()] == "贷")
                     {
-                        ORG[i, 5] = -double.Parse(ORG[i, 5].ToString());
-                        ORG[i, 8] = -double.Parse(ORG[i, 8].ToString());
+                        ORG[i, 5] = -FunC.TD(ORG[i, 5]);
+                        ORG[i, 8] = -FunC.TD(ORG[i, 8]);
                     }
-                    ORG[i, 7] = -double.Parse(ORG[i, 7].ToString());
+                    ORG[i, 7] = -FunC.TD(ORG[i, 7]);
                 }
             }
 

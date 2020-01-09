@@ -148,8 +148,9 @@
             this.TotalBalance.Label = "汇总余额表";
             this.TotalBalance.Name = "TotalBalance";
             this.TotalBalance.OfficeImageId = "DesignXml";
-            this.TotalBalance.ScreenTip = "从末级科目汇总至一级科目";
+            this.TotalBalance.ScreenTip = "小熊加班加点开发ing";
             this.TotalBalance.ShowImage = true;
+            this.TotalBalance.SuperTip = "从末级科目汇总至一级科目";
             this.TotalBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TotalBalance_Click);
             // 
             // BalanceAndJournalSetting
