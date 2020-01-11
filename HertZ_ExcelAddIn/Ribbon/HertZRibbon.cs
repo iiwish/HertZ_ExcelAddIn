@@ -972,7 +972,6 @@ namespace HertZ_ExcelAddIn
         //汇总余额表
         private void TotalBalance_Click(object sender, RibbonControlEventArgs e)
         {
-            return;
             ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
@@ -1018,6 +1017,11 @@ namespace HertZ_ExcelAddIn
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
             NRG[0, 1] = ColumnName[0];
             ColumnName.Clear();
+
+            for(int i = 1; i < AllRows; i++)
+            {
+                if(NRG[i,1] == null) { MessageBox.Show("[科目编码]列不能有空行");return; }
+            }
 
             //选择[科目名称]列
             ColumnName = new List<string> { "[科目名称]", "科目名称" };
@@ -1253,20 +1257,14 @@ namespace HertZ_ExcelAddIn
             NRG[0, 6] = ColumnName[0];
             ColumnName.Clear();
 
-            //规范[科目编码]列
-            //从我的文档读取配置
-            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
-            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
-
             //使用长度区分科目层级
-            Dictionary<int, string> CodeLen = new Dictionary<int, string> { };
+            Dictionary<int, int> CodeLen = new Dictionary<int, int> { };
             for (int i = 1; i < AllRows; i++)
             {
-                try
+                if(! CodeLen.ContainsKey(NRG[i, 1].ToString().Length))
                 {
-                    CodeLen.Add(NRG[i, 1].ToString().Length, NRG[i, 1].ToString());
+                    CodeLen.Add(NRG[i, 1].ToString().Length, i);
                 }
-                catch { }
             }
 
             //字典排序
@@ -1274,48 +1272,176 @@ namespace HertZ_ExcelAddIn
 
             //字典转list
             int[] CodeList = (from val in CodeLen select val.Key).ToArray<int>();
-            CodeLen.Clear();
+
+            for (int i = 0; i < CodeList.Count(); i++)
+            {
+                CodeLen[CodeList[i]] = i+1;
+            }
 
             //添加科目层级列
             NRG[0, 8] = "[科目层级]";
             for (int i = 1; i < AllRows; i++)
             {
-                for (int i1 = 1; i1 <= CodeList.Count(); i1++)
+                NRG[i, 8] = CodeLen[NRG[i, 1].ToString().Length];
+            }
+
+            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
+            //释放数组
+            ORG = null;
+
+            //创建数组
+            if (AllRows < (WST.Rows.Count / 3))
+            {
+                ORG = new object[AllRows * 3, 9];
+            }
+            else
+            {
+                MessageBox.Show("行数过多，超出excel处理能力");
+                return;
+            }
+
+            //读取表头
+            for(int i = 0; i <9; i++)
+            {
+                ORG[0, i] = NRG[0, i];
+            }
+
+            
+            //新增上级科目行
+            int i3 = 1;
+            int TempInt;
+            for (int i = 1; i < AllRows; i++)
+            {
+                if (i3 > AllRows * 3 - 10) { MessageBox.Show("预设行数不足，请修改");return; }
+                if(NRG[i,8].ToString() == "1" || i==1)
                 {
-                    if (NRG[i, 1].ToString().Length == CodeList[i1 - 1])
+                    ORG[i3, 0] = 0;
+                    for (int i1 = 1; i1 < 9; i1++)
                     {
-                        NRG[i, 8] = i1;
+                        ORG[i3, i1] = NRG[i, i1];
+                    }
+                    i3 += 1;
+                }
+                else
+                {
+                    TempInt = CodeList[CodeLen[NRG[i, 1].ToString().Length] - 1];
+                    if (NRG[i, 1].ToString().Substring(0,TempInt) == NRG[i-1, 1].ToString().Substring(0, Math.Min(TempInt, NRG[i-1, 1].ToString().Length)))
+                    {
+                        ORG[i3, 0] = 0;
+                        for (int i1 = 1; i1 < 9; i1++)
+                        {
+                            ORG[i3, i1] = NRG[i, i1];
+                        }
+                        i3 += 1;
+                    }
+                    else
+                    {
+                        for (int i2 = 1; i2 < CodeLen[NRG[i, 1].ToString().Length]; i2++)
+                        {
+                            if(NRG[i, 1].ToString().Substring(0,CodeList[i2 - 1]) == NRG[i-1, 1].ToString().Substring(0, Math.Min(CodeList[i2 - 1], NRG[i - 1, 1].ToString().Length))){ continue; }
+                            ORG[i3, 1] = NRG[i, 1].ToString().Substring(0, CodeList[i2-1]);
+                            ORG[i3, 3] = NRG[i, 3];
+                            i3 += 1;
+                        }
+                        ORG[i3, 0] = 0;
+                        for (int i1 = 1; i1 < 9; i1++)
+                        {
+                            ORG[i3, i1] = NRG[i, i1];
+                        }
+                        i3 += 1;
                     }
                 }
             }
 
-            ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
+
+            //移动数组到NRG,同时计算上级科目的期初借贷余
+            NRG = null;
+            NRG = new object[i3, 9];
+            for (int i = i3-1; i >=0; i--)
+            {
+                for(int i1 = 0; i1 < 9; i1++)
+                {
+                    NRG[i, i1] = ORG[i, i1];
+                }
+                if (NRG[i, 0] == null)
+                {
+                    TempInt = NRG[i, 1].ToString().Length;
+                    for(int i2 = i; i2 < i3; i2++)
+                    {
+                        if(NRG[i2, 1].ToString().Substring(0,Math.Min(TempInt, NRG[i2, 1].ToString().Length)) != NRG[i, 1].ToString()) { break; }
+                        if (CodeLen[NRG[i, 1].ToString().Length] + 1 == CodeLen[NRG[i2, 1].ToString().Length]) 
+                        {
+                            NRG[i, 4] = FunC.TD(NRG[i, 4]) + FunC.TD(NRG[i2, 4]);
+                        }
+                    }
+                    NRG[i, 8] = CodeLen[NRG[i, 1].ToString().Length]];
+                }
+                if(CodeLen[NRG[i, 1].ToString().Length] == 1)
+                {
+                    NRG[i, 0] = 1;
+                }
+                else
+                {
+                    NRG[i, 0] = 0;
+                }
+            }
+            ORG = null;
 
             //删除sheet中的原始数据
             WST.Range["A:" + FunC.CName(AllColumns)].Delete();
 
             //写入数据
-            WST.Range["A1:I" + AllRows.ToString()].Value2 = NRG;
-            
-            //释放数组
-            ORG = null;
-
-            //释放数组
-            NRG = null;
+            WST.Range["A1:I" + i3.ToString()].Value2 = NRG;
 
             //调整格式
             WST.Range["A1:I1"].Interior.Color = Color.LightGray;
-            
+            //按科目层级修改颜色
+            Excel.Range rg;//定义单元格区域对象
+            for (int i = 2; i <= i3; i++)
+            {
+                rg = WST.Range["A" + i + ":I" + i];
+                switch (NRG[i - 1, 8])
+                {
+                    case 1:
+                        rg.Interior.ThemeColor = Excel.XlThemeColor.xlThemeColorDark1;
+                        rg.Interior.TintAndShade = -0.249977111117893;
+                        break;
+                    case 2:
+                        rg.Interior.ThemeColor = Excel.XlThemeColor.xlThemeColorDark1;
+                        rg.Interior.TintAndShade = -0.149998474074526;
+                        break;
+                    case 3:
+                        rg.Interior.ThemeColor = Excel.XlThemeColor.xlThemeColorDark1;
+                        rg.Interior.TintAndShade = -4.99893185216834E-02;
+                        break;
+                    case 4:
+                        rg.Interior.ThemeColor = Excel.XlThemeColor.xlThemeColorAccent1;
+                        rg.Interior.TintAndShade = 0.799981688894314;
+                        break;
+                    case 5:
+                        rg.Interior.ThemeColor = Excel.XlThemeColor.xlThemeColorAccent6;
+                        rg.Interior.TintAndShade = 0.799981688894314;
+                        break;
+                }
+            }
+            //释放数组
+            NRG = null;
+
             //设置数字格式
-            WST.Range["E2:H" + AllRows].NumberFormatLocal = "#,##0.00 ";
+            WST.Range["E2:H" + i3].NumberFormatLocal = "#,##0.00 ";
             //ABC列靠左显示
-            WST.Range["B2:C" + AllRows].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            WST.Range["B2:C" + i3].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
             //设置自动列宽
             WST.Columns["B:H"].EntireColumn.AutoFit();
-            
+            //筛选[显示]列
+            WST.Range["A1:I" + i3].AutoFilter(1, 1);
+            //隐藏[显示]列
+            WST.Columns["A:A"].Hidden = true;
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
-            
+            WST.Tab.Color = Color.Red;//设置tab颜色为红色
+
         }
 
         //看账功能
@@ -1904,7 +2030,7 @@ namespace HertZ_ExcelAddIn
                         
                         NRG[i1, 8] = 1;
                         //检查本期发生额，如果为0则平移账龄
-                        if (Math.Abs(FunC.TD(ORG[i, ColumnNumber4])) > PRECISION && Math.Abs(FunC.TD(ORG[i, ColumnNumber5])) > PRECISION)
+                        if (Math.Abs(FunC.TD(ORG[i, ColumnNumber4])) < PRECISION && Math.Abs(FunC.TD(ORG[i, ColumnNumber5])) < PRECISION)
                         {
                             ORG[i, AllColumns + 1] = 0;
                             for (int i2 = 2; i2 <= 5; i2++)

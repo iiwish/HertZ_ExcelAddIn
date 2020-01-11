@@ -36,6 +36,10 @@
         {
             this.HertZTab = this.Factory.CreateRibbonTab();
             this.TableProcessing = this.Factory.CreateRibbonGroup();
+            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
+            this.Tool = this.Factory.CreateRibbonGroup();
+            this.Protect = this.Factory.CreateRibbonGroup();
+            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.BalanceAndJournal = this.Factory.CreateRibbonMenu();
             this.BalanceSheet = this.Factory.CreateRibbonButton();
             this.JournalSheet = this.Factory.CreateRibbonButton();
@@ -48,8 +52,6 @@
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
-            this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
-            this.Tool = this.Factory.CreateRibbonGroup();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.Exportxlsx = this.Factory.CreateRibbonButton();
@@ -61,14 +63,12 @@
             this.NoTenThousand = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
             this.DateFormate = this.Factory.CreateRibbonButton();
-            this.Protect = this.Factory.CreateRibbonGroup();
             this.ProtectBook = this.Factory.CreateRibbonButton();
             this.ProtectSheet = this.Factory.CreateRibbonButton();
             this.ProtectRange = this.Factory.CreateRibbonButton();
             this.UnlockBook = this.Factory.CreateRibbonButton();
             this.UnlockSheet = this.Factory.CreateRibbonButton();
             this.ProtectSetting = this.Factory.CreateRibbonButton();
-            this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
@@ -94,6 +94,44 @@
             this.TableProcessing.Items.Add(this.CheckBAJ);
             this.TableProcessing.Label = "加工";
             this.TableProcessing.Name = "TableProcessing";
+            // 
+            // CheckBAJ
+            // 
+            this.CheckBAJ.Label = "看 账";
+            this.CheckBAJ.Name = "CheckBAJ";
+            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
+            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
+            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
+            // Tool
+            // 
+            this.Tool.Items.Add(this.AutoFillInTheBlanks);
+            this.Tool.Items.Add(this.CompareTwoColumns);
+            this.Tool.Items.Add(this.Exportxlsx);
+            this.Tool.Items.Add(this.ChangeSign);
+            this.Tool.Items.Add(this.RoundButton);
+            this.Tool.Items.Add(this.TenThousand);
+            this.Tool.Items.Add(this.CheckNum);
+            this.Tool.Items.Add(this.DateFormate);
+            this.Tool.Label = "实用工具";
+            this.Tool.Name = "Tool";
+            // 
+            // Protect
+            // 
+            this.Protect.Items.Add(this.ProtectBook);
+            this.Protect.Items.Add(this.ProtectSheet);
+            this.Protect.Items.Add(this.ProtectRange);
+            this.Protect.Items.Add(this.UnlockBook);
+            this.Protect.Items.Add(this.UnlockSheet);
+            this.Protect.Items.Add(this.ProtectSetting);
+            this.Protect.Label = "保护";
+            this.Protect.Name = "Protect";
+            // 
+            // VersionGroup
+            // 
+            this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Label = "更多";
+            this.VersionGroup.Name = "VersionGroup";
             // 
             // BalanceAndJournal
             // 
@@ -148,9 +186,9 @@
             this.TotalBalance.Label = "汇总余额表";
             this.TotalBalance.Name = "TotalBalance";
             this.TotalBalance.OfficeImageId = "DesignXml";
-            this.TotalBalance.ScreenTip = "小熊加班加点开发ing";
+            this.TotalBalance.ScreenTip = "从末级科目汇总至一级科目";
             this.TotalBalance.ShowImage = true;
-            this.TotalBalance.SuperTip = "从末级科目汇总至一级科目";
+            this.TotalBalance.SuperTip = "同时规范格式";
             this.TotalBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TotalBalance_Click);
             // 
             // BalanceAndJournalSetting
@@ -162,6 +200,7 @@
             this.BalanceAndJournalSetting.ScreenTip = "设置加工账相关信息";
             this.BalanceAndJournalSetting.ShowImage = true;
             this.BalanceAndJournalSetting.SuperTip = "如需更改，需在加工前设置好，如科目级次、科目排序等";
+            this.BalanceAndJournalSetting.Visible = false;
             this.BalanceAndJournalSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BalanceAndJournalSetting_Click);
             // 
             // CurrentAccount
@@ -227,27 +266,6 @@
             this.CurrentAccountSetting.ShowImage = true;
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
-            // 
-            // CheckBAJ
-            // 
-            this.CheckBAJ.Label = "看 账";
-            this.CheckBAJ.Name = "CheckBAJ";
-            this.CheckBAJ.ScreenTip = "勾选即可双击看账";
-            this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
-            this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
-            // 
-            // Tool
-            // 
-            this.Tool.Items.Add(this.AutoFillInTheBlanks);
-            this.Tool.Items.Add(this.CompareTwoColumns);
-            this.Tool.Items.Add(this.Exportxlsx);
-            this.Tool.Items.Add(this.ChangeSign);
-            this.Tool.Items.Add(this.RoundButton);
-            this.Tool.Items.Add(this.TenThousand);
-            this.Tool.Items.Add(this.CheckNum);
-            this.Tool.Items.Add(this.DateFormate);
-            this.Tool.Label = "实用工具";
-            this.Tool.Name = "Tool";
             // 
             // AutoFillInTheBlanks
             // 
@@ -350,17 +368,6 @@
             this.DateFormate.ShowImage = true;
             this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
             // 
-            // Protect
-            // 
-            this.Protect.Items.Add(this.ProtectBook);
-            this.Protect.Items.Add(this.ProtectSheet);
-            this.Protect.Items.Add(this.ProtectRange);
-            this.Protect.Items.Add(this.UnlockBook);
-            this.Protect.Items.Add(this.UnlockSheet);
-            this.Protect.Items.Add(this.ProtectSetting);
-            this.Protect.Label = "保护";
-            this.Protect.Name = "Protect";
-            // 
             // ProtectBook
             // 
             this.ProtectBook.Label = "锁定工作簿";
@@ -414,12 +421,6 @@
             this.ProtectSetting.ScreenTip = "设置默认密码";
             this.ProtectSetting.ShowImage = true;
             this.ProtectSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectSetting_Click);
-            // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Items.Add(this.VersionInfo);
-            this.VersionGroup.Label = "更多";
-            this.VersionGroup.Name = "VersionGroup";
             // 
             // VersionInfo
             // 
