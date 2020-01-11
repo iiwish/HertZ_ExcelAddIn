@@ -1358,7 +1358,11 @@ namespace HertZ_ExcelAddIn
             //移动数组到NRG,同时计算上级科目的期初借贷余
             NRG = null;
             NRG = new object[i3, 9];
-            for (int i = i3-1; i >=0; i--)
+            for (int i1 = 0; i1 < 9; i1++)
+            {
+                NRG[0, i1] = ORG[0, i1];
+            }
+            for (int i = i3-1; i >0; i--)
             {
                 for(int i1 = 0; i1 < 9; i1++)
                 {
@@ -1373,9 +1377,12 @@ namespace HertZ_ExcelAddIn
                         if (CodeLen[NRG[i, 1].ToString().Length] + 1 == CodeLen[NRG[i2, 1].ToString().Length]) 
                         {
                             NRG[i, 4] = FunC.TD(NRG[i, 4]) + FunC.TD(NRG[i2, 4]);
+                            NRG[i, 5] = FunC.TD(NRG[i, 5]) + FunC.TD(NRG[i2, 5]);
+                            NRG[i, 6] = FunC.TD(NRG[i, 6]) + FunC.TD(NRG[i2, 6]);
+                            NRG[i, 7] = FunC.TD(NRG[i, 7]) + FunC.TD(NRG[i2, 7]);
                         }
                     }
-                    NRG[i, 8] = CodeLen[NRG[i, 1].ToString().Length]];
+                    NRG[i, 8] = CodeLen[NRG[i, 1].ToString().Length];
                 }
                 if(CodeLen[NRG[i, 1].ToString().Length] == 1)
                 {

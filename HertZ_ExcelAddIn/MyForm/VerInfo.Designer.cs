@@ -73,9 +73,9 @@
             this.label2.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label2.Location = new System.Drawing.Point(241, 150);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(218, 93);
+            this.label2.Size = new System.Drawing.Size(228, 93);
             this.label2.TabIndex = 3;
-            this.label2.Text = "何未生\r\n\r\nQQ：1215678765";
+            this.label2.Text = "何未生\r\n\r\nQQ群：474246956";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // VerInfo
