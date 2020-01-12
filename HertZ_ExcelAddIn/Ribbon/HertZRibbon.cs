@@ -464,6 +464,9 @@ namespace HertZ_ExcelAddIn
             //目标新数组NRG
             object[,] NRG;
 
+            //选中序时账并继续
+            if (FunC.SelectSheet("序时账") == false) { return; };
+
             //检查余额表是否存在
             if (!FunC.SheetExist("余额表"))
             {
@@ -487,7 +490,6 @@ namespace HertZ_ExcelAddIn
             int AllRows2 = FunC.AllRows();
 
             //选中序时账并继续
-            if (FunC.SelectSheet("序时账") == false) { return; };
             WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["序时账"];
             WST.Select();
             AllRows = FunC.AllRows();
@@ -1398,6 +1400,7 @@ namespace HertZ_ExcelAddIn
             //删除sheet中的原始数据
             WST.Range["A:" + FunC.CName(AllColumns)].Delete();
 
+            NRG[0, 0] = "[显示]";
             //写入数据
             WST.Range["A1:I" + i3.ToString()].Value2 = NRG;
 
