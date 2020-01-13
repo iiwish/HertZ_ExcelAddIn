@@ -505,7 +505,7 @@ namespace HertZ_ExcelAddIn
             //将表格读入数组ORG
             ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
             //创建目标新数组NRG
-            NRG = new object[AllRows, 18];
+            NRG = new object[AllRows, 19];
 
             //将列名读入List
             List<string> OName = new List<string> { };
@@ -711,8 +711,9 @@ namespace HertZ_ExcelAddIn
                 //计算借方、贷方和1-4级科目
                 for (int i = 1; i < AllRows; i++)
                 {
+                    NRG[i, 1] = string.Format("=year(C{0})&\"年\"&month(C{0})&\"月\"&D{0}", i + 1);
                     //计算借方金额和贷方金额
-                    if(NRG[i, 14] != null)
+                    if (NRG[i, 14] != null)
                     {
                         if (NRG[i, 14].ToString().Contains("借"))
                         {
@@ -747,17 +748,51 @@ namespace HertZ_ExcelAddIn
             NRG[0, 7] = "[三级科目]";
             NRG[0, 8] = "[四级科目]";
             NRG[0, 17] = "[抽凭]";//命名第18列[抽凭]
+            NRG[0, 18] = "[对方科目]";//命名第19列[对方科目]
             NRG[0, 1] = "[日期&凭证号]";//命名第2列
             NRG[0, 0] = "[辅助]";
             NRG[AllRows - 1,0] = "1";
 
             ExcelApp.ScreenUpdating = false;//关闭Excel视图刷新
 
-            //删除sheet中的原始数据
-            WST.Range["A:" + FunC.CName(AllColumns)].Delete();
+            //新建字典，计算对方科目
+            Dictionary<string, string> KeyDic = new Dictionary<string, string> { };
+            string TempStr;
+            for (int i = 1; i < AllRows; i++)
+            {
+                //检查空值
+                if (NRG[i, 2] == null || NRG[i, 3] == null || NRG[i, 9] == null) { continue; }
+                TempStr = NRG[i, 2].ToString() + NRG[i, 3].ToString();
+
+                //如果字典中不包含该Key，则添加Key
+                if (!KeyDic.ContainsKey(TempStr))
+                {
+                    KeyDic.Add(TempStr,NRG[i, 9].ToString());
+                }
+                else if(!KeyDic[TempStr].Contains(NRG[i, 9].ToString()))
+                {
+                    KeyDic[TempStr]=KeyDic[TempStr] + ";" + NRG[i, 9].ToString();
+                }
+            }
+            for (int i = 1; i < AllRows; i++)
+            {
+                if (NRG[i, 2] == null || NRG[i, 3] == null) { continue; }
+                if(NRG[i, 9] == null)
+                {
+                    NRG[i, 18] = KeyDic[NRG[i, 2].ToString() + NRG[i, 3].ToString()];
+                }
+                else
+                {
+                    NRG[i, 18] = KeyDic[NRG[i, 2].ToString() + NRG[i, 3].ToString()].Replace(NRG[i, 9].ToString() + ";", string.Empty).Replace(";" + NRG[i, 9].ToString(), string.Empty);
+                }
+            }
+
+
+                //删除sheet中的原始数据
+                WST.Range["A:" + FunC.CName(AllColumns)].Delete();
 
             //赋值
-            WST.Range["A1:R" + AllRows].Value2 = NRG;
+            WST.Range["A1:S" + AllRows].Value2 = NRG;
 
             //释放数组
             ORG = null;
@@ -765,9 +800,9 @@ namespace HertZ_ExcelAddIn
             //调整表格格式
 
             //首行颜色
-            WST.Range["A1:R1"].Interior.Color = Color.LightGray;
+            WST.Range["A1:S1"].Interior.Color = Color.LightGray;
             //加框线
-            WST.Range["A1:R" + AllRows].Borders.LineStyle = 1;
+            WST.Range["A1:S" + AllRows].Borders.LineStyle = 1;
             //设置数字格式
             WST.Range["P2:Q" + AllRows].NumberFormatLocal = "#,##0.00 ";
             //设置日期格式
@@ -929,7 +964,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //赋值给序时账的抽凭列
-            WST.Range[string.Format("{0}1:{0}{1}",FunC.CName(AllColumns), AllRows)].Value2 = NRG;
+            WST.Range[string.Format("{0}1:{0}{1}",FunC.CName(ColumnNumber2), AllRows)].Value2 = NRG;
             NRG = null;
 
             //新建抽凭清单表
