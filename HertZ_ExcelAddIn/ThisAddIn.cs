@@ -42,8 +42,8 @@ namespace HertZ_ExcelAddIn
             //写入父节点VerInfo中配置名VerNum的配置项
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
-            string msg = "HertZ_ExcelAddin已更新" + Environment.NewLine + "当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "加工序时账中新增一列对方科目"  + Environment.NewLine + "QQ群 474246956 方便沟通");
+            string msg = "HertZ已更新，当前版本为" + Nverinfo + Environment.NewLine;
+            MessageBox.Show(msg + "新增功能："  + Environment.NewLine + "QQ群 474246956 方便沟通");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

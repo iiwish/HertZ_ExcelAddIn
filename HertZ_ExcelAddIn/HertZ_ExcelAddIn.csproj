@@ -36,7 +36,7 @@
     <PublishUrl>C:\aaa\HertZExcelAddIn\</PublishUrl>
     <InstallUrl>http://getapp.hertzexcel.com/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>0.0.0.20</ApplicationVersion>
+    <ApplicationVersion>0.0.0.21</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>12</UpdateInterval>

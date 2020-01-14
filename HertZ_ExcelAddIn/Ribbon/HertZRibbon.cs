@@ -218,7 +218,7 @@ namespace HertZ_ExcelAddIn
                     }
                     else
                     {
-                        NRG[i, 2] = "平";
+                        NRG[i, 3] = "平";
                     }
                 }
 
