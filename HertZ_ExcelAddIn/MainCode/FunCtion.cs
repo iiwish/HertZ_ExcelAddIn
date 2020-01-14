@@ -840,12 +840,18 @@ namespace HertZ_ExcelAddIn
                         else//双击前四列，展开下级科目
                         {
                             ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+
+                            //取消筛选
+                            if (WST.AutoFilterMode) { WST.AutoFilterMode = false; }
+
+                            AllRows1 = AllRows("A", 2);
+
                             rg = WST.Range["A1:B" + (AllRows1 + 1)].Value2;
                             rg[AllRows1 + 1, 2] = "1";
                             if(rg[Target.Row + 1, 2] == null) { return; }
                             if (rg[Target.Row, 2] == null) { return; }
                             if (rg[Target.Row + 1, 1] == null) { return; }
-                            i4 = rg[Target.Row+1, 2].ToString().Length;
+                            i4 = rg[Target.Row + 1, 2].ToString().Length;
                             if (i4 <= rg[Target.Row, 2].ToString().Length)
                             {
                                 return;
@@ -878,9 +884,7 @@ namespace HertZ_ExcelAddIn
                                 }
                             }
                             
-                            //取消筛选
-                            if (WST.AutoFilterMode) { WST.AutoFilterMode = false; }
-
+                            
                             WST.Range["A1:B" + AllRows1].Value2 = rg;
 
                             //筛选[显示]列

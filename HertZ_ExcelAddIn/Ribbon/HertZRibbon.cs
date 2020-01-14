@@ -70,7 +70,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //选择[科目编码]列
-            ColumnName = new List<string> { "[科目编码]", "科目编码", "科目编号", "科目号" };
+            ColumnName = new List<string> { "[科目编码]", "科目编码", "科目编号", "科目号","科目代码" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 2);
@@ -524,7 +524,7 @@ namespace HertZ_ExcelAddIn
             ColumnName.Clear();
 
             //选择[凭证号码]列
-            ColumnName = new List<string> { "[凭证号码]", "凭证号码", "凭证号", "凭证编号" };
+            ColumnName = new List<string> { "[凭证号码]", "凭证号码", "凭证号", "凭证编号","凭证字号" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 4);
@@ -532,7 +532,7 @@ namespace HertZ_ExcelAddIn
             ColumnName.Clear();
 
             //选择[科目编码]列
-            ColumnName = new List<string> { "[科目编码]", "科目编码", "科目编号" };
+            ColumnName = new List<string> { "[科目编码]", "科目编码", "科目编号","科目代码" };
             ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
             if (ColumnNumber == 0) { return; }
             FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 5);
@@ -581,7 +581,7 @@ namespace HertZ_ExcelAddIn
             
             //判断是否为借贷方向列示
             bool DrAndCr = false;
-            ColumnName = new List<string> { "[借方金额]", "[贷方金额]", "借方金额", "贷方金额", "借方发生额", "贷方发生额" };
+            ColumnName = new List<string> { "[借方金额]", "[贷方金额]", "借方金额", "贷方金额", "借方发生额", "贷方发生额","借方","贷方" };
             for(int i = 0; i < ColumnName.Count; i++)
             {
                 for(int i1 = 0; i1 < OName.Count; i1++)
@@ -647,7 +647,7 @@ namespace HertZ_ExcelAddIn
             if (DrAndCr)
             {
                 //选择[借方金额]列
-                ColumnName = new List<string> { "[借方金额]", "借方金额", "借方发生额" };
+                ColumnName = new List<string> { "[借方金额]", "借方金额", "借方发生额","借方" };
                 ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
                 if (ColumnNumber == 0) { return; }
                 FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 16);
@@ -655,7 +655,7 @@ namespace HertZ_ExcelAddIn
                 ColumnName.Clear();
 
                 //选择[贷方金额]列
-                ColumnName = new List<string> { "[贷方金额]", "贷方金额", "贷方发生额" };
+                ColumnName = new List<string> { "[贷方金额]", "贷方金额", "贷方发生额","贷方" };
                 ColumnNumber = FunC.SelectColumn(ColumnName, OName, true);
                 if (ColumnNumber == 0) { return; }
                 FunC.TrColumn(ORG, NRG, AllRows, ColumnNumber, 17);
