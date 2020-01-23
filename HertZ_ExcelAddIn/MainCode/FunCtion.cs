@@ -497,6 +497,22 @@ namespace HertZ_ExcelAddIn
         }
 
         /// <summary>
+        /// 将object转换为string
+        /// </summary>
+        /// <param name="Value"></param>
+        /// <returns></returns>
+        public string TS(object Value)
+        {
+            string returnValue = "";
+            if (Value == null)
+            {
+                return "";
+            }
+            returnValue = Value.ToString();
+            return returnValue;
+        }
+
+        /// <summary>
         /// 将不是数字的单元格标注黄色
         /// </summary>
         /// <param name="SelectRange"></param>

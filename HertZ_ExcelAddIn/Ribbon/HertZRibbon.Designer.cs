@@ -70,6 +70,10 @@
             this.ProtectSetting = this.Factory.CreateRibbonButton();
             this.VersionGroup = this.Factory.CreateRibbonGroup();
             this.VersionInfo = this.Factory.CreateRibbonButton();
+            this.GlobalSetting = this.Factory.CreateRibbonMenu();
+            this.TableProcessingCheck = this.Factory.CreateRibbonCheckBox();
+            this.ToolCheck = this.Factory.CreateRibbonCheckBox();
+            this.ProtectCheck = this.Factory.CreateRibbonCheckBox();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.Tool.SuspendLayout();
@@ -419,6 +423,7 @@
             // VersionGroup
             // 
             this.VersionGroup.Items.Add(this.VersionInfo);
+            this.VersionGroup.Items.Add(this.GlobalSetting);
             this.VersionGroup.Label = "更多";
             this.VersionGroup.Name = "VersionGroup";
             // 
@@ -431,6 +436,33 @@
             this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
+            // 
+            // GlobalSetting
+            // 
+            this.GlobalSetting.Items.Add(this.TableProcessingCheck);
+            this.GlobalSetting.Items.Add(this.ToolCheck);
+            this.GlobalSetting.Items.Add(this.ProtectCheck);
+            this.GlobalSetting.Label = "设置";
+            this.GlobalSetting.Name = "GlobalSetting";
+            this.GlobalSetting.ScreenTip = "设置选项卡显示情况";
+            // 
+            // TableProcessingCheck
+            // 
+            this.TableProcessingCheck.Label = "加工";
+            this.TableProcessingCheck.Name = "TableProcessingCheck";
+            this.TableProcessingCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TableProcessingCheck_Click);
+            // 
+            // ToolCheck
+            // 
+            this.ToolCheck.Label = "实用工具";
+            this.ToolCheck.Name = "ToolCheck";
+            this.ToolCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToolCheck_Click);
+            // 
+            // ProtectCheck
+            // 
+            this.ProtectCheck.Label = "保护";
+            this.ProtectCheck.Name = "ProtectCheck";
+            this.ProtectCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ProtectCheck_Click);
             // 
             // HertZRibbon
             // 
@@ -490,6 +522,10 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton UnlockSheet;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ProtectSetting;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton TotalBalance;
+        internal Microsoft.Office.Tools.Ribbon.RibbonMenu GlobalSetting;
+        internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox TableProcessingCheck;
+        internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox ToolCheck;
+        internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox ProtectCheck;
     }
 
     partial class ThisRibbonCollection

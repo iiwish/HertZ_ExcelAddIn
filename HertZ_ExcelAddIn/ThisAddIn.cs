@@ -43,7 +43,7 @@ namespace HertZ_ExcelAddIn
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
             string msg = "HertZ已更新，当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "新增功能："  + Environment.NewLine + "QQ群 474246956 方便沟通");
+            MessageBox.Show(msg + "新增功能：修复了几个bug");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

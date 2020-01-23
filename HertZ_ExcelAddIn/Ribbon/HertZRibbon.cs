@@ -26,6 +26,16 @@ namespace HertZ_ExcelAddIn
 
         private void HertZRibbon_Load(object sender, RibbonUIEventArgs e)
         {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            TableProcessing.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "TableProcessingCheck", true);
+            TableProcessingCheck.Checked = TableProcessing.Visible;
+            Tool.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "ToolCheck", true);
+            ToolCheck.Checked = Tool.Visible;
+            Protect.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "ProtectCheck", true);
+            ProtectCheck.Checked = Protect.Visible;
         }
 
         //加工余额表
@@ -66,7 +76,7 @@ namespace HertZ_ExcelAddIn
             List<string> OName = new List<string> { };
             for (int i = 1; i <= AllColumns; i++)
             {
-                OName.Add(ORG[1, i].ToString());
+                OName.Add(FunC.TS(ORG[1, i]));
             }
 
             //选择[科目编码]列
@@ -448,7 +458,6 @@ namespace HertZ_ExcelAddIn
             WST.Tab.Color = Color.Red;//设置tab颜色为红色
         }
 
-        
         //加工序时账
         private void JournalSheet_Click(object sender, RibbonControlEventArgs e)
         {
@@ -2669,7 +2678,7 @@ namespace HertZ_ExcelAddIn
             {
                 if (ORG[i, 1] != null)
                 {
-                    ARG[i - 1, 0] = ORG[i, 1].ToString();
+                    ARG[i - 1, 0] = FunC.TS(ORG[i, 1]);
                 }
                 else
                 {
@@ -2682,7 +2691,7 @@ namespace HertZ_ExcelAddIn
             {
                 if (NRG[i, 1] != null)
                 {
-                    ARG[i - 1, 1] = NRG[i, 1].ToString();
+                    ARG[i - 1, 1] = FunC.TS(NRG[i, 1]);
                 }
                 else
                 {
@@ -3879,6 +3888,60 @@ namespace HertZ_ExcelAddIn
             InfoForm.Show();
         }
 
-        
+        //
+        private void TableProcessingCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            if (TableProcessingCheck.Checked)
+            {
+                TableProcessing.Visible = true;
+                clsConfig.WriteConfig("GlobalSetting", "TableProcessingCheck", true.ToString());
+            }
+            else
+            {
+                TableProcessing.Visible = false;
+                clsConfig.WriteConfig("GlobalSetting", "TableProcessingCheck", false.ToString());
+            }
+
+        }
+
+        private void ToolCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            if (ToolCheck.Checked)
+            {
+                Tool.Visible = true;
+                clsConfig.WriteConfig("GlobalSetting", "ToolCheck", true.ToString());
+            }
+            else
+            {
+                Tool.Visible = false;
+                clsConfig.WriteConfig("GlobalSetting", "ToolCheck", false.ToString());
+            }
+        }
+
+        private void ProtectCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            if (ProtectCheck.Checked)
+            {
+                Protect.Visible = true;
+                clsConfig.WriteConfig("GlobalSetting", "ProtectCheck", true.ToString());
+            }
+            else
+            {
+                Protect.Visible = false;
+                clsConfig.WriteConfig("GlobalSetting", "ProtectCheck", false.ToString());
+            }
+        }
     }
 }
