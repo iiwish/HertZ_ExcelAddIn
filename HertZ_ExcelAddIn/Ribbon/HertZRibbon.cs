@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Data.SQLite;
+using System.Data;
 
 namespace HertZ_ExcelAddIn
 {
@@ -3983,7 +3984,7 @@ namespace HertZ_ExcelAddIn
                 Directory.CreateDirectory(strPath + "\\HertZTemplate");
             }
 
-            //将模板提取出来
+            //将数据库提取出来
             if (!File.Exists(strPath + "\\HertZTemplate\\JiuQi.sqlite"))
             {
                 byte[] JiuQiDb = Properties.Resources.JiuQi; //取出Resources中的JiuQi.sqlite
@@ -3995,13 +3996,32 @@ namespace HertZ_ExcelAddIn
             //打开数据库
             string DbPath = strPath + "\\HertZTemplate\\JiuQi.sqlite";
             SQLiteConnection DbCon = new SQLiteConnection(DbPath);
-            DbCon.Open();
+            
+            DbCon.Open();//打开数据库
 
+            SQLiteDataAdapter JiuQiData = new SQLiteDataAdapter("SELECT * FROM Index;", DbCon);//读数据库
 
-
+            //读取数据到DataSet
+            DataSet JiuQiDS = new DataSet();
+            JiuQiData.Fill(JiuQiDS, "Index");
+            JiuQiData.Dispose();
 
             //关闭数据库
             DbCon.Close();
+
+            //创建字典
+
+            DataTable JiuQiTable = JiuQiDS.Tables["Index"];
+            foreach (DataRow  dr in JiuQiTable.Rows)
+            {
+                foreach (DataColumn dc in JiuQiTable.Columns)
+                {
+                    dr[dc];
+                }
+            }
+
+
+            
         }
 
     }
