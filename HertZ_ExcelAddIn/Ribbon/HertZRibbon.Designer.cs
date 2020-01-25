@@ -49,6 +49,9 @@
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
             this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
+            this.JiuQi = this.Factory.CreateRibbonGroup();
+            this.EditJiuQi = this.Factory.CreateRibbonButton();
+            this.ExportNotes = this.Factory.CreateRibbonButton();
             this.Tool = this.Factory.CreateRibbonGroup();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
@@ -72,10 +75,12 @@
             this.VersionInfo = this.Factory.CreateRibbonButton();
             this.GlobalSetting = this.Factory.CreateRibbonMenu();
             this.TableProcessingCheck = this.Factory.CreateRibbonCheckBox();
+            this.JiuQiCheck = this.Factory.CreateRibbonCheckBox();
             this.ToolCheck = this.Factory.CreateRibbonCheckBox();
             this.ProtectCheck = this.Factory.CreateRibbonCheckBox();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
+            this.JiuQi.SuspendLayout();
             this.Tool.SuspendLayout();
             this.Protect.SuspendLayout();
             this.VersionGroup.SuspendLayout();
@@ -84,6 +89,7 @@
             // HertZTab
             // 
             this.HertZTab.Groups.Add(this.TableProcessing);
+            this.HertZTab.Groups.Add(this.JiuQi);
             this.HertZTab.Groups.Add(this.Tool);
             this.HertZTab.Groups.Add(this.Protect);
             this.HertZTab.Groups.Add(this.VersionGroup);
@@ -240,6 +246,31 @@
             this.CheckBAJ.ScreenTip = "勾选即可双击看账";
             this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
             this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
+            // 
+            // JiuQi
+            // 
+            this.JiuQi.Items.Add(this.EditJiuQi);
+            this.JiuQi.Items.Add(this.ExportNotes);
+            this.JiuQi.Label = "久其";
+            this.JiuQi.Name = "JiuQi";
+            // 
+            // EditJiuQi
+            // 
+            this.EditJiuQi.Label = "加工久其";
+            this.EditJiuQi.Name = "EditJiuQi";
+            this.EditJiuQi.OfficeImageId = "SharePointListsWorkOffline";
+            this.EditJiuQi.ScreenTip = "点击加工久其导出的表格";
+            this.EditJiuQi.ShowImage = true;
+            this.EditJiuQi.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.EditJiuQi_Click);
+            // 
+            // ExportNotes
+            // 
+            this.ExportNotes.Label = "生成附注";
+            this.ExportNotes.Name = "ExportNotes";
+            this.ExportNotes.OfficeImageId = "ExportWord";
+            this.ExportNotes.ScreenTip = "从久其表生成word附注";
+            this.ExportNotes.ShowImage = true;
+            this.ExportNotes.SuperTip = "生成的附注存放在久其表同一目录下";
             // 
             // Tool
             // 
@@ -400,6 +431,7 @@
             this.UnlockBook.OfficeImageId = "RecordsDeleteRecord";
             this.UnlockBook.ScreenTip = "解除当前工作簿中所有工作表的锁定";
             this.UnlockBook.ShowImage = true;
+            this.UnlockBook.SuperTip = "当工作簿中工作表较多时建议先解锁一张表进行测试";
             this.UnlockBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnlockBook_Click);
             // 
             // UnlockSheet
@@ -440,9 +472,10 @@
             // GlobalSetting
             // 
             this.GlobalSetting.Items.Add(this.TableProcessingCheck);
+            this.GlobalSetting.Items.Add(this.JiuQiCheck);
             this.GlobalSetting.Items.Add(this.ToolCheck);
             this.GlobalSetting.Items.Add(this.ProtectCheck);
-            this.GlobalSetting.Label = "设置";
+            this.GlobalSetting.Label = "显示设置";
             this.GlobalSetting.Name = "GlobalSetting";
             this.GlobalSetting.ScreenTip = "设置选项卡显示情况";
             // 
@@ -451,6 +484,12 @@
             this.TableProcessingCheck.Label = "加工";
             this.TableProcessingCheck.Name = "TableProcessingCheck";
             this.TableProcessingCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TableProcessingCheck_Click);
+            // 
+            // JiuQiCheck
+            // 
+            this.JiuQiCheck.Label = "久其";
+            this.JiuQiCheck.Name = "JiuQiCheck";
+            this.JiuQiCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.JiuQiCheck_Click);
             // 
             // ToolCheck
             // 
@@ -474,6 +513,8 @@
             this.HertZTab.PerformLayout();
             this.TableProcessing.ResumeLayout(false);
             this.TableProcessing.PerformLayout();
+            this.JiuQi.ResumeLayout(false);
+            this.JiuQi.PerformLayout();
             this.Tool.ResumeLayout(false);
             this.Tool.PerformLayout();
             this.Protect.ResumeLayout(false);
@@ -526,6 +567,10 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox TableProcessingCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox ToolCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox ProtectCheck;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup JiuQi;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton EditJiuQi;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ExportNotes;
+        internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox JiuQiCheck;
     }
 
     partial class ThisRibbonCollection

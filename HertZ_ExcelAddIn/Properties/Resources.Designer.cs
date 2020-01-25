@@ -91,6 +91,16 @@ namespace HertZ_ExcelAddIn.Properties {
         }
         
         /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
+        internal static byte[] JiuQi {
+            get {
+                object obj = ResourceManager.GetObject("JiuQi", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
         internal static System.Drawing.Bitmap MinusSign {

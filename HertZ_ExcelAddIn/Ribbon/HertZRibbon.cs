@@ -10,6 +10,7 @@ using Microsoft.Office.Tools.Ribbon;
 using System.Drawing;
 using System.IO;
 using System.Threading;
+using System.Data.SQLite;
 
 namespace HertZ_ExcelAddIn
 {
@@ -32,6 +33,8 @@ namespace HertZ_ExcelAddIn
 
             TableProcessing.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "TableProcessingCheck", true);
             TableProcessingCheck.Checked = TableProcessing.Visible;
+            JiuQi.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "JiuQiCheck", true);
+            JiuQiCheck.Checked = JiuQi.Visible;
             Tool.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "ToolCheck", true);
             ToolCheck.Checked = Tool.Visible;
             Protect.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "ProtectCheck", true);
@@ -3888,7 +3891,7 @@ namespace HertZ_ExcelAddIn
             InfoForm.Show();
         }
 
-        //
+        //账表加工 组 显示
         private void TableProcessingCheck_Click(object sender, RibbonControlEventArgs e)
         {
             //从我的文档读取文件路径
@@ -3905,9 +3908,28 @@ namespace HertZ_ExcelAddIn
                 TableProcessing.Visible = false;
                 clsConfig.WriteConfig("GlobalSetting", "TableProcessingCheck", false.ToString());
             }
-
         }
 
+        //久其 组 显示
+        private void JiuQiCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            if (JiuQiCheck.Checked)
+            {
+                JiuQi.Visible = true;
+                clsConfig.WriteConfig("GlobalSetting", "JiuQiCheck", true.ToString());
+            }
+            else
+            {
+                JiuQi.Visible = false;
+                clsConfig.WriteConfig("GlobalSetting", "JiuQiCheck", false.ToString());
+            }
+        }
+
+        //工具 组 显示
         private void ToolCheck_Click(object sender, RibbonControlEventArgs e)
         {
             //从我的文档读取文件路径
@@ -3926,6 +3948,7 @@ namespace HertZ_ExcelAddIn
             }
         }
 
+        //保护 组 显示
         private void ProtectCheck_Click(object sender, RibbonControlEventArgs e)
         {
             //从我的文档读取文件路径
@@ -3943,5 +3966,43 @@ namespace HertZ_ExcelAddIn
                 clsConfig.WriteConfig("GlobalSetting", "ProtectCheck", false.ToString());
             }
         }
+
+        //加工久其表
+        private void EditJiuQi_Click(object sender, RibbonControlEventArgs e)
+        {
+            //弹出窗体提示
+            DialogResult IsWait = MessageBox.Show("请在2019年久其导出的表格中使用该功能！" + Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
+            if (IsWait != DialogResult.Yes) { return; }
+
+            //读取我的文档路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+
+            //在我的文档创建模板文件夹
+            if (!Directory.Exists(strPath + "\\HertZTemplate"))//如果不存在就创建文件夹
+            {
+                Directory.CreateDirectory(strPath + "\\HertZTemplate");
+            }
+
+            //将模板提取出来
+            if (!File.Exists(strPath + "\\HertZTemplate\\JiuQi.sqlite"))
+            {
+                byte[] JiuQiDb = Properties.Resources.JiuQi; //取出Resources中的JiuQi.sqlite
+                FileStream outputExcelFile = new FileStream(strPath + "\\HertZTemplate\\JiuQi.sqlite", FileMode.Create, FileAccess.Write); //存到我的文档
+                outputExcelFile.Write(JiuQiDb, 0, JiuQiDb.Length);
+                outputExcelFile.Close();
+            }
+
+            //打开数据库
+            string DbPath = strPath + "\\HertZTemplate\\JiuQi.sqlite";
+            SQLiteConnection DbCon = new SQLiteConnection(DbPath);
+            DbCon.Open();
+
+
+
+
+            //关闭数据库
+            DbCon.Close();
+        }
+
     }
 }
