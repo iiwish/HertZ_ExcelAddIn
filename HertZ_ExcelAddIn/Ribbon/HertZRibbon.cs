@@ -3975,6 +3975,13 @@ namespace HertZ_ExcelAddIn
             DialogResult IsWait = MessageBox.Show("请在2019年久其导出的表格中使用该功能！" + Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
             if (IsWait != DialogResult.Yes) { return; }
 
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            int AllRows;
+            int AllColumns;
+            object[,] ORG;
+            object[,] NRG;
+
             //读取我的文档路径
             string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
 
@@ -3984,44 +3991,124 @@ namespace HertZ_ExcelAddIn
                 Directory.CreateDirectory(strPath + "\\HertZTemplate");
             }
 
-            //将数据库提取出来
-            if (!File.Exists(strPath + "\\HertZTemplate\\JiuQi.sqlite"))
+            //将CSV文件提取出来
+            if (!File.Exists(strPath + "\\HertZTemplate\\JiuQiDB.csv"))
             {
-                byte[] JiuQiDb = Properties.Resources.JiuQi; //取出Resources中的JiuQi.sqlite
-                FileStream outputExcelFile = new FileStream(strPath + "\\HertZTemplate\\JiuQi.sqlite", FileMode.Create, FileAccess.Write); //存到我的文档
+                byte[] JiuQiDb = new byte[Properties.Resources.JiuQiDB.Length]; //取出Resources中的JiuQiDB.csv
+                //Properties.Resources.JiuQiDB.CopyTo(0,JiuQiDb,0,0);
+                JiuQiDb = Encoding.Default.GetBytes(Properties.Resources.JiuQiDB);
+                FileStream outputExcelFile = new FileStream(strPath + "\\HertZTemplate\\JiuQiDB.csv", FileMode.Create, FileAccess.Write); //存到我的文档
                 outputExcelFile.Write(JiuQiDb, 0, JiuQiDb.Length);
                 outputExcelFile.Close();
             }
 
-            //打开数据库
-            string DbPath = strPath + "\\HertZTemplate\\JiuQi.sqlite";
-            SQLiteConnection DbCon = new SQLiteConnection(DbPath);
-            
-            DbCon.Open();//打开数据库
-
-            SQLiteDataAdapter JiuQiData = new SQLiteDataAdapter("SELECT * FROM Index;", DbCon);//读数据库
-
-            //读取数据到DataSet
-            DataSet JiuQiDS = new DataSet();
-            JiuQiData.Fill(JiuQiDS, "Index");
-            JiuQiData.Dispose();
-
-            //关闭数据库
-            DbCon.Close();
+            //打开CSV文件
+            DataTable JiuQiTable = FunC.OpenCSV(strPath + "\\HertZTemplate\\JiuQiDB.csv");
 
             //创建字典
-
-            DataTable JiuQiTable = JiuQiDS.Tables["Index"];
+            Dictionary<string, int> TableType = new Dictionary<string, int> { };
             foreach (DataRow  dr in JiuQiTable.Rows)
             {
-                foreach (DataColumn dc in JiuQiTable.Columns)
-                {
-                    dr[dc];
-                }
+                TableType.Add(dr[0].ToString(),FunC.TI(dr[3]));
             }
 
+            //关闭屏幕刷新
+            ExcelApp.ScreenUpdating = false;
 
+            //清除命名区域
+            foreach(Excel.Name exname in ExcelApp.ActiveWorkbook.Names)
+            {
+                exname.Delete();
+            }
+
+            string TempStr;
+            //遍历工作表
+            foreach(Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
+            {
+                TempStr = wst.Name;
+                if (!TableType.ContainsKey(TempStr)) { continue; }
+
+                wst.Select();
+
+                AllRows = FunC.AllRows();
+                AllColumns = FunC.AllColumns(4,1);
+                
+                switch (TableType[TempStr])
+                {
+                    case 1://普通表
+
+                        //不引用最后注释行
+                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                        for (int i = Math.Max(AllRows - 4, 1); i <= AllRows; i++)
+                        {
+                            if (ORG[i, 1] == null) { continue; }
+                            if (ORG[i, 1].ToString().Contains("注:") || ORG[i, 1].ToString().Contains("注："))
+                            {
+                                AllRows = i - 1;
+                                continue;
+                            }
+                        }
+                        ORG = null;
+
+                        //命名区域
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: TempStr.Split(' ')[0], RefersToR1C1: string.Format(" = '{0}'!R4C1: R{1}C{2}",TempStr,AllRows,AllColumns));
+                        break;
+                    case 2://需要拆分的表
+                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                        if (TempStr == "Z20 成本费用情况表(企财20表)")
+                        {
+                            FunC.NewSheet("Z20 成本费用情况表(企财20表)1");
+                        }
+                        else
+                        {
+
+                        }
+
+                        break;
+                    case 3://行列转置的表
+
+                        break;
+                    case 4://行列转置并拆分的表，还要删除空列
+
+                        break;
+                    case 5://删除空行的表
+
+                        //删除空行
+                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                        for (int i = AllRows; i >= Math.Max(AllRows - 4, 1); i--)
+                        {
+                            if (ORG[i, 1] == null) 
+                            {
+                                wst.Range[string.Format("{0}:{0}", i)].Delete();
+                            }
+                        }
+                        ORG = null;
+                        AllRows = FunC.AllRows();
+
+                        //不引用最后注释行
+                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                        for (int i = Math.Max(AllRows - 4, 1); i <= AllRows; i++)
+                        {
+                            if (ORG[i, 1] == null) { continue; }
+                            if (ORG[i, 1].ToString().Contains("注:") || ORG[i, 1].ToString().Contains("注："))
+                            {
+                                AllRows = i - 1;
+                                continue;
+                            }
+                        }
+                        ORG = null;
+
+                        //命名区域
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: TempStr.Split(' ')[0], RefersToR1C1: string.Format(" = '{0}'!R4C1: R{1}C{2}", TempStr, AllRows, AllColumns));
+                        
+                        break;
+                }
+
+                
+            }
             
+
+
         }
 
     }

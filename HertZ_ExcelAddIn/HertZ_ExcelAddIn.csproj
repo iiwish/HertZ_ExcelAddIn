@@ -308,7 +308,7 @@
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Resources\JiuQi.sqlite" />
+    <None Include="Resources\JiuQiDB.csv" />
     <None Include="Resources\往来询证函模板.dotx" />
     <None Include="ThisAddIn.Designer.xml">
       <DependentUpon>ThisAddIn.cs</DependentUpon>
