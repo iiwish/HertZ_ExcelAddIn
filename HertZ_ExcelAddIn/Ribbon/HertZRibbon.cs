@@ -4031,7 +4031,7 @@ namespace HertZ_ExcelAddIn
                 wst.Select();
 
                 AllRows = FunC.AllRows();
-                AllColumns = FunC.AllColumns(4,1);
+                AllColumns = FunC.AllColumns(3,2);
                 
                 switch (TableType[TempStr])
                 {
@@ -4051,35 +4051,297 @@ namespace HertZ_ExcelAddIn
                         ORG = null;
 
                         //命名区域
-                        ExcelApp.ActiveWorkbook.Names.Add(Name: TempStr.Split(' ')[0], RefersToR1C1: string.Format(" = '{0}'!R4C1: R{1}C{2}",TempStr,AllRows,AllColumns));
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R{1}C{2}",TempStr,AllRows,AllColumns));
                         break;
                     case 2://需要拆分的表
-                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                        
                         if (TempStr == "Z20 成本费用情况表(企财20表)")
                         {
-                            FunC.NewSheet("Z20 成本费用情况表(企财20表)1");
+                            if(AllRows != 27 || AllColumns != 12) { MessageBox.Show(TempStr + "行列数不合规,请检查"); continue; }
+
+                            ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                            #region 读取销售费用到NRG
+                            NRG = new object[17,3];
+                            NRG[0, 0] = "项目";
+                            NRG[0, 1] = "本期发生额";
+                            NRG[0, 2] = "上期发生额";
+
+                            for(int i = 13; i <= AllRows; i++)
+                            {
+                                if (ORG[i, 1] != null)
+                                {
+                                    NRG[i - 12, 0] = ORG[i, 1].ToString().Replace(" ", "");
+                                }
+
+                                NRG[i - 12, 1] = ORG[i, 3];
+                                NRG[i - 12, 2] = ORG[i, 4];
+                            }
+
+                            NRG[16, 0] = "合计";
+                            NRG[16, 1] = ORG[12, 3];
+                            NRG[16, 2] = ORG[12, 4];
+                            #endregion
+
+                            FunC.NewSheet(TempStr + "1");
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].Value2 = NRG;
+                            NRG = null;
+                            //命名区域
+                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 1, RefersToR1C1: string.Format("='{0}1'!R4C1:R20C3", TempStr));
+
+                            #region 读取管理费用到NRG
+                            NRG = new object[20, 3];
+                            NRG[0, 0] = "项目";
+                            NRG[0, 1] = "本期发生额";
+                            NRG[0, 2] = "上期发生额";
+
+                            for (int i = 6; i <= 23; i++)
+                            {
+                                if (ORG[i, 1] != null)
+                                {
+                                    NRG[i - 5, 0] = ORG[i, 5].ToString().Replace(" ", "");
+                                }
+
+                                NRG[i - 5, 1] = ORG[i, 7];
+                                NRG[i - 5, 2] = ORG[i, 8];
+                            }
+
+                            NRG[19, 0] = "合计";
+                            NRG[19, 1] = ORG[5, 7];
+                            NRG[19, 2] = ORG[5, 8];
+                            #endregion
+
+                            ORG = null;
+                            FunC.NewSheet(TempStr + "2");
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].Value2 = NRG;
+                            NRG = null;
+                            //命名区域
+                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R23C3", TempStr));
                         }
                         else
                         {
+                            if (AllColumns != 9) { MessageBox.Show(TempStr + "列数不合规,请检查"); continue; }
+                            AllRows = 10;
+
+                            ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                            #region 期末余额表
+                            NRG = new object[6, 5];
+                            NRG[0, 0] = "类别";
+                            NRG[0, 1] = "期末数";
+                            NRG[1, 1] = "账面余额";
+                            NRG[1, 3] = "坏账准备";
+
+                            for(int i = 1; i < 6; i++)
+                            {
+                                for(int i1 = 0; i1 < 5; i1++)
+                                {
+                                    NRG[i, i1] = ORG[i + 5, i1 + 1];
+                                }
+                            }
+
+                            FunC.NewSheet(TempStr + "1");
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].Value2 = NRG;
+                            ExcelApp.DisplayAlerts = false;//关闭弹窗
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B4:E4"].Merge();
+                            ExcelApp.DisplayAlerts = true;//打开弹窗
+                            //命名区域
+                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 1, RefersToR1C1: string.Format(" = '{0}1'!R4C1: R9C5", TempStr));
+                            #endregion
+
+
+                            #region 期初余额数
+                            NRG[0, 1] = "期初数";
+
+                            for (int i = 1; i < 6; i++)
+                            {
+                                for (int i1 = 1; i1 < 5; i1++)
+                                {
+                                    NRG[i, i1] = ORG[i + 5, i1 + 5];
+                                }
+                            }
+
+                            FunC.NewSheet(TempStr + "2");
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].Value2 = NRG;
+                            NRG = null;
+                            ExcelApp.DisplayAlerts = false;//关闭弹窗
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B4:E4"].Merge();
+                            ExcelApp.DisplayAlerts = true;//打开弹窗
+                            //命名区域
+                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R9C5", TempStr));
+                            #endregion
 
                         }
 
                         break;
                     case 3://行列转置的表
+                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                        //删除空行
+                        for (int i = AllRows; i > 6; i--)
+                        {
+                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "")
+                            {
+                                wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
+                            }
+                        }
+                        wst.Range["7:7"].Delete(Excel.XlDirection.xlUp);//删除序号列
+                        ORG = null;
+                        AllRows = FunC.AllRows();
+                        if (AllRows < 8 || AllColumns != 31) { MessageBox.Show(TempStr + "行列数不合规,请检查"); continue; }
+                        ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                        //修改样式
+                        NRG = new object[17,((AllRows-6)*2+1)];
+
+                        //首列标题
+                        NRG[0, 1] = "项目";
+                        for(int i = 2; i <= 31; i += 2)
+                        {
+                            if (ORG[4, i] == null)
+                            {
+                                NRG[i / 2 + 1, 0] = "          " + FunC.TS(ORG[5, i]);
+                            }
+                            else if(ORG[4, i].ToString() == "其中：")
+                            {
+                                NRG[i / 2 + 1, 0] = "    其中：" + FunC.TS(ORG[5, i]);
+                            }
+                            else
+                            {
+                                NRG[i / 2 + 1, 0] = ORG[4, i];
+                            }
+                        }
+
+                        //首行标题
+                        for (int i = 1; i <= AllRows - 6; i++)
+                        {
+                            NRG[0, i * 2 - 1] = ORG[6 + i, 1];
+                            NRG[1, i * 2 - 1] = "本期";
+                            NRG[1, i * 2] = "上期";
+                        }
+
+                        //数据
+                        for (int i = 2; i <= 31; i += 2)
+                        {
+                            for (int i1 = 1; i1 <= AllRows - 6; i1++)
+                            {
+                                NRG[i / 2 + 1, i1 * 2 - 1] = ORG[6 + i1, i];
+                                NRG[i / 2 + 1, i1 * 2] = ORG[6 + i1, i + 1];
+                            }
+                        }
+
+                        //赋值并调整格式
+                        wst.Range[string.Format("4:{0}", AllRows)].Delete(Excel.XlDirection.xlUp);
+                        wst.Range[string.Format("A4:{0}20", FunC.CName((AllRows - 6) * 2 + 1))].Value2 = NRG;
+                        NRG = null;
+                        ExcelApp.DisplayAlerts = false;//关闭弹窗
+                        wst.Range["A4:A5"].Merge();
+                        //合并表头
+                        for(int i = 1; i <= AllRows - 6; i++)
+                        {
+                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i * 2-1), FunC.CName(i * 2))].Merge();
+                        }
+                        ExcelApp.DisplayAlerts = true;//打开弹窗
+
+                        //命名区域
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R20C{1}", TempStr, (AllRows - 6) * 2 + 1));
 
                         break;
                     case 4://行列转置并拆分的表，还要删除空列
+                        if (AllRows < 7 || (AllColumns != 20 && AllColumns != 18)) { MessageBox.Show(TempStr + "行列数不合规,请检查"); continue; }
+                        wst.Range[string.Format("{0}:{0}", AllRows)].Delete(Excel.XlDirection.xlUp);//删除注释行
+                        AllRows -= 2;//不引用注释行
+                        //删除空行
+                        ORG = wst.Range["A1:T" + AllRows.ToString()].Value2;
+                        for (int i = AllRows; i >= Math.Max(AllRows - 4, 1); i -= 2)
+                        {
+                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "")
+                            {
+                                wst.Range[string.Format("{0}:{1}", i,i+1)].Delete(Excel.XlDirection.xlUp);
+                            }
+                        }
+
+                        ORG = null;
+                        AllRows = FunC.AllRows("A",2);
+                        ORG = wst.Range["A1:T" + AllRows.ToString()].Value2;
+
+                        //行列转换读取余额区域
+                        NRG = new object[13, AllRows - 3];
+                        for(int i = 0; i < 13; i++)
+                        {
+                            for(int i1 = 0; i1 < AllRows - 3; i1++)
+                            {
+                                NRG[i, i1] = ORG[i1 + 4, i + 1];
+                            }
+                        }
+                        NRG[1, 0] = null;
+                        NRG[0, 0] = "项目";
+                        //拆分第一张余额表
+                        FunC.NewSheet(TempStr + 1);
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}16",FunC.CName(AllRows-3))].Value2 = NRG;
+                        NRG = null;
+                        ExcelApp.DisplayAlerts = false;//关闭弹窗
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
+                        //合并表头
+                        for (int i = 2; i <= AllRows - 4; i+=2)
+                        {
+                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i+1))].Merge();
+                        }
+                        ExcelApp.DisplayAlerts = true;//打开弹窗
+                        //命名区域
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0]+1, RefersToR1C1: string.Format("='{0}1'!R4C1:R16C{1}", TempStr, AllRows - 3));
+
+                        //读取第二章表的数据
+                        NRG = new object[9, AllRows - 3];
+                        NRG[0, 0] = "项目";
+                        for (int i = 5;i<= AllRows; i++)
+                        {
+                            NRG[0, i - 4] = ORG[i, 1];
+                            if (i % 2 == 0)
+                            {
+                                NRG[1, i - 4] = "上期发生额";
+                            }
+                            else
+                            {
+                                NRG[1, i - 4] = "本期发生额";
+                            }
+                        }
+                        for (int i = 2; i < 9; i++)
+                        {
+                            NRG[i, 0] = ORG[4, i + 12];
+                            for (int i1 = 1; i1 < AllRows - 3; i1++)
+                            {
+                                NRG[i, i1] = ORG[i1 + 4, i + 12];
+                            }
+                        }
+                        //拆分第二张余额表
+                        FunC.NewSheet(TempStr + 2);
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}12", FunC.CName(AllRows - 3))].Value2 = NRG;
+                        NRG = null;
+                        ORG = null;
+                        //合并表头
+                        ExcelApp.DisplayAlerts = false;//关闭弹窗
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
+                        for (int i = 2; i <= AllRows - 4; i += 2)
+                        {
+                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i + 1))].Merge();
+                        }
+                        ExcelApp.DisplayAlerts = true;//打开弹窗
+                        //命名区域
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R12C{1}", TempStr, AllRows - 3));
 
                         break;
                     case 5://删除空行的表
 
                         //删除空行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
-                        for (int i = AllRows; i >= Math.Max(AllRows - 4, 1); i--)
+                        for (int i = AllRows; i >= 4; i--)
                         {
-                            if (ORG[i, 1] == null) 
+                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "") 
                             {
-                                wst.Range[string.Format("{0}:{0}", i)].Delete();
+                                wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
                             }
                         }
                         ORG = null;
@@ -4099,15 +4361,17 @@ namespace HertZ_ExcelAddIn
                         ORG = null;
 
                         //命名区域
-                        ExcelApp.ActiveWorkbook.Names.Add(Name: TempStr.Split(' ')[0], RefersToR1C1: string.Format(" = '{0}'!R4C1: R{1}C{2}", TempStr, AllRows, AllColumns));
+                        ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R{1}C{2}", TempStr, AllRows, AllColumns));
                         
                         break;
                 }
 
                 
             }
-            
 
+            WST.Select();
+            //关闭屏幕刷新
+            ExcelApp.ScreenUpdating = true;
 
         }
 
