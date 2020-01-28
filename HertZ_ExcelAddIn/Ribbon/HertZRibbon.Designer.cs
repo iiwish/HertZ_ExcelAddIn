@@ -271,6 +271,7 @@
             this.ExportNotes.ScreenTip = "从久其表生成word附注";
             this.ExportNotes.ShowImage = true;
             this.ExportNotes.SuperTip = "生成的附注存放在久其表同一目录下";
+            this.ExportNotes.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ExportNotes_Click);
             // 
             // Tool
             // 

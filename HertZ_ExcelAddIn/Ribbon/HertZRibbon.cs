@@ -4016,14 +4016,14 @@ namespace HertZ_ExcelAddIn
             ExcelApp.ScreenUpdating = false;
 
             //清除命名区域
-            foreach(Excel.Name exname in ExcelApp.ActiveWorkbook.Names)
+            foreach (Excel.Name exname in ExcelApp.ActiveWorkbook.Names)
             {
                 exname.Delete();
             }
 
             string TempStr;
             //遍历工作表
-            foreach(Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
+            foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
             {
                 TempStr = wst.Name;
                 if (!TableType.ContainsKey(TempStr)) { continue; }
@@ -4071,7 +4071,7 @@ namespace HertZ_ExcelAddIn
                             {
                                 if (ORG[i, 1] != null)
                                 {
-                                    NRG[i - 12, 0] = ORG[i, 1].ToString().Replace(" ", "");
+                                    NRG[i - 12, 0] = ORG[i, 1].ToString().Replace("　", "");
                                 }
 
                                 NRG[i - 12, 1] = ORG[i, 3];
@@ -4099,7 +4099,7 @@ namespace HertZ_ExcelAddIn
                             {
                                 if (ORG[i, 1] != null)
                                 {
-                                    NRG[i - 5, 0] = ORG[i, 5].ToString().Replace(" ", "");
+                                    NRG[i - 5, 0] = ORG[i, 5].ToString().Replace("　", "");
                                 }
 
                                 NRG[i - 5, 1] = ORG[i, 7];
@@ -4129,8 +4129,6 @@ namespace HertZ_ExcelAddIn
                             NRG = new object[6, 5];
                             NRG[0, 0] = "类别";
                             NRG[0, 1] = "期末数";
-                            NRG[1, 1] = "账面余额";
-                            NRG[1, 3] = "坏账准备";
 
                             for(int i = 1; i < 6; i++)
                             {
@@ -4140,6 +4138,9 @@ namespace HertZ_ExcelAddIn
                                 }
                             }
 
+                            NRG[1, 1] = "账面余额";
+                            NRG[1, 3] = "坏账准备";
+
                             FunC.NewSheet(TempStr + "1");
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].Value2 = NRG;
                             ExcelApp.DisplayAlerts = false;//关闭弹窗
@@ -4147,7 +4148,7 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B4:E4"].Merge();
                             ExcelApp.DisplayAlerts = true;//打开弹窗
                             //命名区域
-                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 1, RefersToR1C1: string.Format(" = '{0}1'!R4C1: R9C5", TempStr));
+                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0]+ 1, RefersToR1C1: string.Format("='{0}1'!R4C1:R9C5", TempStr));
                             #endregion
 
 
@@ -4161,6 +4162,9 @@ namespace HertZ_ExcelAddIn
                                     NRG[i, i1] = ORG[i + 5, i1 + 5];
                                 }
                             }
+
+                            NRG[1, 1] = "账面余额";
+                            NRG[1, 3] = "坏账准备";
 
                             FunC.NewSheet(TempStr + "2");
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].Value2 = NRG;
@@ -4176,9 +4180,9 @@ namespace HertZ_ExcelAddIn
                         }
 
                         break;
-                    case 3://行列转置的表
+                    case 3://行列转置的表 QCF170分部信息
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
-
+                        if(ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") { continue; }
                         //删除空行
                         for (int i = AllRows; i > 6; i--)
                         {
@@ -4197,10 +4201,10 @@ namespace HertZ_ExcelAddIn
                         NRG = new object[17,((AllRows-6)*2+1)];
 
                         //首列标题
-                        NRG[0, 1] = "项目";
+                        NRG[0, 0] = "项目";
                         for(int i = 2; i <= 31; i += 2)
                         {
-                            if (ORG[4, i] == null)
+                            if (ORG[4, i] == null || ORG[4, i].ToString() == "")
                             {
                                 NRG[i / 2 + 1, 0] = "          " + FunC.TS(ORG[5, i]);
                             }
@@ -4241,7 +4245,7 @@ namespace HertZ_ExcelAddIn
                         //合并表头
                         for(int i = 1; i <= AllRows - 6; i++)
                         {
-                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i * 2-1), FunC.CName(i * 2))].Merge();
+                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i * 2), FunC.CName(i * 2+1))].Merge();
                         }
                         ExcelApp.DisplayAlerts = true;//打开弹窗
 
@@ -4251,20 +4255,20 @@ namespace HertZ_ExcelAddIn
                         break;
                     case 4://行列转置并拆分的表，还要删除空列
                         if (AllRows < 7 || (AllColumns != 20 && AllColumns != 18)) { MessageBox.Show(TempStr + "行列数不合规,请检查"); continue; }
-                        wst.Range[string.Format("{0}:{0}", AllRows)].Delete(Excel.XlDirection.xlUp);//删除注释行
-                        AllRows -= 2;//不引用注释行
+                        //wst.Range[string.Format("{0}:{0}", AllRows)].Delete(Excel.XlDirection.xlUp);//删除注释行
+                        AllRows -= 1;//不引用注释行
                         //删除空行
                         ORG = wst.Range["A1:T" + AllRows.ToString()].Value2;
-                        for (int i = AllRows; i >= Math.Max(AllRows - 4, 1); i -= 2)
+                        for (int i = AllRows; i > 4; i -= 2)
                         {
-                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "")
+                            if (ORG[i-1, 1] == null || ORG[i-1, 1].ToString() == "")
                             {
-                                wst.Range[string.Format("{0}:{1}", i,i+1)].Delete(Excel.XlDirection.xlUp);
+                                wst.Range[string.Format("{0}:{1}", i-1,i)].Delete(Excel.XlDirection.xlUp);
                             }
                         }
 
                         ORG = null;
-                        AllRows = FunC.AllRows("A",2);
+                        AllRows = FunC.AllRows("A", 2) - 1;
                         ORG = wst.Range["A1:T" + AllRows.ToString()].Value2;
 
                         //行列转换读取余额区域
@@ -4287,7 +4291,7 @@ namespace HertZ_ExcelAddIn
                         //合并表头
                         for (int i = 2; i <= AllRows - 4; i+=2)
                         {
-                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i+1))].Merge();
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i+1))].Merge();
                         }
                         ExcelApp.DisplayAlerts = true;//打开弹窗
                         //命名区域
@@ -4366,14 +4370,22 @@ namespace HertZ_ExcelAddIn
                         break;
                 }
 
-                
             }
+
+
 
             WST.Select();
             //关闭屏幕刷新
             ExcelApp.ScreenUpdating = true;
 
+            MessageBox.Show("久其表加工完成，请检查！");
+
         }
 
+        //生成附注Word
+        private void ExportNotes_Click(object sender, RibbonControlEventArgs e)
+        {
+
+        }
     }
 }
