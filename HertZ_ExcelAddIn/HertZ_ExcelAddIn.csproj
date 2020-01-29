@@ -308,6 +308,7 @@
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="Resources\1.1.3-2019 国企财务报表附注.docx" />
     <None Include="Resources\JiuQiDB.csv" />
     <None Include="Resources\往来询证函模板.dotx" />
     <None Include="ThisAddIn.Designer.xml">

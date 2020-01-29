@@ -4385,7 +4385,56 @@ namespace HertZ_ExcelAddIn
         //生成附注Word
         private void ExportNotes_Click(object sender, RibbonControlEventArgs e)
         {
+            //弹出窗体提示
+            DialogResult IsWait = MessageBox.Show("请在加工完的2019年久其导出的表格中使用该功能！" +Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
+            if (IsWait != DialogResult.Yes) { return; }
 
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取我的文档路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+
+            //在我的文档创建模板文件夹
+            if (!Directory.Exists(strPath + "\\HertZTemplate"))//如果不存在就创建文件夹
+            {
+                Directory.CreateDirectory(strPath + "\\HertZTemplate");
+            }
+
+            //检查CSV文件是否提取出来
+            if (!File.Exists(strPath + "\\HertZTemplate\\JiuQiDB.csv"))
+            {
+                MessageBox.Show("请先加工久其表");
+                return;
+            }
+
+            //将附注模板提取出来
+            if (!File.Exists(strPath + "\\HertZTemplate\\1.1.3-2019 国企财务报表附注.docx"))
+            {
+                byte[] NotS2019 = Properties.Resources._2019国企财务报表附注; //取出Resources中的附注模板
+                FileStream outputExcelFile = new FileStream(strPath + "\\HertZTemplate\\1.1.3-2019 国企财务报表附注.docx", FileMode.Create, FileAccess.Write); //存到我的文档
+                outputExcelFile.Write(NotS2019, 0, NotS2019.Length);
+                outputExcelFile.Close();
+            }
+
+            //打开CSV文件
+            DataTable JiuQiTable = FunC.OpenCSV(strPath + "\\HertZTemplate\\JiuQiDB.csv");
+
+            //创建字典
+            //Dictionary<string, int> TableType = new Dictionary<string, int> { };
+            //foreach (DataRow dr in JiuQiTable.Rows)
+            //{
+            //    TableType.Add(dr[0].ToString(), FunC.TI(dr[3]));
+            //}
+
+            Word.Application WordApp = new Word.Application(); //初始化
+            WordApp.Visible = false;//使文档不可见
+            Word.Document WordDoc;
+
+            WordDoc = WordApp.Documents.Open(strPath + "\\HertZTemplate\\1.1.3-2019 国企财务报表附注.docx");
+
+            //关闭屏幕刷新
+            ExcelApp.ScreenUpdating = false;
         }
     }
 }
