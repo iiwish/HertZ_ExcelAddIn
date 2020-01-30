@@ -4426,15 +4426,59 @@ namespace HertZ_ExcelAddIn
             //{
             //    TableType.Add(dr[0].ToString(), FunC.TI(dr[3]));
             //}
+            string TempStr = ExcelApp.ActiveWorkbook.Path + "\\1.1.3-2019 国企财务报表附注-久其生成.docx";
 
+            //检查目标目录是否存在
+            if (File.Exists(TempStr))
+            {
+                //弹出窗体提示
+                IsWait = MessageBox.Show("当前目录存在“1.1.3-2019 国企财务报表附注-久其生成.docx”文件！" + Environment.NewLine + "是否删除并继续？", "请选择", MessageBoxButtons.YesNo);
+                if (IsWait == DialogResult.Yes)
+                {
+                    File.Delete(TempStr);
+                }
+                else
+                { 
+                    return; 
+                }
+            }
+            
+            //复制模板文件
+            File.Copy(strPath + "\\HertZTemplate\\1.1.3-2019 国企财务报表附注.docx", TempStr, true);
+            
             Word.Application WordApp = new Word.Application(); //初始化
             WordApp.Visible = false;//使文档不可见
             Word.Document WordDoc;
 
-            WordDoc = WordApp.Documents.Open(strPath + "\\HertZTemplate\\1.1.3-2019 国企财务报表附注.docx");
+            WordDoc = WordApp.Documents.Open(TempStr);
 
-            //关闭屏幕刷新
-            ExcelApp.ScreenUpdating = false;
+            //查找开始和结束段落
+            int StartPg = 0;//开始段落
+            int EndPg = 0;//结束段落
+            int i4 = 0;
+            foreach (Word.Paragraph Pg in WordDoc.Paragraphs)
+            {
+                i4++;
+                if (Pg.OutlineLevel == Word.WdOutlineLevel.wdOutlineLevel1)
+                {
+                    if(StartPg == 0)
+                    {
+                        TempStr = Pg.ToString();
+                        if (TempStr.Contains('、') && TempStr.Split('、')[1] == "财务报表主要项目注释")
+                        {
+                            StartPg = i4;
+                        }
+                    }
+                    else
+                    {
+                        EndPg = i4;
+                        break;
+                    }
+                }
+            }
+
+
+
         }
     }
 }
