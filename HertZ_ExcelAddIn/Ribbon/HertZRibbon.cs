@@ -4343,9 +4343,12 @@ namespace HertZ_ExcelAddIn
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
                         for (int i = AllRows; i >= 4; i--)
                         {
-                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "") 
+                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "" || ORG[i, 1].ToString() == "　") 
                             {
-                                wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
+                                if(ORG[i, 2] == null || ORG[i, 2].ToString() == "" || ORG[i, 2].ToString() == "　")
+                                {
+                                    wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
+                                }
                             }
                         }
                         ORG = null;
