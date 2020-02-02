@@ -4026,8 +4026,8 @@ namespace HertZ_ExcelAddIn
             foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
             {
                 TempStr = wst.Name;
-                if (!TableType.ContainsKey(TempStr)) { continue; }
-
+                if (!TableType.ContainsKey(TempStr)){ continue; }
+                
                 wst.Select();
 
                 AllRows = FunC.AllRows();
@@ -4039,6 +4039,27 @@ namespace HertZ_ExcelAddIn
 
                         //不引用最后注释行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                        
+                        //QCF46表删除括号内容
+                        if (TempStr.Length > 5 && TempStr.Substring(0, 5) == "QCF46")
+                        {
+                            for(int i = 1; i <= AllRows;i++)
+                            {
+                                if(FunC.TS(ORG[i, 1]).Contains("("))
+                                {
+                                    ORG[i, 1] = FunC.TS(ORG[i, 1]).Split('(')[0];
+                                }
+                            }
+                        }
+
+                        //QCF33 应收利息(附注33表)表名称有问题，修正
+                        if (TempStr.Length > 5 && TempStr.Substring(0, 5) == "QCF33")
+                        {
+                            wst.Name = "QCF33 应收利息(附注33表)";
+                            TempStr = "QCF33 应收利息(附注33表)";
+                        }
+
+                        //删除空行
                         for (int i = Math.Max(AllRows - 4, 1); i <= AllRows; i++)
                         {
                             if (ORG[i, 1] == null) { continue; }
@@ -4050,6 +4071,9 @@ namespace HertZ_ExcelAddIn
                         }
                         ORG = null;
 
+                        //调整表格样式
+                        FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns), AllRows));
+                        
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R{1}C{2}",TempStr,AllRows,AllColumns));
                         break;
@@ -4086,6 +4110,11 @@ namespace HertZ_ExcelAddIn
                             FunC.NewSheet(TempStr + "1");
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].Value2 = NRG;
                             NRG = null;
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].WrapText = true;
+
+                            //调整表格样式
+                            FunC.JQChangeFont(string.Format("A4:C20"));
+
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 1, RefersToR1C1: string.Format("='{0}1'!R4C1:R20C3", TempStr));
 
@@ -4115,6 +4144,11 @@ namespace HertZ_ExcelAddIn
                             FunC.NewSheet(TempStr + "2");
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].Value2 = NRG;
                             NRG = null;
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].WrapText = true;
+
+                            //调整表格样式
+                            FunC.JQChangeFont(string.Format("A4:C23"));
+
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R23C3", TempStr));
                         }
@@ -4147,6 +4181,11 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B4:E4"].Merge();
                             ExcelApp.DisplayAlerts = true;//打开弹窗
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].WrapText = true;
+
+                            //调整表格样式
+                            FunC.JQChangeFont(string.Format("A4:E9"));
+
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0]+ 1, RefersToR1C1: string.Format("='{0}1'!R4C1:R9C5", TempStr));
                             #endregion
@@ -4173,6 +4212,12 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B4:E4"].Merge();
                             ExcelApp.DisplayAlerts = true;//打开弹窗
+
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].WrapText = true;
+
+                            //调整表格样式
+                            FunC.JQChangeFont(string.Format("A4:E9"));
+
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R9C5", TempStr));
                             #endregion
@@ -4242,8 +4287,14 @@ namespace HertZ_ExcelAddIn
                         NRG = null;
                         ExcelApp.DisplayAlerts = false;//关闭弹窗
                         wst.Range["A4:A5"].Merge();
+
+                        wst.Range["A4:A20"].WrapText = true;
+
+                        //调整表格样式
+                        FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName((AllRows - 6) * 2 + 1)));
+
                         //合并表头
-                        for(int i = 1; i <= AllRows - 6; i++)
+                        for (int i = 1; i <= AllRows - 6; i++)
                         {
                             wst.Range[string.Format("{0}4:{1}4", FunC.CName(i * 2), FunC.CName(i * 2+1))].Merge();
                         }
@@ -4294,6 +4345,12 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i+1))].Merge();
                         }
                         ExcelApp.DisplayAlerts = true;//打开弹窗
+
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A20"].WrapText = true;
+
+                        //调整表格样式
+                        FunC.JQChangeFont(string.Format("A4:{0}16", FunC.CName(AllRows - 3)));
+
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0]+1, RefersToR1C1: string.Format("='{0}1'!R4C1:R16C{1}", TempStr, AllRows - 3));
 
@@ -4330,9 +4387,15 @@ namespace HertZ_ExcelAddIn
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A5"].Merge();
                         for (int i = 2; i <= AllRows - 4; i += 2)
                         {
-                            wst.Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i + 1))].Merge();
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("{0}4:{1}4", FunC.CName(i), FunC.CName(i + 1))].Merge();
                         }
                         ExcelApp.DisplayAlerts = true;//打开弹窗
+
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A12"].WrapText = true;
+
+                        //调整表格样式
+                        FunC.JQChangeFont(string.Format("A4:{0}12", FunC.CName(AllRows - 3)));
+
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R12C{1}", TempStr, AllRows - 3));
 
@@ -4341,18 +4404,17 @@ namespace HertZ_ExcelAddIn
 
                         //删除空行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
                         for (int i = AllRows; i >= 4; i--)
                         {
-                            if (ORG[i, 1] == null || ORG[i, 1].ToString() == "" || ORG[i, 1].ToString() == "　") 
+                            if (FunC.TS(ORG[i, 1]) == "" && FunC.TS(ORG[i, 2]) == "") 
                             {
-                                if(ORG[i, 2] == null || ORG[i, 2].ToString() == "" || ORG[i, 2].ToString() == "　")
-                                {
-                                    wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
-                                }
+                                wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
+                                AllRows--;
                             }
                         }
                         ORG = null;
-                        AllRows = FunC.AllRows();
+                        //AllRows = FunC.AllRows();
 
                         //不引用最后注释行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
@@ -4367,6 +4429,9 @@ namespace HertZ_ExcelAddIn
                         }
                         ORG = null;
 
+                        //调整表格样式
+                        FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns),AllRows));
+
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R{1}C{2}", TempStr, AllRows, AllColumns));
                         
@@ -4374,10 +4439,11 @@ namespace HertZ_ExcelAddIn
                 }
 
             }
-
-
-
-            WST.Select();
+            try 
+            { 
+                WST.Select(); 
+            }
+            catch { }
             //关闭屏幕刷新
             ExcelApp.ScreenUpdating = true;
 

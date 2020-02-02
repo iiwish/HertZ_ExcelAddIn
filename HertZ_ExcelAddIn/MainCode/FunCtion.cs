@@ -1160,6 +1160,68 @@ namespace HertZ_ExcelAddIn
             return returnValue;
         }
 
+        public void JQChangeFont(string RG)
+        {
+            Excel.Range rg = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[RG];
+            Excel.Range rg2;
+            rg.Interior.Pattern = Excel.XlPattern.xlPatternNone;
+            rg.Interior.TintAndShade = 0;
+            rg.Interior.PatternTintAndShade = 0;
+            rg.Font.Name = "仿宋_GB2312";
+            rg.Font.Size = 9;
+            rg.Font.Name = "Arial Narrow";
 
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlDiagonalDown).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlDiagonalUp).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeRight).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlInsideVertical).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
+
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).Weight = Excel.XlBorderWeight.xlThick;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).Weight = Excel.XlBorderWeight.xlThick;
+
+            object[,] ORG = rg.Value2;
+            if(ORG.GetLength(0) > 1)
+            {
+                if (TS(ORG[2, 1]) == "") 
+                {
+                    if(ORG.GetLength(0)>2 && TS(ORG[3, 1]) == "")
+                    {
+                        rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}6", CName(ORG.GetLength(1)))];
+                    }
+                    else
+                    {
+                        rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}5", CName(ORG.GetLength(1)))];
+                    }
+                }
+                else
+                {
+                    rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}4", CName(ORG.GetLength(1)))];
+                }
+                rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
+                rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).Weight = Excel.XlBorderWeight.xlThin;
+                rg2.Font.Bold = true;
+                rg2.HorizontalAlignment = Excel.Constants.xlCenter;
+                rg2.VerticalAlignment = Excel.Constants.xlCenter;
+
+                if (TS(ORG[ORG.GetLength(0), 1]).Contains("合") && TS(ORG[ORG.GetLength(0), 1]).Contains("计"))
+                {
+                    rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A{0}:{1}{0}", ORG.GetLength(0) + 3, CName(ORG.GetLength(1)))];
+                    rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous;
+                    rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).Weight = Excel.XlBorderWeight.xlThin;
+                    rg2.Font.Bold = true;
+                    rg2.VerticalAlignment = Excel.Constants.xlCenter;
+                    ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A{0}:A{0}", ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlCenter;
+                    ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B{0}:{1}{0}", ORG.GetLength(0) + 3, CName(ORG.GetLength(1)))].HorizontalAlignment = Excel.Constants.xlRight;
+                }
+                rg2 = null;
+            }
+
+
+
+        }
     }
 }
