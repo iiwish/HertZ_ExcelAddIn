@@ -52,6 +52,8 @@
             this.JiuQi = this.Factory.CreateRibbonGroup();
             this.EditJiuQi = this.Factory.CreateRibbonButton();
             this.ExportNotes = this.Factory.CreateRibbonButton();
+            this.OpenNoteTemplate = this.Factory.CreateRibbonSplitButton();
+            this.OpenFloder = this.Factory.CreateRibbonButton();
             this.Tool = this.Factory.CreateRibbonGroup();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
@@ -251,6 +253,7 @@
             // 
             this.JiuQi.Items.Add(this.EditJiuQi);
             this.JiuQi.Items.Add(this.ExportNotes);
+            this.JiuQi.Items.Add(this.OpenNoteTemplate);
             this.JiuQi.Label = "久其";
             this.JiuQi.Name = "JiuQi";
             // 
@@ -272,6 +275,25 @@
             this.ExportNotes.ShowImage = true;
             this.ExportNotes.SuperTip = "生成的附注存放在久其表同一目录下";
             this.ExportNotes.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ExportNotes_Click);
+            // 
+            // OpenNoteTemplate
+            // 
+            this.OpenNoteTemplate.Items.Add(this.OpenFloder);
+            this.OpenNoteTemplate.Label = "附注模板";
+            this.OpenNoteTemplate.Name = "OpenNoteTemplate";
+            this.OpenNoteTemplate.OfficeImageId = "FileSaveAsWordDocx";
+            this.OpenNoteTemplate.ScreenTip = "点击打开附注模板";
+            this.OpenNoteTemplate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OpenNoteTemplate_Click);
+            // 
+            // OpenFloder
+            // 
+            this.OpenFloder.Label = "打开文件夹";
+            this.OpenFloder.Name = "OpenFloder";
+            this.OpenFloder.OfficeImageId = "FileOpen";
+            this.OpenFloder.ScreenTip = "打开模板文件夹";
+            this.OpenFloder.ShowImage = true;
+            this.OpenFloder.SuperTip = "如果想要恢复默认模板，可以打开文件夹删除模板文件";
+            this.OpenFloder.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.OpenFloder_Click);
             // 
             // Tool
             // 
@@ -572,6 +594,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton EditJiuQi;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ExportNotes;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox JiuQiCheck;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSplitButton OpenNoteTemplate;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton OpenFloder;
     }
 
     partial class ThisRibbonCollection

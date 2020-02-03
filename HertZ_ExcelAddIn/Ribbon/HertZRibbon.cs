@@ -4037,6 +4037,26 @@ namespace HertZ_ExcelAddIn
                 {
                     case 1://普通表
 
+                        //QCF141 B列有问题，修正
+                        if (TempStr.Length > 6 && TempStr.Substring(0, 6) == "QCF141")
+                        {
+                            if (FunC.TS(wst.Range["B4"].Value2) == "")
+                            {
+                                wst.Range["B:B"].Delete();
+                                AllColumns--;
+                            }
+                        }
+
+                        //QCF90 第六行需要删除
+                        if (TempStr.Length > 5 && TempStr.Substring(0, 5) == "QCF90")
+                        {
+                            if (wst.Range["B5"].MergeCells)
+                            {
+                                wst.Range["6:6"].Delete();
+                                AllRows--;
+                            }
+                        }
+
                         //不引用最后注释行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
                         
@@ -4059,7 +4079,7 @@ namespace HertZ_ExcelAddIn
                             TempStr = "QCF33 应收利息(附注33表)";
                         }
 
-                        //删除空行
+                        //删除注释行
                         for (int i = Math.Max(AllRows - 4, 1); i <= AllRows; i++)
                         {
                             if (ORG[i, 1] == null) { continue; }
@@ -4227,7 +4247,12 @@ namespace HertZ_ExcelAddIn
                         break;
                     case 3://行列转置的表 QCF170分部信息
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
-                        if(ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") { continue; }
+                        if(ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") 
+                        {
+                            //调整表格样式
+                            FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4))));
+                            continue; 
+                        }
                         //删除空行
                         for (int i = AllRows; i > 6; i--)
                         {
@@ -4407,10 +4432,21 @@ namespace HertZ_ExcelAddIn
 
                         for (int i = AllRows; i >= 4; i--)
                         {
-                            if (FunC.TS(ORG[i, 1]) == "" && FunC.TS(ORG[i, 2]) == "") 
+                            if (FunC.TS(ORG[i, 1]) == "" && FunC.TS(ORG[i, 2]) == "")
                             {
-                                wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
-                                AllRows--;
+                                if (AllColumns > 2)
+                                {
+                                    if(FunC.TS(ORG[i, 3]) == "")
+                                    {
+                                        wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
+                                        AllRows--;
+                                    }
+                                }
+                                else
+                                {
+                                    wst.Range[string.Format("{0}:{0}", i)].Delete(Excel.XlDirection.xlUp);
+                                    AllRows--;
+                                }
                             }
                         }
                         ORG = null;
@@ -4489,12 +4525,6 @@ namespace HertZ_ExcelAddIn
             //打开CSV文件
             DataTable JiuQiTable = FunC.OpenCSV(strPath + "\\HertZTemplate\\JiuQiDB.csv");
 
-            //创建字典
-            //Dictionary<string, int> TableType = new Dictionary<string, int> { };
-            //foreach (DataRow dr in JiuQiTable.Rows)
-            //{
-            //    TableType.Add(dr[0].ToString(), FunC.TI(dr[3]));
-            //}
             string TempStr = ExcelApp.ActiveWorkbook.Path + "\\1.1.3-2019 国企财务报表附注-久其生成.docx";
 
             //检查目标目录是否存在
@@ -4521,33 +4551,65 @@ namespace HertZ_ExcelAddIn
 
             WordDoc = WordApp.Documents.Open(TempStr);
 
-            //查找开始和结束段落
-            int StartPg = 0;//开始段落
-            int EndPg = 0;//结束段落
-            int i4 = 0;
-            foreach (Word.Paragraph Pg in WordDoc.Paragraphs)
+
+        }
+
+        /// <summary>
+        /// 打开附注模板文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenNoteTemplate_Click(object sender, RibbonControlEventArgs e)
+        {
+            string TempStr = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            TempStr += "\\HertZTemplate\\1.1.3-2019 国企财务报表附注.docx";
+            //检查文件是否存在
+            if (!File.Exists(TempStr))
             {
-                i4++;
-                if (Pg.OutlineLevel == Word.WdOutlineLevel.wdOutlineLevel1)
-                {
-                    if(StartPg == 0)
-                    {
-                        TempStr = Pg.ToString();
-                        if (TempStr.Contains('、') && TempStr.Split('、')[1] == "财务报表主要项目注释")
-                        {
-                            StartPg = i4;
-                        }
-                    }
-                    else
-                    {
-                        EndPg = i4;
-                        break;
-                    }
-                }
+                byte[] NotS2019 = Properties.Resources._2019国企财务报表附注; //取出Resources中的附注模板
+                FileStream outputExcelFile = new FileStream(TempStr, FileMode.Create, FileAccess.Write); //存到我的文档模板文件夹
+                outputExcelFile.Write(NotS2019, 0, NotS2019.Length);
+                outputExcelFile.Close();
             }
 
+            if (FunC.IsFileInUse(TempStr))//如果目标文件已被打开
+            {
+                MessageBox.Show("模板文件已被打开！");
+            }
+            else
+            {
+                Word.Application WordApp = null;
+                try
+                {
+                    WordApp = (Word.Application)Marshal.GetActiveObject("Word.Application");
+                }
+                catch
+                {
+                    WordApp = new Word.Application();
+                }
+                Word.Document WordDoc = WordApp.Documents.Open(TempStr);
+                WordApp.Visible = true;
+            }
+        }
 
+        /// <summary>
+        /// 打开模板文件夹
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenFloder_Click(object sender, RibbonControlEventArgs e)
+        {
+            string TempStr = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            TempStr += "\\HertZTemplate";
 
+            if (Directory.Exists(TempStr))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", TempStr);
+            }
+            else
+            {
+                System.Diagnostics.Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments));
+            }
         }
     }
 }

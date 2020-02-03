@@ -1053,33 +1053,6 @@ namespace HertZ_ExcelAddIn
             return returnValue;
         }
 
-        //希尔排序，未完成
-        public object[,] OrderBy(object[,] OriginalArr, int i)
-        {
-            int gap = OriginalArr.GetLength(0) / 2;
-
-            while (1 <= gap)
-            {
-                // 把距离为 gap 的元素编为一个组，扫描所有组
-                for (int i1 = gap; i1 < OriginalArr.GetLength(0); i1++)
-                {
-                    int j = 0;
-                    double temp = double.Parse(OriginalArr[i1,9].ToString());
-
-                    // 对距离为 gap 的元素组进行排序
-                    for (j = i1 - gap; j >= 0 && temp < double.Parse(OriginalArr[j, 9].ToString()); j = j - gap)
-                    {
-                        OriginalArr[j + gap, 9] = double.Parse(OriginalArr[j, 9].ToString());
-                    }
-                    OriginalArr[j + gap, 9] = temp;
-                }
-
-                gap = gap / 2; // 减小增量
-            }
-
-            return OriginalArr;
-        }
-
         /// <summary>
         /// 将CSV文件的数据读取到DataTable中
         /// </summary>
@@ -1162,6 +1135,7 @@ namespace HertZ_ExcelAddIn
 
         public void JQChangeFont(string RG)
         {
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[RG];
             Excel.Range rg2;
             rg.Interior.Pattern = Excel.XlPattern.xlPatternNone;
@@ -1179,10 +1153,11 @@ namespace HertZ_ExcelAddIn
             rg.Borders.get_Item(Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
 
             rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous;
-            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).Weight = Excel.XlBorderWeight.xlThick;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).Weight = Excel.XlBorderWeight.xlMedium;
             rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
-            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).Weight = Excel.XlBorderWeight.xlThick;
+            rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).Weight = Excel.XlBorderWeight.xlMedium;
 
+            rg.VerticalAlignment = Excel.Constants.xlCenter;//垂直居中
             object[,] ORG = rg.Value2;
             if(ORG.GetLength(0) > 1)
             {
@@ -1190,38 +1165,88 @@ namespace HertZ_ExcelAddIn
                 {
                     if(ORG.GetLength(0)>2 && TS(ORG[3, 1]) == "")
                     {
-                        rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}6", CName(ORG.GetLength(1)))];
+                        rg2 = WST.Range[string.Format("A4:{0}6", CName(ORG.GetLength(1)))];
                     }
                     else
                     {
-                        rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}5", CName(ORG.GetLength(1)))];
+                        rg2 = WST.Range[string.Format("A4:{0}5", CName(ORG.GetLength(1)))];
                     }
                 }
                 else
                 {
-                    rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}4", CName(ORG.GetLength(1)))];
+                    rg2 = WST.Range[string.Format("A4:{0}4", CName(ORG.GetLength(1)))];
                 }
+
                 rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
                 rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).Weight = Excel.XlBorderWeight.xlThin;
                 rg2.Font.Bold = true;
-                rg2.HorizontalAlignment = Excel.Constants.xlCenter;
-                rg2.VerticalAlignment = Excel.Constants.xlCenter;
+                rg2.HorizontalAlignment = Excel.Constants.xlCenter;//表头水平居中
 
                 if (TS(ORG[ORG.GetLength(0), 1]).Contains("合") && TS(ORG[ORG.GetLength(0), 1]).Contains("计"))
                 {
-                    rg2 = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A{0}:{1}{0}", ORG.GetLength(0) + 3, CName(ORG.GetLength(1)))];
+                    rg2 = WST.Range[string.Format("A{0}:{1}{0}", ORG.GetLength(0) + 3, CName(ORG.GetLength(1)))];
                     rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous;
                     rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).Weight = Excel.XlBorderWeight.xlThin;
                     rg2.Font.Bold = true;
-                    rg2.VerticalAlignment = Excel.Constants.xlCenter;
-                    ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A{0}:A{0}", ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlCenter;
-                    ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B{0}:{1}{0}", ORG.GetLength(0) + 3, CName(ORG.GetLength(1)))].HorizontalAlignment = Excel.Constants.xlRight;
+                }
+
+
+                //左右对齐
+                if (TS(ORG[2, 1]) == "")
+                {
+                    if (ORG.GetLength(0) > 2 && TS(ORG[3, 1]) == "")
+                    {
+                        WST.Range[string.Format("A6:A{0}", ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlLeft;
+                        WST.Range[string.Format("B6:{0}{1}", CName(ORG.GetLength(1)), ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlRight;
+                    }
+                    else
+                    {
+                        WST.Range[string.Format("A5:A{0}", ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlLeft;
+                        WST.Range[string.Format("B5:{0}{1}", CName(ORG.GetLength(1)), ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlRight;
+                    }
+                }
+                else
+                {
+                    WST.Range[string.Format("A4:A{0}", ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlLeft;
+                    WST.Range[string.Format("B4:{0}{1}", CName(ORG.GetLength(1)), ORG.GetLength(0) + 3)].HorizontalAlignment = Excel.Constants.xlRight;
                 }
                 rg2 = null;
             }
 
 
 
+        }
+
+        /// <summary>
+        /// 判断文件是否被占用
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public bool IsFileInUse(string fileName)
+        {
+            bool inUse = true;
+
+            FileStream fs = null;
+            try
+            {
+
+                fs = new FileStream(fileName, FileMode.Open, FileAccess.Read,
+
+                FileShare.None);
+
+                inUse = false;
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                if (fs != null)
+
+                    fs.Close();
+            }
+            return inUse;//true表示正在使用,false没有使用
         }
     }
 }
