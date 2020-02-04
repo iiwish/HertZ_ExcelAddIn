@@ -1133,7 +1133,29 @@ namespace HertZ_ExcelAddIn
             return returnValue;
         }
 
-        public void JQChangeFont(string RG)
+        /// <summary>
+        /// object转decimal
+        /// </summary>
+        /// <param name="Value"></param>
+        /// <returns></returns>
+        public decimal TDM(object Value)
+        {
+            decimal returnValue = 0;
+            if (Value == null)
+            {
+                return 0;
+            }
+            string inputValue = Value.ToString();
+            decimal.TryParse(inputValue, out returnValue);
+            return returnValue;
+        }
+
+        /// <summary>
+        /// 修改久其表格式
+        /// </summary>
+        /// <param name="RG"></param>
+        /// <param name="ColumnWide"></param>
+        public void JQChangeFont(string RG,List<decimal> ColumnWide)
         {
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[RG];
@@ -1213,8 +1235,12 @@ namespace HertZ_ExcelAddIn
                 rg2 = null;
             }
 
+            for(int i = 1;i<= ColumnWide.Count; i++)
+            {
+                WST.Range[string.Format("{0}:{0}", CName(i))].ColumnWidth = Math.Round(ColumnWide[i - 1]/5.72m,2);
+            }
 
-
+            WST.Rows["4:" + (ORG.GetLength(0) + 3)].EntireRow.AutoFit();
         }
 
         /// <summary>

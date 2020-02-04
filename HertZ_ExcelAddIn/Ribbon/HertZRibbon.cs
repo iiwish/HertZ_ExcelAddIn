@@ -4002,15 +4002,24 @@ namespace HertZ_ExcelAddIn
                 outputExcelFile.Close();
             }
 
-            //打开CSV文件
+            //读取CSV文件
             DataTable JiuQiTable = FunC.OpenCSV(strPath + "\\HertZTemplate\\JiuQiDB.csv");
 
-            //创建字典
+            //创建表格类型字典
             Dictionary<string, int> TableType = new Dictionary<string, int> { };
             foreach (DataRow  dr in JiuQiTable.Rows)
             {
                 TableType.Add(dr[0].ToString(),FunC.TI(dr[3]));
             }
+
+            //创建表格行数字典
+            Dictionary<string, int> TableRow = new Dictionary<string, int> { };
+            for (int i = 0; i < JiuQiTable.Rows.Count; i++)
+            {
+                TableRow.Add(JiuQiTable.Rows[i][0].ToString(), i);
+            }
+            List<decimal> WideList = new List<decimal> { };
+            DataRow TempDr;
 
             //关闭屏幕刷新
             ExcelApp.ScreenUpdating = false;
@@ -4026,6 +4035,14 @@ namespace HertZ_ExcelAddIn
             foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
             {
                 TempStr = wst.Name;
+
+                //QCF33 应收利息(附注33表)表名称有问题，修正
+                if (TempStr.Length > 5 && TempStr.Substring(0, 5) == "QCF33")
+                {
+                    wst.Name = "QCF33 应收利息(附注33表)";
+                    TempStr = "QCF33 应收利息(附注33表)";
+                }
+
                 if (!TableType.ContainsKey(TempStr)){ continue; }
                 
                 wst.Select();
@@ -4072,13 +4089,6 @@ namespace HertZ_ExcelAddIn
                             }
                         }
 
-                        //QCF33 应收利息(附注33表)表名称有问题，修正
-                        if (TempStr.Length > 5 && TempStr.Substring(0, 5) == "QCF33")
-                        {
-                            wst.Name = "QCF33 应收利息(附注33表)";
-                            TempStr = "QCF33 应收利息(附注33表)";
-                        }
-
                         //删除注释行
                         for (int i = Math.Max(AllRows - 4, 1); i <= AllRows; i++)
                         {
@@ -4091,11 +4101,19 @@ namespace HertZ_ExcelAddIn
                         }
                         ORG = null;
 
+                        //读取列宽list
+                        WideList.Clear();
+                        TempDr = JiuQiTable.Rows[TableRow[TempStr]];
+                        for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                        {
+                            WideList.Add(FunC.TDM(TempDr[8 + i]));
+                        }
                         //调整表格样式
-                        FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns), AllRows));
+                        FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns), AllRows), WideList);
                         
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R{1}C{2}",TempStr,AllRows,AllColumns));
+                        
                         break;
                     case 2://需要拆分的表
                         
@@ -4132,8 +4150,15 @@ namespace HertZ_ExcelAddIn
                             NRG = null;
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].WrapText = true;
 
+                            //读取列宽list
+                            WideList.Clear();
+                            TempDr = JiuQiTable.Rows[TableRow[TempStr + "1"]];
+                            for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                            {
+                                WideList.Add(FunC.TDM(TempDr[8 + i]));
+                            }
                             //调整表格样式
-                            FunC.JQChangeFont(string.Format("A4:C20"));
+                            FunC.JQChangeFont("A4:C20",WideList);
 
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 1, RefersToR1C1: string.Format("='{0}1'!R4C1:R20C3", TempStr));
@@ -4166,8 +4191,15 @@ namespace HertZ_ExcelAddIn
                             NRG = null;
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].WrapText = true;
 
+                            //读取列宽list
+                            WideList.Clear();
+                            TempDr = JiuQiTable.Rows[TableRow[TempStr + "2"]];
+                            for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                            {
+                                WideList.Add(FunC.TDM(TempDr[8 + i]));
+                            }
                             //调整表格样式
-                            FunC.JQChangeFont(string.Format("A4:C23"));
+                            FunC.JQChangeFont("A4:C23",WideList);
 
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R23C3", TempStr));
@@ -4202,13 +4234,22 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B4:E4"].Merge();
                             ExcelApp.DisplayAlerts = true;//打开弹窗
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].WrapText = true;
+                            #endregion
+                            
+                            //读取列宽list
+                            WideList.Clear();
+                            TempDr = JiuQiTable.Rows[TableRow[TempStr + "1"]];
+                            for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                            {
+                                WideList.Add(FunC.TDM(TempDr[8 + i]));
+                            }
 
                             //调整表格样式
-                            FunC.JQChangeFont(string.Format("A4:E9"));
+                            FunC.JQChangeFont("A4:E9",WideList);
 
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0]+ 1, RefersToR1C1: string.Format("='{0}1'!R4C1:R9C5", TempStr));
-                            #endregion
+                            
 
 
                             #region 期初余额数
@@ -4234,13 +4275,22 @@ namespace HertZ_ExcelAddIn
                             ExcelApp.DisplayAlerts = true;//打开弹窗
 
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:E9"].WrapText = true;
+                            #endregion
+
+                            //读取列宽list
+                            WideList.Clear();
+                            TempDr = JiuQiTable.Rows[TableRow[TempStr + "2"]];
+                            for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                            {
+                                WideList.Add(FunC.TDM(TempDr[8 + i]));
+                            }
 
                             //调整表格样式
-                            FunC.JQChangeFont(string.Format("A4:E9"));
+                            FunC.JQChangeFont("A4:E9",WideList);
 
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R9C5", TempStr));
-                            #endregion
+                            
 
                         }
 
@@ -4249,8 +4299,15 @@ namespace HertZ_ExcelAddIn
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
                         if(ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") 
                         {
+                            //读取列宽list
+                            WideList.Clear();
+                            TempDr = JiuQiTable.Rows[TableRow[TempStr]];
+                            for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                            {
+                                WideList.Add(FunC.TDM(TempDr[8 + i]));
+                            }
                             //调整表格样式
-                            FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4))));
+                            FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4))),WideList);
                             continue; 
                         }
                         //删除空行
@@ -4315,8 +4372,15 @@ namespace HertZ_ExcelAddIn
 
                         wst.Range["A4:A20"].WrapText = true;
 
+                        //读取列宽list
+                        WideList.Clear();
+                        TempDr = JiuQiTable.Rows[TableRow[TempStr]];
+                        for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                        {
+                            WideList.Add(FunC.TDM(TempDr[8 + i]));
+                        }
                         //调整表格样式
-                        FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName((AllRows - 6) * 2 + 1)));
+                        FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName((AllRows - 6) * 2 + 1)),WideList);
 
                         //合并表头
                         for (int i = 1; i <= AllRows - 6; i++)
@@ -4373,8 +4437,15 @@ namespace HertZ_ExcelAddIn
 
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A20"].WrapText = true;
 
+                        //读取列宽list
+                        WideList.Clear();
+                        TempDr = JiuQiTable.Rows[TableRow[TempStr + "1"]];
+                        for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                        {
+                            WideList.Add(FunC.TDM(TempDr[8 + i]));
+                        }
                         //调整表格样式
-                        FunC.JQChangeFont(string.Format("A4:{0}16", FunC.CName(AllRows - 3)));
+                        FunC.JQChangeFont(string.Format("A4:{0}16", FunC.CName(AllRows - 3)),WideList);
 
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0]+1, RefersToR1C1: string.Format("='{0}1'!R4C1:R16C{1}", TempStr, AllRows - 3));
@@ -4418,8 +4489,15 @@ namespace HertZ_ExcelAddIn
 
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A12"].WrapText = true;
 
+                        //读取列宽list
+                        WideList.Clear();
+                        TempDr = JiuQiTable.Rows[TableRow[TempStr + "2"]];
+                        for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                        {
+                            WideList.Add(FunC.TDM(TempDr[8 + i]));
+                        }
                         //调整表格样式
-                        FunC.JQChangeFont(string.Format("A4:{0}12", FunC.CName(AllRows - 3)));
+                        FunC.JQChangeFont(string.Format("A4:{0}12", FunC.CName(AllRows - 3)),WideList);
 
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R12C{1}", TempStr, AllRows - 3));
@@ -4465,8 +4543,16 @@ namespace HertZ_ExcelAddIn
                         }
                         ORG = null;
 
+                        //读取列宽list
+                        WideList.Clear();
+                        TempDr = JiuQiTable.Rows[TableRow[TempStr]];
+                        for (int i = 0; i < FunC.TI(TempDr[7]); i++)
+                        {
+                            WideList.Add(FunC.TDM(TempDr[8 + i]));
+                        }
+
                         //调整表格样式
-                        FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns),AllRows));
+                        FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns),AllRows),WideList);
 
                         //命名区域
                         ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R{1}C{2}", TempStr, AllRows, AllColumns));
@@ -4534,7 +4620,15 @@ namespace HertZ_ExcelAddIn
                 IsWait = MessageBox.Show("当前目录存在“1.1.3-2019 国企财务报表附注-久其生成.docx”文件！" + Environment.NewLine + "是否删除并继续？", "请选择", MessageBoxButtons.YesNo);
                 if (IsWait == DialogResult.Yes)
                 {
-                    File.Delete(TempStr);
+                    try
+                    {
+                        File.Delete(TempStr);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("当前目录生成的附注已打开，请关闭后再试");
+                        return;
+                    }
                 }
                 else
                 { 
@@ -4550,6 +4644,7 @@ namespace HertZ_ExcelAddIn
             Word.Document WordDoc;
 
             WordDoc = WordApp.Documents.Open(TempStr);
+
 
 
         }
