@@ -1061,10 +1061,11 @@ namespace HertZ_ExcelAddIn
         public DataTable OpenCSV(string filePath)
         {
             //UTF8Encoding encoding = Common.GetType(filePath); //Encoding.ASCII;//
+            //Encoding encoding = GetType(filePath);
             DataTable dt = new DataTable();
             FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
-            StreamReader sr = new StreamReader(fs, Encoding.Default);
+            StreamReader sr = new StreamReader(fs, Encoding.UTF8);
             //StreamReader sr = new StreamReader(fs, encoding);
             //string fileContent = sr.ReadToEnd();
             //encoding = sr.CurrentEncoding;
@@ -1160,13 +1161,16 @@ namespace HertZ_ExcelAddIn
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[RG];
             Excel.Range rg2;
+
+            rg.WrapText = true;//自动换行
+
             rg.Interior.Pattern = Excel.XlPattern.xlPatternNone;
             rg.Interior.TintAndShade = 0;
             rg.Interior.PatternTintAndShade = 0;
             rg.Font.Name = "仿宋_GB2312";
             rg.Font.Size = 9;
             rg.Font.Name = "Arial Narrow";
-
+            
             rg.Borders.get_Item(Excel.XlBordersIndex.xlDiagonalDown).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             rg.Borders.get_Item(Excel.XlBordersIndex.xlDiagonalUp).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
             rg.Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlLineStyleNone;
@@ -1199,6 +1203,14 @@ namespace HertZ_ExcelAddIn
                     rg2 = WST.Range[string.Format("A4:{0}4", CName(ORG.GetLength(1)))];
                 }
 
+                foreach(Excel.Range rgcell in rg2)
+                {
+                    if(TS(rgcell.Value2) != "")
+                    {
+                        rgcell.Value2 = TS(rgcell.Value2).Replace("\n", string.Empty);
+                    }
+                }
+
                 rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
                 rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).Weight = Excel.XlBorderWeight.xlThin;
                 rg2.Font.Bold = true;
@@ -1211,7 +1223,6 @@ namespace HertZ_ExcelAddIn
                     rg2.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).Weight = Excel.XlBorderWeight.xlThin;
                     rg2.Font.Bold = true;
                 }
-
 
                 //左右对齐
                 if (TS(ORG[2, 1]) == "")
@@ -1237,7 +1248,7 @@ namespace HertZ_ExcelAddIn
 
             for(int i = 1;i<= ColumnWide.Count; i++)
             {
-                WST.Range[string.Format("{0}:{0}", CName(i))].ColumnWidth = Math.Round(ColumnWide[i - 1]/5.72m,2);
+                WST.Range[string.Format("{0}:{0}", CName(i))].ColumnWidth = Math.Round(ColumnWide[i - 1],2);
             }
 
             WST.Rows["4:" + (ORG.GetLength(0) + 3)].EntireRow.AutoFit();
@@ -1273,6 +1284,17 @@ namespace HertZ_ExcelAddIn
                     fs.Close();
             }
             return inUse;//true表示正在使用,false没有使用
+        }
+
+        /// <summary>
+        /// 返回Link域中的表格名称
+        /// </summary>
+        /// <param name="CodeText"></param>
+        /// <returns></returns>
+        public string LinkSheet(string CodeText)
+        {
+            string TempStr = CodeText.Split('"')[3];
+            return (TempStr.Split('!')[0]);
         }
     }
 }

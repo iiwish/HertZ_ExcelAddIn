@@ -1174,7 +1174,7 @@ namespace HertZ_ExcelAddIn
                 for (int i = 1; i < AllRows; i++)
                 {
                     //规范[期初借方]列数据
-                    if (string.IsNullOrWhiteSpace(NRG[i, 5].ToString()))
+                    if (FunC.TS(NRG[i, 5]) == "" || FunC.TDM(NRG[i, 5]) == 0m)
                     {
                         NRG[i, 5] = 0;
                     }
@@ -1188,7 +1188,7 @@ namespace HertZ_ExcelAddIn
                     }
 
                     //规范[期初贷方]列数据
-                    if (string.IsNullOrWhiteSpace(NRG[i, 6].ToString()))
+                    if (FunC.TS(NRG[i, 6]) == "" || FunC.TDM(NRG[i, 6]) == 0m)
                     {
                         NRG[i, 6] = 0;
                     }
@@ -1237,7 +1237,7 @@ namespace HertZ_ExcelAddIn
                 for (int i = 1; i < AllRows; i++)
                 {
                     //规范[期末借方]列数据
-                    if (string.IsNullOrWhiteSpace(NRG[i, 5].ToString()))
+                    if (FunC.TS(NRG[i, 5]) == "" || FunC.TDM(NRG[i, 5]) == 0m)
                     {
                         NRG[i, 5] = 0;
                     }
@@ -1251,7 +1251,7 @@ namespace HertZ_ExcelAddIn
                     }
 
                     //规范[期末贷方]列数据
-                    if (string.IsNullOrWhiteSpace(NRG[i, 6].ToString()))
+                    if (FunC.TS(NRG[i, 6]) == "" || FunC.TDM(NRG[i, 6]) == 0m)
                     {
                         NRG[i, 6] = 0;
                     }
@@ -1265,11 +1265,11 @@ namespace HertZ_ExcelAddIn
                     }
 
                     //计算[期末余额]列
-                    if (NRG[i, 3].ToString() == "借")
+                    if (FunC.TS(NRG[i, 3]) == "借")
                     {
                         NRG[i, 7] = Math.Round(FunC.TD(NRG[i, 5]) - FunC.TD(NRG[i, 6]), 2);
                     }
-                    else if (NRG[i, 3].ToString() == "贷")
+                    else if (FunC.TS(NRG[i, 3]) == "贷")
                     {
                         NRG[i, 7] = FunC.TD(NRG[i, 6]) - FunC.TD(NRG[i, 5]);
                     }
@@ -3996,7 +3996,7 @@ namespace HertZ_ExcelAddIn
             {
                 byte[] JiuQiDb = new byte[Properties.Resources.JiuQiDB.Length]; //取出Resources中的JiuQiDB.csv
                 //Properties.Resources.JiuQiDB.CopyTo(0,JiuQiDb,0,0);
-                JiuQiDb = Encoding.Default.GetBytes(Properties.Resources.JiuQiDB);
+                JiuQiDb = Encoding.UTF8.GetBytes(Properties.Resources.JiuQiDB);
                 FileStream outputExcelFile = new FileStream(strPath + "\\HertZTemplate\\JiuQiDB.csv", FileMode.Create, FileAccess.Write); //存到我的文档
                 outputExcelFile.Write(JiuQiDb, 0, JiuQiDb.Length);
                 outputExcelFile.Close();
@@ -4048,7 +4048,7 @@ namespace HertZ_ExcelAddIn
                 wst.Select();
 
                 AllRows = FunC.AllRows();
-                AllColumns = FunC.AllColumns(3,2);
+                AllColumns = FunC.AllColumns(3,3);
                 
                 switch (TableType[TempStr])
                 {
@@ -4071,6 +4071,16 @@ namespace HertZ_ExcelAddIn
                             {
                                 wst.Range["6:6"].Delete();
                                 AllRows--;
+                            }
+                        }
+
+                        //QCF171 B列需要删除
+                        if (TempStr.Length > 6 && TempStr.Substring(0, 6) == "QCF171")
+                        {
+                            if (FunC.TS(wst.Range["B4"].Value2) == "行次")
+                            {
+                                wst.Range["B:B"].Delete();
+                                AllColumns--;
                             }
                         }
 
@@ -4299,6 +4309,7 @@ namespace HertZ_ExcelAddIn
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
                         if(ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") 
                         {
+                            
                             //读取列宽list
                             WideList.Clear();
                             TempDr = JiuQiTable.Rows[TableRow[TempStr]];
@@ -4306,8 +4317,13 @@ namespace HertZ_ExcelAddIn
                             {
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
+
                             //调整表格样式
-                            FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4))),WideList);
+                            FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4,2))),WideList);
+
+                            //命名区域
+                            ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0], RefersToR1C1: string.Format("='{0}'!R4C1:R20C{1}", TempStr, FunC.AllColumns(4, 2)));
+
                             continue; 
                         }
                         //删除空行
@@ -4645,7 +4661,71 @@ namespace HertZ_ExcelAddIn
 
             WordDoc = WordApp.Documents.Open(TempStr);
 
+            int i5 = WordDoc.Fields.Count;
+            int i4 = 0;
+            foreach (Word.Field TempField in WordDoc.Fields)
+            {
+                i4++;
 
+                if (TempField.Type != Word.WdFieldType.wdFieldLink)
+                {
+                    //显示进度
+                    ExcelApp.StatusBar = "当前进度:" + Math.Round((i4 * 100d / i5), 2) + "%";
+                    continue;
+                }
+
+                //TempField.Locked = true;
+
+                TempStr = TempField.Code.Text;
+                TempField.Code.Text = " LINK Excel.Sheet.12 \"" + ExcelApp.ActiveWorkbook.FullName.Replace(@"\", @"\\") + "\" \"" + FunC.LinkSheet(TempStr) + "!" + TempStr.Split('!')[1];
+
+                //显示进度
+                ExcelApp.StatusBar = "当前进度:" + Math.Round((i4 * 100d / i5), 2) + "%";
+            }
+
+
+
+            WordDoc.Save();
+            WordApp.Visible = true;//使文档可见
+
+            WordApp.ScreenUpdating = false;//关闭屏幕刷新
+
+            //遍历WBK工作表名，加入字典
+            Dictionary<string, bool> wstDic = new Dictionary<string, bool> { };
+            foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
+            {
+                wstDic.Add(wst.Name, true);
+            }
+
+            i5 = WordDoc.Fields.Count;
+            i4 = 0;
+            foreach (Word.Field TempField in WordDoc.Fields)
+            {
+                i4++;
+
+                if (TempField.Type != Word.WdFieldType.wdFieldLink)
+                {
+                    //显示进度
+                    WordApp.StatusBar = "当前进度:" + Math.Round((i4 * 100d / i5), 2) + "%";
+
+                    continue;
+                }
+
+                TempStr = TempField.Code.Text;
+
+                if (TempStr.Contains('"'))
+                {
+                    if (wstDic.ContainsKey(FunC.LinkSheet(TempStr)))
+                    {
+                        TempField.Update();
+                    }
+                }
+
+                //显示进度
+                WordApp.StatusBar = "当前进度:" + Math.Round((i4 * 100d / i5), 2) + "%";
+            }
+
+            WordApp.ScreenUpdating = true;//打开屏幕刷新
 
         }
 
