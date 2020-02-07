@@ -1293,8 +1293,9 @@ namespace HertZ_ExcelAddIn
         /// <returns></returns>
         public string LinkSheet(string CodeText)
         {
-            string TempStr = CodeText.Split('"')[3];
-            return (TempStr.Split('!')[0]);
+            string TempStr = CodeText.Split('!')[0];//CodeText.Split('"')[3];
+            TempStr = TempStr.Substring(TempStr.LastIndexOf('"') + 1);
+            return TempStr;
         }
     }
 }

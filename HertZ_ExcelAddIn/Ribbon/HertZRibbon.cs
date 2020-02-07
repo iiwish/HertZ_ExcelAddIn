@@ -4086,7 +4086,22 @@ namespace HertZ_ExcelAddIn
 
                         //不引用最后注释行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
-                        
+                        //删除空值和零值
+                        for (int i = 1; i <= AllRows; i++)
+                        {
+                            for (int i1 = 1; i1 <= AllColumns; i1++)
+                            {
+                                if (FunC.TS(ORG[i,i1]) != "" && FunC.IsNumber(FunC.TS(ORG[i, i1])))
+                                {
+                                    if (Math.Abs(FunC.TDM(ORG[i, i1]) - 0m) < 0.001m)
+                                    {
+                                        ORG[i, i1] = null;
+                                    }
+                                }
+                            }
+                        }
+                        wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2 = ORG;
+
                         //QCF46表删除括号内容
                         if (TempStr.Length > 5 && TempStr.Substring(0, 5) == "QCF46")
                         {
@@ -4111,6 +4126,7 @@ namespace HertZ_ExcelAddIn
                         }
                         ORG = null;
 
+
                         //读取列宽list
                         WideList.Clear();
                         TempDr = JiuQiTable.Rows[TableRow[TempStr]];
@@ -4118,6 +4134,7 @@ namespace HertZ_ExcelAddIn
                         {
                             WideList.Add(FunC.TDM(TempDr[8 + i]));
                         }
+
                         //调整表格样式
                         FunC.JQChangeFont(string.Format("A4:{0}{1}", FunC.CName(AllColumns), AllRows), WideList);
                         
@@ -4132,6 +4149,22 @@ namespace HertZ_ExcelAddIn
                             if(AllRows != 27 || AllColumns != 12) { MessageBox.Show(TempStr + "行列数不合规,请检查"); continue; }
 
                             ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                            //删除空值和零值
+                            for (int i = 1; i <= AllRows; i++)
+                            {
+                                for (int i1 = 1; i1 <= AllColumns; i1++)
+                                {
+                                    if (FunC.TS(ORG[i, i1]) != "" && FunC.IsNumber(FunC.TS(ORG[i, i1])))
+                                    {
+                                        if (Math.Abs(FunC.TDM(ORG[i, i1]) - 0m) < 0.001m)
+                                        {
+                                            ORG[i, i1] = null;
+                                        }
+                                    }
+                                }
+                            }
+                            wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2 = ORG;
 
                             #region 读取销售费用到NRG
                             NRG = new object[17,3];
@@ -4159,6 +4192,7 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].Value2 = NRG;
                             NRG = null;
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].WrapText = true;
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B5:C20"].NumberFormatLocal = "#,##0.00_";
 
                             //读取列宽list
                             WideList.Clear();
@@ -4200,6 +4234,7 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].Value2 = NRG;
                             NRG = null;
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].WrapText = true;
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B5:C23"].NumberFormatLocal = "#,##0.00_";
 
                             //读取列宽list
                             WideList.Clear();
@@ -4220,6 +4255,22 @@ namespace HertZ_ExcelAddIn
                             AllRows = 10;
 
                             ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                            //删除空值和零值
+                            for (int i = 1; i <= AllRows; i++)
+                            {
+                                for (int i1 = 1; i1 <= AllColumns; i1++)
+                                {
+                                    if (FunC.TS(ORG[i, i1]) != "" && FunC.IsNumber(FunC.TS(ORG[i, i1])))
+                                    {
+                                        if (Math.Abs(FunC.TDM(ORG[i, i1]) - 0m) < 0.001m)
+                                        {
+                                            ORG[i, i1] = null;
+                                        }
+                                    }
+                                }
+                            }
+                            wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2 = ORG;
 
                             #region 期末余额表
                             NRG = new object[6, 5];
@@ -4254,6 +4305,7 @@ namespace HertZ_ExcelAddIn
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
 
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B6:E9"].NumberFormatLocal = "#,##0.00_";
                             //调整表格样式
                             FunC.JQChangeFont("A4:E9",WideList);
 
@@ -4295,19 +4347,36 @@ namespace HertZ_ExcelAddIn
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
 
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B6:E9"].NumberFormatLocal = "#,##0.00_";
                             //调整表格样式
                             FunC.JQChangeFont("A4:E9",WideList);
 
                             //命名区域
                             ExcelApp.ActiveWorkbook.Names.Add(Name: "JiuQi" + TempStr.Split(' ')[0] + 2, RefersToR1C1: string.Format("='{0}2'!R4C1:R9C5", TempStr));
                             
-
                         }
 
                         break;
                     case 3://行列转置的表 QCF170分部信息
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
-                        if(ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") 
+
+                        //删除空值和零值
+                        for (int i = 1; i <= AllRows; i++)
+                        {
+                            for (int i1 = 1; i1 <= AllColumns; i1++)
+                            {
+                                if (FunC.TS(ORG[i, i1]) != "" && FunC.IsNumber(FunC.TS(ORG[i, i1])))
+                                {
+                                    if (Math.Abs(FunC.TDM(ORG[i, i1]) - 0m) < 0.001m)
+                                    {
+                                        ORG[i, i1] = null;
+                                    }
+                                }
+                            }
+                        }
+                        wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2 = ORG;
+
+                        if (ORG[4, 2] == null || ORG[4,2].ToString() != "一、营业收入") 
                         {
                             
                             //读取列宽list
@@ -4318,6 +4387,7 @@ namespace HertZ_ExcelAddIn
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
 
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B6:{0}20", FunC.CName(FunC.AllColumns(4, 2)))].NumberFormatLocal = "#,##0.00_";
                             //调整表格样式
                             FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4,2))),WideList);
 
@@ -4387,6 +4457,7 @@ namespace HertZ_ExcelAddIn
                         wst.Range["A4:A5"].Merge();
 
                         wst.Range["A4:A20"].WrapText = true;
+                        wst.Range[string.Format("B6:{0}20", FunC.CName((AllRows - 6) * 2 + 1))].NumberFormatLocal = "#,##0.00_";
 
                         //读取列宽list
                         WideList.Clear();
@@ -4415,6 +4486,23 @@ namespace HertZ_ExcelAddIn
                         AllRows -= 1;//不引用注释行
                         //删除空行
                         ORG = wst.Range["A1:T" + AllRows.ToString()].Value2;
+
+                        //删除空值和零值
+                        for (int i = 1; i <= AllRows; i++)
+                        {
+                            for (int i1 = 1; i1 <= 20; i1++)
+                            {
+                                if (FunC.TS(ORG[i, i1]) != "" && FunC.IsNumber(FunC.TS(ORG[i, i1])))
+                                {
+                                    if (Math.Abs(FunC.TDM(ORG[i, i1]) - 0m) < 0.001m)
+                                    {
+                                        ORG[i, i1] = null;
+                                    }
+                                }
+                            }
+                        }
+                        wst.Range["A1:T" + AllRows.ToString()].Value2 = ORG;
+
                         for (int i = AllRows; i > 4; i -= 2)
                         {
                             if (ORG[i-1, 1] == null || ORG[i-1, 1].ToString() == "")
@@ -4452,6 +4540,7 @@ namespace HertZ_ExcelAddIn
                         ExcelApp.DisplayAlerts = true;//打开弹窗
 
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A20"].WrapText = true;
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B6:{0}16", FunC.CName(AllRows - 3))].NumberFormatLocal = "#,##0.00_";
 
                         //读取列宽list
                         WideList.Clear();
@@ -4504,6 +4593,7 @@ namespace HertZ_ExcelAddIn
                         ExcelApp.DisplayAlerts = true;//打开弹窗
 
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A12"].WrapText = true;
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}12", FunC.CName(AllRows - 3))].NumberFormatLocal = "#,##0.00_";
 
                         //读取列宽list
                         WideList.Clear();
@@ -4523,6 +4613,22 @@ namespace HertZ_ExcelAddIn
 
                         //删除空行
                         ORG = wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+
+                        //删除空值和零值
+                        for (int i = 1; i <= AllRows; i++)
+                        {
+                            for (int i1 = 1; i1 <= AllColumns; i1++)
+                            {
+                                if (FunC.TS(ORG[i, i1]) != "" && FunC.IsNumber(FunC.TS(ORG[i, i1])))
+                                {
+                                    if (Math.Abs(FunC.TDM(ORG[i, i1]) - 0m) < 0.001m)
+                                    {
+                                        ORG[i, i1] = null;
+                                    }
+                                }
+                            }
+                        }
+                        wst.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2 = ORG;
 
                         for (int i = AllRows; i >= 4; i--)
                         {
@@ -4558,6 +4664,8 @@ namespace HertZ_ExcelAddIn
                             }
                         }
                         ORG = null;
+
+
 
                         //读取列宽list
                         WideList.Clear();
