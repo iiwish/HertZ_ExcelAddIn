@@ -4192,7 +4192,7 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].Value2 = NRG;
                             NRG = null;
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C20"].WrapText = true;
-                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B5:C20"].NumberFormatLocal = "#,##0.00_";
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B5:C20"].NumberFormatLocal = "#,##0.00_ ";
 
                             //读取列宽list
                             WideList.Clear();
@@ -4234,7 +4234,7 @@ namespace HertZ_ExcelAddIn
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].Value2 = NRG;
                             NRG = null;
                             ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:C23"].WrapText = true;
-                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B5:C23"].NumberFormatLocal = "#,##0.00_";
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B5:C23"].NumberFormatLocal = "#,##0.00_ ";
 
                             //读取列宽list
                             WideList.Clear();
@@ -4305,7 +4305,7 @@ namespace HertZ_ExcelAddIn
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
 
-                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B6:E9"].NumberFormatLocal = "#,##0.00_";
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B6:E9"].NumberFormatLocal = "#,##0.00_ ";
                             //调整表格样式
                             FunC.JQChangeFont("A4:E9",WideList);
 
@@ -4347,7 +4347,7 @@ namespace HertZ_ExcelAddIn
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
 
-                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B6:E9"].NumberFormatLocal = "#,##0.00_";
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["B6:E9"].NumberFormatLocal = "#,##0.00_ ";
                             //调整表格样式
                             FunC.JQChangeFont("A4:E9",WideList);
 
@@ -4387,7 +4387,7 @@ namespace HertZ_ExcelAddIn
                                 WideList.Add(FunC.TDM(TempDr[8 + i]));
                             }
 
-                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B6:{0}20", FunC.CName(FunC.AllColumns(4, 2)))].NumberFormatLocal = "#,##0.00_";
+                            ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B6:{0}20", FunC.CName(FunC.AllColumns(4, 2)))].NumberFormatLocal = "#,##0.00_ ";
                             //调整表格样式
                             FunC.JQChangeFont(string.Format("A4:{0}20", FunC.CName(FunC.AllColumns(4,2))),WideList);
 
@@ -4457,7 +4457,7 @@ namespace HertZ_ExcelAddIn
                         wst.Range["A4:A5"].Merge();
 
                         wst.Range["A4:A20"].WrapText = true;
-                        wst.Range[string.Format("B6:{0}20", FunC.CName((AllRows - 6) * 2 + 1))].NumberFormatLocal = "#,##0.00_";
+                        wst.Range[string.Format("B6:{0}20", FunC.CName((AllRows - 6) * 2 + 1))].NumberFormatLocal = "#,##0.00_ ";
 
                         //读取列宽list
                         WideList.Clear();
@@ -4540,7 +4540,7 @@ namespace HertZ_ExcelAddIn
                         ExcelApp.DisplayAlerts = true;//打开弹窗
 
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A20"].WrapText = true;
-                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B6:{0}16", FunC.CName(AllRows - 3))].NumberFormatLocal = "#,##0.00_";
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("B6:{0}16", FunC.CName(AllRows - 3))].NumberFormatLocal = "#,##0.00_ ";
 
                         //读取列宽list
                         WideList.Clear();
@@ -4593,7 +4593,7 @@ namespace HertZ_ExcelAddIn
                         ExcelApp.DisplayAlerts = true;//打开弹窗
 
                         ((Excel.Worksheet)ExcelApp.ActiveSheet).Range["A4:A12"].WrapText = true;
-                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}12", FunC.CName(AllRows - 3))].NumberFormatLocal = "#,##0.00_";
+                        ((Excel.Worksheet)ExcelApp.ActiveSheet).Range[string.Format("A4:{0}12", FunC.CName(AllRows - 3))].NumberFormatLocal = "#,##0.00_ ";
 
                         //读取列宽list
                         WideList.Clear();
@@ -4707,6 +4707,13 @@ namespace HertZ_ExcelAddIn
             ExcelApp = Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
 
+            Word.Table TempTable;
+            int ExcelRows;
+            int ExcelColumns;
+            int WordRows;
+            int WordColumns;
+            int TempInt;
+
             //读取我的文档路径
             string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
 
@@ -4771,27 +4778,23 @@ namespace HertZ_ExcelAddIn
 
             int i5 = WordDoc.Fields.Count;
             int i4 = 0;
+            TempStr = ExcelApp.ActiveWorkbook.FullName;
             foreach (Word.Field TempField in WordDoc.Fields)
             {
-                i4++;
+                i4 += 1;
 
                 if (TempField.Type != Word.WdFieldType.wdFieldLink)
                 {
-                    //显示进度
+                    ////显示进度
                     ExcelApp.StatusBar = "当前进度:" + Math.Round((i4 * 100d / i5), 2) + "%";
                     continue;
                 }
 
-                //TempField.Locked = true;
-
-                TempStr = TempField.Code.Text;
-                TempField.Code.Text = " LINK Excel.Sheet.12 \"" + ExcelApp.ActiveWorkbook.FullName.Replace(@"\", @"\\") + "\" \"" + FunC.LinkSheet(TempStr) + "!" + TempStr.Split('!')[1];
+                TempField.Code.Text = FunC.LinkPath(TempField.Code.Text,TempStr);
 
                 //显示进度
                 ExcelApp.StatusBar = "当前进度:" + Math.Round((i4 * 100d / i5), 2) + "%";
             }
-
-
 
             WordDoc.Save();
             WordApp.Visible = true;//使文档可见
@@ -4799,10 +4802,24 @@ namespace HertZ_ExcelAddIn
             WordApp.ScreenUpdating = false;//关闭屏幕刷新
 
             //遍历WBK工作表名，加入字典
-            Dictionary<string, bool> wstDic = new Dictionary<string, bool> { };
+            Dictionary<string, string> wstDic = new Dictionary<string, string> { };
+            object[,] ORG;
             foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
             {
-                wstDic.Add(wst.Name, true);
+                ExcelColumns = FunC.AllColumns(wst, 4, 2);
+                ExcelRows = FunC.AllRows(wst, "A", 2);
+                ORG = wst.Range["A1:A" + ExcelRows].Value2;
+                for (int i = ExcelRows; i > Math.Max(ExcelRows - 5, 4); i--)
+                {
+                    if (FunC.TS(ORG[i, 1]).Contains("注：") || FunC.TS(ORG[i, 1]).Contains("注:"))
+                    {
+                        ExcelRows = i - 1;
+                    }
+                }
+
+                ORG = null;
+
+                wstDic.Add(wst.Name, ExcelRows + ":" + ExcelColumns);
             }
 
             i5 = WordDoc.Fields.Count;
@@ -4825,6 +4842,48 @@ namespace HertZ_ExcelAddIn
                 {
                     if (wstDic.ContainsKey(FunC.LinkSheet(TempStr)))
                     {
+                        TempField.Select();
+                        TempTable = WordApp.Selection.Tables[1];
+                        WordRows = TempTable.Rows.Count;
+                        WordColumns = TempTable.Columns.Count;
+                        ExcelRows = int.Parse(wstDic[FunC.LinkSheet(TempStr)].Split(':')[0]);
+                        ExcelColumns = int.Parse(wstDic[FunC.LinkSheet(TempStr)].Split(':')[1]);
+
+                        TempInt = WordRows - ExcelRows;
+                        //检查行数
+                        if (TempInt < 0)
+                        {
+                            for (int i = 1; i <= Math.Abs(TempInt); i++)
+                            {
+                                TempTable.Cell(Math.Max(WordRows - 1, 1), 1).Range.Rows.Add(TempTable.Cell(Math.Max(WordRows - 1, 1), 1).Range.Rows);
+                            }
+                        }
+                        else if (TempInt > 0)
+                        {
+                            for (int i = TempInt; i >= 1; i--)
+                            {
+                                TempTable.Cell(Math.Max(WordRows - i, 1), 1).Range.Rows.Delete();
+                            }
+                        }
+
+                        TempInt = WordColumns - ExcelColumns;
+                        //检查列数
+                        if (TempInt < 0)
+                        {
+                            for (int i = 1; i <= Math.Abs(TempInt); i++)
+                            {
+                                TempTable.Cell(ExcelRows, Math.Max(WordColumns - 2, 1)).Range.Columns.Add(TempTable.Cell(ExcelRows, Math.Max(WordColumns - 2, 1)).Range.Columns);
+                            }
+                        }
+                        else if (TempInt > 0)
+                        {
+                            for (int i = TempInt; i >= 1; i--)
+                            {
+                                TempTable.Cell(ExcelRows, Math.Max(WordColumns - 1, 1)).Range.Columns.Delete();
+                            }
+                        }
+
+
                         TempField.Update();
                     }
                 }
@@ -4855,13 +4914,23 @@ namespace HertZ_ExcelAddIn
                 outputExcelFile.Close();
             }
 
+            Word.Application WordApp = null;
+
             if (FunC.IsFileInUse(TempStr))//如果目标文件已被打开
             {
-                MessageBox.Show("模板文件已被打开！");
+                try
+                {
+                    WordApp = (Word.Application)Marshal.GetActiveObject("Word.Application");
+                    WordApp.Documents[Path.GetFileName(TempStr)].Activate();
+                    MessageBox.Show("模板文件已打开！");
+                }
+                catch
+                {
+                    MessageBox.Show("模板文件已被后台程序打开，请检查并清理后台程序");
+                }
             }
             else
             {
-                Word.Application WordApp = null;
                 try
                 {
                     WordApp = (Word.Application)Marshal.GetActiveObject("Word.Application");
@@ -4871,8 +4940,10 @@ namespace HertZ_ExcelAddIn
                     WordApp = new Word.Application();
                 }
                 Word.Document WordDoc = WordApp.Documents.Open(TempStr);
-                WordApp.Visible = true;
             }
+
+            WordApp.Activate();
+            WordApp.Visible = true;
         }
 
         /// <summary>

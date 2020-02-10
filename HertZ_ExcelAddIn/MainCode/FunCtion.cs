@@ -142,6 +142,43 @@ namespace HertZ_ExcelAddIn
         }
 
         /// <summary>
+        /// 返回指定表指定列的行数
+        /// </summary>
+        public int AllRows(Excel.Worksheet wst,string ColumnName = "A", int ColumnsTotal = 1)
+        {
+            int returnValue = 0;
+            int StartColumn = CNumber(ColumnName);
+            int NewRows;
+            String Column;
+
+            for (int i = StartColumn; i < StartColumn + ColumnsTotal; i++)
+            {
+                Column = CName(i);
+                NewRows = ((Excel.Range)(wst.Cells[wst.Rows.Count, Column])).End[Excel.XlDirection.xlUp].Row;
+                returnValue = Math.Max(returnValue, NewRows);
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// 返回指定表指定行的列数
+        /// </summary>
+        public int AllColumns(Excel.Worksheet wst,int RowName = 1, int RowsTotal = 1)
+        {
+            int returnValue = 0;
+            int NewColumns;
+
+            for (int i = RowName; i < RowName + RowsTotal; i++)
+            {
+                NewColumns = ((Excel.Range)(wst.Cells[i, "IV"])).End[Excel.XlDirection.xlToLeft].Column;
+                returnValue = Math.Max(returnValue, NewColumns);
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
         /// 检查Sheet中的数据区域是否规范
         /// </summary>
         public bool RangeIsStandard()
@@ -1297,5 +1334,51 @@ namespace HertZ_ExcelAddIn
             TempStr = TempStr.Substring(TempStr.LastIndexOf('"') + 1);
             return TempStr;
         }
+
+        /// <summary>
+        /// 返回Link域中的路径
+        /// </summary>
+        /// <param name="CodeText"></param>
+        /// <returns></returns>
+        public string LinkPath(string CodeText)
+        {
+            string TempStr;
+            if (CodeText.Length - CodeText.Replace("\"", "").Length == 2)
+            {
+                TempStr = CodeText.Split('"')[0];
+                TempStr = TempStr.Substring(0, TempStr.Length - 1);
+                TempStr = TempStr.Replace(" LINK Excel.Sheet.12 ", "");
+                TempStr = TempStr.Replace(" LINK Excel.Sheet.8 ", "");
+                TempStr = TempStr.Replace(@"\\", @"\");
+            }
+            else
+            {
+                TempStr = CodeText.Split('"')[1];
+                TempStr = TempStr.Replace(@"\\", @"\");
+            }
+            return TempStr;
+        }
+
+        /// <summary>
+        /// 修改Link域中的路径
+        /// </summary>
+        /// <param name="CodeText"></param>
+        /// <returns></returns>
+        public string LinkPath(string CodeText, string NewPath)
+        {
+            string TempStr;
+            if (CodeText.Length - CodeText.Replace("\"", "").Length == 2)
+            {
+                TempStr = CodeText.Split('"')[1] + '"' + CodeText.Split('"')[2];
+                TempStr = " LINK Excel.Sheet.12 " + NewPath.Replace(@"\", @"\\") + " \"" + TempStr;
+            }
+            else
+            {
+                TempStr = CodeText.Split('"')[3] + '"' + CodeText.Split('"')[4];
+                TempStr = " LINK Excel.Sheet.12 " + NewPath.Replace(@"\", @"\\") + " \"" + TempStr;
+            }
+            return TempStr;
+        }
+
     }
 }
