@@ -4685,11 +4685,14 @@ namespace HertZ_ExcelAddIn
                 }
 
             }
+
             try 
             { 
                 WST.Select(); 
             }
             catch { }
+
+            ExcelApp.ActiveWorkbook.Save();
             //关闭屏幕刷新
             ExcelApp.ScreenUpdating = true;
 
@@ -4862,7 +4865,7 @@ namespace HertZ_ExcelAddIn
                         {
                             for (int i = TempInt; i >= 1; i--)
                             {
-                                TempTable.Cell(Math.Max(WordRows - i, 1), 1).Range.Rows.Delete();
+                                TempTable.Cell(Math.Max(WordRows - TempInt + i - 1, 1), 1).Range.Rows.Delete();
                             }
                         }
 
@@ -4879,7 +4882,7 @@ namespace HertZ_ExcelAddIn
                         {
                             for (int i = TempInt; i >= 1; i--)
                             {
-                                TempTable.Cell(ExcelRows, Math.Max(WordColumns - 1, 1)).Range.Columns.Delete();
+                                TempTable.Cell(ExcelRows, Math.Max(WordColumns - TempInt + i - 2, 1)).Range.Columns.Delete();
                             }
                         }
 
