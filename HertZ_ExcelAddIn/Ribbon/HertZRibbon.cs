@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace HertZ_ExcelAddIn
 {
@@ -3870,10 +3871,17 @@ namespace HertZ_ExcelAddIn
             try
             {
                 string NewPassword = ExcelApp.InputBox("请输入默认密码", "输入密码", Password, Type: 1 + 2);
-
-                if (NewPassword != Password)
+                Regex rg = new Regex("^[a-z0-9A-Z]+$");
+                if (rg.IsMatch(NewPassword))
                 {
-                    clsConfig.WriteConfig("Protect", "Password", NewPassword);
+                    if (NewPassword != Password)
+                    {
+                        clsConfig.WriteConfig("Protect", "Password", NewPassword);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("请使用数字及字母组合！");
                 }
             }
             catch
@@ -5088,11 +5096,8 @@ namespace HertZ_ExcelAddIn
 
             string TempStr;//数组中的字符串
             bool Full = true;//是否全部修改
-            bool BreakTwo;//跳出外层循环
-            List<string> NoStrList = new List<string> { "[", "]", "/", "?", "\\", "*", ":", " ", "、" };
             for (int i = 2;i<= AllRows; i++)
             {
-                BreakTwo = false;
                 TempStr = FunC.TS(ORG[i, 2]);
 
                 if (TempStr == "") { continue; }
@@ -5105,25 +5110,13 @@ namespace HertZ_ExcelAddIn
                     continue;
                 }
                 
-                if (TempStr.Length > 31) 
-                { 
+                if (!FunC.CheckSheetName(TempStr))
+                {
                     WST.Range["B" + i].Interior.ColorIndex = 6;
                     Full = false;
                     continue;
                 }
-
-                foreach(string NoStr in NoStrList)
-                {
-                    if (TempStr.Contains(NoStr))
-                    {
-                        WST.Range["B" + i].Interior.ColorIndex = 6;
-                        Full = false;
-                        BreakTwo = true;
-                        break;
-                    }
-                }
-                if (BreakTwo) { continue; }
-
+                
                 try
                 {
                     (ExcelApp.ActiveWorkbook.Worksheets[FunC.TS(ORG[i, 1])]).Name = TempStr;
@@ -5161,6 +5154,169 @@ namespace HertZ_ExcelAddIn
                 StartPosition = FormStartPosition.CenterScreen
             };
             UnionSheetForm.Show();
+        }
+
+        /// <summary>
+        /// 按列拆表
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SplitSheet_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            Excel.Workbook WBK = ExcelApp.ActiveWorkbook;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            int ColumnNum = 0;
+            int AllRows;
+            int AllColumns;
+            int StartRows;
+
+            string PromptText = "请选择需拆分列";
+            //捕获用户 直接点击取消 的情况
+            try
+            {
+                ColumnNum = ExcelApp.InputBox(Prompt: PromptText, Type: 8).Column;
+            }
+            catch
+            {
+                return;
+            }
+            if(ColumnNum == 0) { return; }
+
+            //输入标题行数
+            try
+            {
+                object TempRows = ExcelApp.InputBox("请输入标题行数（0<标题行<20）", "输入行数", 1, Type: 1);
+                StartRows = FunC.TI(TempRows) + 1;
+                if(StartRows>21 || StartRows < 2)
+                {
+                    MessageBox.Show("仅支持标题行1-20行，请重新输入！");
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+
+            //计算行列数
+            AllRows = FunC.AllRows(FunC.CName(ColumnNum));
+            if (AllRows <= StartRows)
+            {
+                MessageBox.Show("所选列行数较少，请重新选择！");
+                return;
+            }
+            AllColumns = FunC.AllColumns(1, 5);
+            AllColumns = Math.Max(AllColumns, FunC.AllColumns(AllRows - 3, 3));
+            AllColumns = Math.Max(AllColumns, 2);
+
+            //新表名字典
+            Dictionary<string, int> NewSheetNameDic = new Dictionary<string, int> { };
+            string TempStr;
+            bool FullAdd = true;
+            object[,] ORG = WST.Range[FunC.CName(ColumnNum) +"1:" + FunC.CName(ColumnNum) + AllRows].Value2;
+            for(int i = StartRows; i <= AllRows; i++)
+            {
+                TempStr = FunC.TS(ORG[i, 1]);
+                //空值
+                if (TempStr == "") { continue; }
+                //字典已包含
+                if (NewSheetNameDic.ContainsKey(TempStr)) { continue; }
+                //是否符合命名规范
+                if (!FunC.CheckSheetName(TempStr))
+                {
+                    WST.Range[FunC.CName(ColumnNum) + i].Interior.ColorIndex = 6;
+                    FullAdd = false;
+                    continue;
+                }
+                NewSheetNameDic.Add(TempStr, i);
+
+                //检查表名是否超出限制
+                if (NewSheetNameDic.Count >= 100)
+                {
+                    MessageBox.Show("最多支持100张表！请重新选择");
+                    return;
+                }
+            }
+            ORG = null;
+
+            ExcelApp.ScreenUpdating = false;
+
+            //检查是否删除同名表
+            bool IsDelete = false;
+            bool AskDelete = false;
+
+            //遍历表名
+            foreach (Excel.Worksheet wst in WBK.Worksheets)
+            {
+                TempStr = wst.Name;
+                if (NewSheetNameDic.ContainsKey(TempStr))
+                {
+                    //询问是否删除
+                    if (!AskDelete)
+                    {
+                        //弹出窗体提示
+                        DialogResult IsWait = MessageBox.Show("发现重复的表名是否删除？", "请选择", MessageBoxButtons.YesNo);
+                        if (IsWait == DialogResult.Yes) 
+                        {
+                            AskDelete = true;
+                            IsDelete = true;
+                            ExcelApp.DisplayAlerts = false;//关闭警示弹窗
+                        }
+                        else if(IsWait == DialogResult.No)
+                        {
+                            AskDelete = true;
+                            IsDelete = false;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+
+                    if (IsDelete)
+                    {
+                        ((Excel.Worksheet)WBK.Worksheets[TempStr]).Delete();
+                    }
+                    else
+                    {
+                        WST.Range[FunC.CName(ColumnNum) + NewSheetNameDic[TempStr]].Interior.ColorIndex = 6;
+                        NewSheetNameDic.Remove(TempStr);
+                    }
+                }
+            }
+            ExcelApp.DisplayAlerts = true;//打开警示弹窗
+
+            //复制表
+            Excel.Worksheet WST1;
+            foreach (string s in NewSheetNameDic.Keys)
+            {
+                //复制表
+                WST.Copy(After: (Excel.Worksheet)WBK.Worksheets[WBK.Worksheets.Count]);
+                WST1 = WBK.ActiveSheet;
+                //如果开启了筛选，先关闭
+                if(WST1.AutoFilterMode == true) { WST1.AutoFilterMode = false; }
+                WST1.Name = s;
+                //筛选非当前项
+                WST1.Range[string.Format("{0}:{0}", StartRows - 1)].AutoFilter(ColumnNum, "<>" + s);
+                //删除行
+                WST1.Range[string.Format("A{0}:A{1}", StartRows, AllRows + 5)].SpecialCells(Excel.XlCellType.xlCellTypeVisible).EntireRow.Delete();
+                //取消筛选
+                WST1.AutoFilterMode = false;
+            }
+
+            WST.Select();
+
+            ExcelApp.ScreenUpdating = true;
+
+            if (FullAdd)
+            {
+                MessageBox.Show("已拆分为多个表格，请检查");
+            }
+            else
+            {
+                MessageBox.Show("部分表格未拆分，请检查所选列黄色单元格");
+            }
         }
     }
 }

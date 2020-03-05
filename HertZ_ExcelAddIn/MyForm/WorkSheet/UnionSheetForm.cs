@@ -87,8 +87,8 @@ namespace HertZ_ExcelAddIn.MyForm.WorkSheet
 
             //被合并表开始行数
             int StartRows = FunC.TI(NumUpDown.Value) + 1;
-            int AllColumns = 2;
-            int AllRows = 0;
+            int AllColumns ;
+            int AllRows ;
             int NewColumns;
             int MaxRows = WST.Rows.Count;
 
@@ -105,6 +105,8 @@ namespace HertZ_ExcelAddIn.MyForm.WorkSheet
                 {
                     if (ListBox.GetItemChecked(i))
                     {
+                        AllColumns = 2;
+                        AllRows = 0;
                         wst = WBK.Worksheets[ListBox.GetItemText(ListBox.Items[i])];
                         //获取列数
                         for (int i1 = 1; i1 <= StartRows; i1++)
@@ -137,6 +139,8 @@ namespace HertZ_ExcelAddIn.MyForm.WorkSheet
             {
                 if (ListBox.GetItemChecked(i))
                 {
+                    AllColumns = 2;
+                    AllRows = 0;
                     wst = WBK.Worksheets[ListBox.GetItemText(ListBox.Items[i])];
                     //获取列数
                     for (int i1 = 1; i1 <= StartRows; i1++)

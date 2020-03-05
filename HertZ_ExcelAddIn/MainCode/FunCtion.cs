@@ -1379,5 +1379,34 @@ namespace HertZ_ExcelAddIn
             return TempStr;
         }
 
+        /// <summary>
+        /// 检查字符串是否符合Excel表名要求
+        /// </summary>
+        /// <param name="SheetName">目标表名</param>
+        /// <returns></returns>
+        public bool CheckSheetName(string SheetName)
+        {
+            bool returnValue = true;
+            if (SheetName.Length >= 31) 
+            {
+                returnValue = false;
+            }
+            else
+            {
+                List<string> NoStrList = new List<string> { "[", "]", "/", "?", "\\", "*", ":", " ", "、" };
+
+                foreach (string NoStr in NoStrList)
+                {
+                    if (SheetName.Contains(NoStr))
+                    {
+                        returnValue = false;
+                        break;
+                    }
+                }
+            }
+            
+            return returnValue;
+        }
+
     }
 }
