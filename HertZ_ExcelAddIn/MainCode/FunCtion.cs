@@ -58,16 +58,15 @@ namespace HertZ_ExcelAddIn
         public bool SheetExist(string SheetName)
         {
             ExcelApp = Globals.ThisAddIn.Application;
-            bool returnValue;
+            bool returnValue = false;
 
-            try
+            foreach(Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
             {
-                WST = ExcelApp.Worksheets[SheetName];
-                returnValue = true;
-            }
-            catch (Exception)
-            {
-                returnValue = false;
+                if(wst.Name == SheetName)
+                {
+                    returnValue = true;
+                    break;
+                }
             }
 
             return returnValue;

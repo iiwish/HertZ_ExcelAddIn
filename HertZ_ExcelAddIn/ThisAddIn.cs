@@ -43,7 +43,7 @@ namespace HertZ_ExcelAddIn
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
             string msg = "HertZ已更新，当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "新增功能：根据久其导出的表格生成附注;" + Environment.NewLine + "        可以在设置中自定义选项卡显示");
+            MessageBox.Show(msg + "新增功能：修复了几个Bug");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

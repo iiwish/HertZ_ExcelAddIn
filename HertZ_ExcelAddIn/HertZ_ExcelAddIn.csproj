@@ -37,7 +37,7 @@
     <PublishUrl>C:\aaa\HertZExcelAddIn\</PublishUrl>
     <InstallUrl>http://getapp.hertzexcel.com/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>0.0.0.24</ApplicationVersion>
+    <ApplicationVersion>0.0.0.27</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>12</UpdateInterval>
@@ -146,18 +146,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\System.Data.SQLite\2012\bin\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\System.Data.SQLite\2012\bin\System.Data.SQLite.EF6.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\System.Data.SQLite\2012\bin\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -235,6 +223,12 @@
     </Compile>
     <Compile Include="MainCode\A_BaseConfig.cs" />
     <Compile Include="MainCode\FunCtion.cs" />
+    <Compile Include="MyForm\WorkSheet\UnionSheetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MyForm\WorkSheet\UnionSheetForm.Designer.cs">
+      <DependentUpon>UnionSheetForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Ribbon\HertZRibbon.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -255,6 +249,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MyForm\TableProcessing\CASetting.resx">
       <DependentUpon>CASetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyForm\WorkSheet\UnionSheetForm.resx">
+      <DependentUpon>UnionSheetForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Ribbon\HertZRibbon.resx">
       <DependentUpon>HertZRibbon.cs</DependentUpon>

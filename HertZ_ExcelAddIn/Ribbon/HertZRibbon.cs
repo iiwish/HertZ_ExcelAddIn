@@ -10,7 +10,6 @@ using Microsoft.Office.Tools.Ribbon;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Data.SQLite;
 using System.Data;
 
 namespace HertZ_ExcelAddIn
@@ -34,7 +33,7 @@ namespace HertZ_ExcelAddIn
 
             TableProcessing.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "TableProcessingCheck", true);
             TableProcessingCheck.Checked = TableProcessing.Visible;
-            JiuQi.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "JiuQiCheck", true);
+            JiuQi.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "JiuQiCheck", false);
             JiuQiCheck.Checked = JiuQi.Visible;
             Tool.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "ToolCheck", true);
             ToolCheck.Checked = Tool.Visible;
@@ -2493,7 +2492,7 @@ namespace HertZ_ExcelAddIn
                 //如果客户名称列为空则跳过
                 if(NRG[i, 0] == null){ break;}
                 //如果合计为空则跳过
-                if(Math.Abs(FunC.TD(NRG[i, 1])+ FunC.TD(NRG[i, 2])+ FunC.TD(NRG[i, 3]) + FunC.TD(NRG[i, 4])+ FunC.TD(NRG[i, 5]) + FunC.TD(NRG[i, 6])) < PRECISION) { break; }
+                if(Math.Abs(FunC.TD(NRG[i, 1]))+ Math.Abs(FunC.TD(NRG[i, 2]))+ Math.Abs(FunC.TD(NRG[i, 3])) + Math.Abs(FunC.TD(NRG[i, 4]))+ Math.Abs(FunC.TD(NRG[i, 5])) + Math.Abs(FunC.TD(NRG[i, 6])) < PRECISION) { break; }
 
                 WordDoc = WordApp.Documents.Add(strPath + "\\HertZTemplate\\往来询证函模板.dotx");
 
@@ -4967,6 +4966,201 @@ namespace HertZ_ExcelAddIn
             {
                 System.Diagnostics.Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments));
             }
+        }
+
+        /// <summary>
+        /// 生成索引表
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MakeIndex_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+
+            //索引表名
+            string SheetNameStr = "索引";
+            if (FunC.SheetExist(SheetNameStr))
+            {
+                for(int i = 1; i < 11; i++)
+                {
+                    if (!FunC.SheetExist(SheetNameStr + i))
+                    {
+                        SheetNameStr = SheetNameStr + i;
+                        break;
+                    }
+                }
+                if(SheetNameStr == "索引")
+                {
+                    MessageBox.Show("已存在多个“索引”表，请删除或重命名后再试");
+                    return;
+                }
+            }
+
+            ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+
+            //创建表名列表
+            string[,] NameArr = new string[ExcelApp.ActiveWorkbook.Worksheets.Count,1];
+            int TempInt = 0;
+            //为每一张表添加首行返回链接，并将表名加入字典
+            foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
+            {
+                wst.Range["1:1"].Insert();
+                wst.Range["A1"].Value2 = "//点击返回索引";
+                wst.Hyperlinks.Add(wst.Range["A1"], "", SheetNameStr + "!A1");
+                NameArr[TempInt,0] = wst.Name;
+                TempInt++;
+            }
+
+            //添加新表
+            WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets.Add(ExcelApp.ActiveWorkbook.Worksheets[1]);
+            WST.Name = SheetNameStr;
+
+            //添加表头并居中
+            WST.Range["A1"].Value2 = "表名";
+            WST.Range["A1:B1"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            //添加内容并靠左对齐
+            WST.Range["A2:A" + (NameArr.Length + 1)].Value2 = NameArr;
+            WST.Range["A2:B" + (NameArr.Length + 1)].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+
+            for(int i = 2;i<= NameArr.Length + 1; i++)
+            {
+                WST.Hyperlinks.Add(WST.Range["A" + i], "", NameArr[i - 2, 0] + "!A1");
+            }
+
+            ExcelApp.ScreenUpdating = true;//打开屏幕刷新
+
+            MessageBox.Show("索引表已生成！");
+        }
+
+        /// <summary>
+        /// 删除首行索引链接
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeleteFirstRow_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+
+            ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+
+            //遍历表格删除首行
+            foreach (Excel.Worksheet wst in ExcelApp.ActiveWorkbook.Worksheets)
+            {
+                if(FunC.TS(wst.Range["A1"].Value2) == "//点击返回索引")
+                {
+                    wst.Range["1:1"].Delete();
+                }
+            }
+
+            ExcelApp.ScreenUpdating = true;//打开屏幕刷新
+        }
+
+        /// <summary>
+        /// 批量修改表名
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChangeName_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //检查表名
+            if (WST.Name.Length < 2 || WST.Name.Substring(0,2) != "索引")
+            {
+                DialogResult IsWait = MessageBox.Show("请在索引表中使用该功能！（如未生成索引请先点击生成）" + Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
+                if (IsWait != DialogResult.Yes) { return; }
+            }
+
+            //检查表行
+            if(FunC.AllRows("B") < 2)
+            {
+                DialogResult IsWait = MessageBox.Show("请保持首列为当前表名，并在第二列添加新表名！" + Environment.NewLine + "是否继续？", "请选择", MessageBoxButtons.YesNo);
+                if (IsWait != DialogResult.Yes) { return; }
+            }
+
+            int AllRows = FunC.AllRows();
+
+            ExcelApp.ScreenUpdating = false;
+
+            //读取有效区域
+            object[,] ORG = WST.Range["A1:B" + AllRows].Value2;
+
+            string TempStr;//数组中的字符串
+            bool Full = true;//是否全部修改
+            bool BreakTwo;//跳出外层循环
+            List<string> NoStrList = new List<string> { "[", "]", "/", "?", "\\", "*", ":", " ", "、" };
+            for (int i = 2;i<= AllRows; i++)
+            {
+                BreakTwo = false;
+                TempStr = FunC.TS(ORG[i, 2]);
+
+                if (TempStr == "") { continue; }
+                if(TempStr == FunC.TS(ORG[i, 1])) { continue; }
+
+                if (!FunC.SheetExist(FunC.TS(ORG[i, 1])))
+                {
+                    WST.Range["A" + i].Interior.ColorIndex = 6;
+                    Full = false;
+                    continue;
+                }
+                
+                if (TempStr.Length > 31) 
+                { 
+                    WST.Range["B" + i].Interior.ColorIndex = 6;
+                    Full = false;
+                    continue;
+                }
+
+                foreach(string NoStr in NoStrList)
+                {
+                    if (TempStr.Contains(NoStr))
+                    {
+                        WST.Range["B" + i].Interior.ColorIndex = 6;
+                        Full = false;
+                        BreakTwo = true;
+                        break;
+                    }
+                }
+                if (BreakTwo) { continue; }
+
+                try
+                {
+                    (ExcelApp.ActiveWorkbook.Worksheets[FunC.TS(ORG[i, 1])]).Name = TempStr;
+                }
+                catch
+                {
+                    WST.Range["B" + i].Interior.ColorIndex = 6;
+                    Full = false;
+                    continue;
+                }
+            }
+
+            ExcelApp.ScreenUpdating = true;
+
+            if (Full)
+            {
+                MessageBox.Show("修改完成！");
+            }
+            else
+            {
+                MessageBox.Show("部分未修改，请检查黄色单元格！");
+            }
+
+        }
+
+        /// <summary>
+        /// 多表合并
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UnionSheet_Click(object sender, RibbonControlEventArgs e)
+        {
+            Form UnionSheetForm = new MyForm.WorkSheet.UnionSheetForm
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            UnionSheetForm.Show();
         }
     }
 }
