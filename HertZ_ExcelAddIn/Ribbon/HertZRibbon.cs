@@ -5319,5 +5319,131 @@ namespace HertZ_ExcelAddIn
                 MessageBox.Show("部分表格未拆分，请检查所选列黄色单元格");
             }
         }
+
+        /// <summary>
+        /// 汇总工作簿
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UnionBook_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+
+            //让用户选择文件夹
+            string FolderPath = ExcelApp.ActiveWorkbook.Path;
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            folderDialog.Description = "请选择文件夹存放函证";
+            folderDialog.SelectedPath = FolderPath;
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                FolderPath = folderDialog.SelectedPath;
+            }
+            else
+            {
+                return;
+            }
+
+            int i = 0;//合并计数
+            int i1 = 0;//跳过计数
+            int AllRows = 2;
+            int AllColumns = 2;
+            int TempInt;//存储行列数
+            int MaxRows = 0;
+            bool CloseIt = true;//是否关闭该文件
+            
+            Excel.Workbook WBK;
+            Excel.Worksheet WST;
+
+            //获取文件夹下的所有xls和xlsx文件
+            string[] files = Directory.GetFiles(FolderPath, "*.xls");
+            //string[] files2 = Directory.GetFiles(FolderPath, "*.xlsx");
+            //string[] files = new string[files1.Length + files2.Length];
+            //files1.CopyTo(files, 0);
+            //files2.CopyTo(files, files1.Length);
+            //files1 = null;
+            //files2 = null;
+
+            if (files.Length == 0)
+            {
+                MessageBox.Show("未发现Excel文件，目前仅支持xls和xlsx格式");
+                return;
+            }
+
+            ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+            //创建工作簿
+            Excel.Workbook NewWBK = ExcelApp.Workbooks.Add();
+            Excel.Worksheet NewWST = NewWBK.Sheets[1];
+
+            foreach (string file in files)
+            {
+                if (FunC.IsFileInUse(file))//如果目标文件已被打开
+                {
+                    try
+                    {
+                        WBK = ExcelApp.Workbooks[Path.GetFileName(file)];
+                        CloseIt = false;
+                    }
+                    catch
+                    {
+                        i1++;
+                        continue;//如果文件被后台其他文件占用，就跳过这个文件
+                    }
+                }
+                else
+                {
+                    WBK = ExcelApp.Workbooks.Open(file);
+                    CloseIt = true;
+                }
+
+                WST = WBK.ActiveSheet;//获取工作表
+
+                //获取行数
+                for (int i3 = 1; i3 <= 10; i3++)
+                {
+                    TempInt = ((Excel.Range)(WST.Cells[WST.Rows.Count, i3])).End[Excel.XlDirection.xlUp].Row;
+                    AllRows = Math.Max(AllRows, TempInt);
+                }
+                //获取列数
+                for (int i3 = 1; i3 <= 10; i3++)
+                {
+                    TempInt = ((Excel.Range)(WST.Cells[i3, "IV"])).End[Excel.XlDirection.xlToLeft].Column;
+                    AllColumns = Math.Max(AllColumns, TempInt);
+                }
+
+                MaxRows += AllRows;
+                if (MaxRows >= NewWST.Rows.Count)
+                {
+                    MessageBox.Show("行数超过Excel最多行数！");
+                    break;
+                }
+                //读取数据到新工作簿，从C列开始
+                NewWST.Range["C" + (MaxRows - AllRows + 1) + ":" + FunC.CName(AllColumns + 2) + MaxRows].Value2 = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows].Value2;
+                NewWST.Range["A" + (MaxRows - AllRows + 1) + ":A" + MaxRows].Value2 = WBK.Name;//A列存储工作簿名
+                NewWST.Range["B" + (MaxRows - AllRows + 1) + ":B" + MaxRows].Value2 = WST.Name;//B列存储工作表名
+
+                if (CloseIt) { WBK.Close(); }
+                i++;
+            }
+
+            if (i != files.Length)
+            {
+                if (i1 == 0)
+                {
+                    MessageBox.Show(string.Format("已合并{0}个工作簿，{1}个被后台占用，请检查", i,i1));
+                }
+                else
+                {
+                    MessageBox.Show(string.Format("已合并{0}个工作簿，请检查" i));
+                }
+            }
+            else
+            {
+                MessageBox.Show(string.Format("已合并所有Excel，共{0}个，请检查", i));
+            }
+
+            NewWST.Select();
+            ExcelApp.ScreenUpdating = true;//打开屏幕刷新
+
+        }
     }
 }

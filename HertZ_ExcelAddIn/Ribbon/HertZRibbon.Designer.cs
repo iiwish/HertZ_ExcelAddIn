@@ -338,6 +338,7 @@
             this.UnionBook.ScreenTip = "汇总一个文件夹中所有的Excel工作簿";
             this.UnionBook.ShowImage = true;
             this.UnionBook.SuperTip = "要求表头一致，仅汇总活动表一张表格";
+            this.UnionBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnionBook_Click);
             // 
             // SplitBook
             // 

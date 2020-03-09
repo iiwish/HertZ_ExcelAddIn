@@ -59,7 +59,6 @@ namespace HertZ_ExcelAddIn.MyForm.WorkSheet
             ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
             clsConfig.WriteConfig("WorkSheet", "HeadRows", NumUpDown.Value.ToString());
 
-
             //合并表名
             string SheetNameStr = "合并表";
             if (FunC.SheetExist(SheetNameStr))
