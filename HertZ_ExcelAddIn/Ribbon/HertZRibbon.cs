@@ -3796,7 +3796,8 @@ namespace HertZ_ExcelAddIn
                         }
                         catch
                         {
-
+                            MessageBox.Show("暴力解锁失败，请尝试其他方式！");
+                            return;
                         }
                     }
                 }

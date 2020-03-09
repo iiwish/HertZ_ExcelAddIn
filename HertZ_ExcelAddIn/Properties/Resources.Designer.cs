@@ -73,16 +73,6 @@ namespace HertZ_ExcelAddIn.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap DivisionSign {
-            get {
-                object obj = ResourceManager.GetObject("DivisionSign", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
         internal static System.Drawing.Bitmap HertZ_Logo {
             get {
                 object obj = ResourceManager.GetObject("HertZ_Logo", resourceCulture);
@@ -101,51 +91,17 @@ namespace HertZ_ExcelAddIn.Properties {
         }
         
         /// <summary>
-        ///   查找类似 工作表名称,一级标题,二级标题,表格类型,表格顺序,备注
-        ///Z20 成本费用情况表(企财20表),八、财务报表主要项目注释,54、销售费用,2,0,
-        ///Z20 成本费用情况表(企财20表)1,八、财务报表主要项目注释,54、销售费用,0,1,
-        ///Z20 成本费用情况表(企财20表)2,八、财务报表主要项目注释,55、管理费用,0,1,
-        ///QCF09 货币资金(附注09表),八、财务报表主要项目注释,1、货币资金,1,1,
-        ///QCF10 受限制的货币资金明细(附注10表),八、财务报表主要项目注释,1、货币资金,5,2,
-        ///QCF12 以公允价值计量且其变动计入当期损益的金融资产(附注,八、财务报表主要项目注释,2、以公允价值计量且其变动计入当期损益的金融资产,1,1,
-        ///QCF13 衍生金融资产(附注13表),八、财务报表主要项目注释,3、衍生金融资产,5,1,
-        ///QCF14 应收票据(附注14表),八、财务报表主要项目注释,4、应收票据,1,1,
-        ///QCF15 已质押的应收票据(附注15表),八、财务报表主要项目注释,4、应收票据,1,2,
-        ///QCF16 已背书或贴现且资产负债表日尚未到期的应收票据(附注, [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///   查找类似 工作表名称,一级标题,二级标题,表格类型,表格顺序,备注,表格序号,列数合计,列宽1,列宽2,列宽3,列宽4,列宽5,列宽6,列宽7,列宽8,列宽9,列宽10,列宽11,列宽12,列宽13
+        ///Z20 成本费用情况表(企财20表),八、财务报表主要项目注释,54、销售费用,2,0,,,,,,,,,,,,,,,,
+        ///Z20 成本费用情况表(企财20表)1,八、财务报表主要项目注释,54、销售费用,0,1,,143,3,26.67,26.67,26.67,,,,,,,,,,
+        ///Z20 成本费用情况表(企财20表)2,八、财务报表主要项目注释,55、管理费用,0,1,,144,3,26.67,26.67,26.67,,,,,,,,,,
+        ///QCF09 货币资金(附注09表),八、财务报表主要项目注释,1、货币资金,1,1,,1,3,41.33,19.33,19.33,,,,,,,,,,
+        ///QCF10 受限制的货币资金明细(附注10表),八、财务报表主要项目注释,1、货币资金,5,2,,2,3,41.33,19.33,19.33,,,,,,,,,,
+        ///QCF12 以公允价值计量且其变动计入当期损益的金融资产(附注,八、财 [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string JiuQiDB {
             get {
                 return ResourceManager.GetString("JiuQiDB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap MinusSign {
-            get {
-                object obj = ResourceManager.GetObject("MinusSign", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap MultiplicationSign {
-            get {
-                object obj = ResourceManager.GetObject("MultiplicationSign", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap PlusSign {
-            get {
-                object obj = ResourceManager.GetObject("PlusSign", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

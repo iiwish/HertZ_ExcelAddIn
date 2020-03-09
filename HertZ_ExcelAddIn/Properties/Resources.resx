@@ -121,9 +121,6 @@
   <data name="2019国企财务报表附注" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1.1.3-2019 国企财务报表附注.docx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="DivisionSign" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DivisionSign.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="HertZ_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HertZ_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -132,15 +129,6 @@
   </data>
   <data name="JiuQiDB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JiuQiDB.csv;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="MinusSign" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MinusSign.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MultiplicationSign" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MultiplicationSign.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PlusSign" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PlusSign.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="往来询证函模板" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\往来询证函模板.dotx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
