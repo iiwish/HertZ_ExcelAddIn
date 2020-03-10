@@ -5332,7 +5332,7 @@ namespace HertZ_ExcelAddIn
             //让用户选择文件夹
             string FolderPath = ExcelApp.ActiveWorkbook.Path;
             FolderBrowserDialog folderDialog = new FolderBrowserDialog();
-            folderDialog.Description = "请选择文件夹存放函证";
+            folderDialog.Description = "请选择工作簿存放的文件夹";
             folderDialog.SelectedPath = FolderPath;
             if (folderDialog.ShowDialog() == DialogResult.OK)
             {
@@ -5433,7 +5433,7 @@ namespace HertZ_ExcelAddIn
                 }
                 else
                 {
-                    MessageBox.Show(string.Format("已合并{0}个工作簿，请检查" i));
+                    MessageBox.Show(string.Format("已合并{0}个工作簿，请检查" ,i));
                 }
             }
             else
@@ -5443,6 +5443,119 @@ namespace HertZ_ExcelAddIn
 
             NewWST.Select();
             ExcelApp.ScreenUpdating = true;//打开屏幕刷新
+
+        }
+
+        /// <summary>
+        /// 拆分工作簿
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SplitBook_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            Excel.Workbook WBK = ExcelApp.ActiveWorkbook;
+            Excel.Worksheet WST;
+
+            //让用户选择文件夹
+            string FolderPath = ExcelApp.ActiveWorkbook.Path;
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            folderDialog.Description = "请选择文件夹存放拆分后的工作簿";
+            folderDialog.SelectedPath = FolderPath;
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                FolderPath = folderDialog.SelectedPath;
+            }
+            else
+            {
+                return;
+            }
+
+            //将表名添加到字典
+            Dictionary<string, int> SheetName = new Dictionary<string, int> { };
+            foreach (Excel.Worksheet wst in WBK.Worksheets)
+            {
+                if(wst.Visible != Excel.XlSheetVisibility.xlSheetHidden)
+                {
+                    SheetName.Add(wst.Name, wst.Index);
+                }
+            }
+
+            if(SheetName.Count <= 1) { MessageBox.Show("当前工作簿中工作表太少，无需拆分！");return; }
+
+            //获取文件夹下的所有xls和xlsx文件
+            string[] files = Directory.GetFiles(FolderPath, "*.xls");
+
+            bool AskDelete = false;
+            bool DeleteIt = false;
+
+            foreach (string file in files)
+            {
+                //如果所选文件包含同名文件
+                if (SheetName.ContainsKey(Path.GetFileNameWithoutExtension(file)))
+                {
+                    if (!AskDelete)
+                    {
+                        DialogResult IsWait = MessageBox.Show("所选文件夹包含同名工作簿" + Environment.NewLine + "是否替换相关文件？", "请选择", MessageBoxButtons.YesNo);
+                        if (IsWait == DialogResult.Yes) 
+                        {
+                            DeleteIt = true;
+                        }
+                        else if(IsWait == DialogResult.No)
+                        {
+                            DeleteIt = false;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                        AskDelete = true;
+                    }
+
+                    if (DeleteIt)
+                    {
+                        if (FunC.IsFileInUse(file))//如果目标文件已被打开
+                        {
+                            MessageBox.Show("文件夹中存在打开的同名工作簿，请关闭工作簿再试");
+                            return;
+                        }
+                        File.Delete(file);
+                    }
+                    else
+                    {
+                        SheetName.Remove(Path.GetFileNameWithoutExtension(file));
+                    }
+                    
+                }
+            }
+
+            if (SheetName.Count == 0) { MessageBox.Show("未发现需拆分的工作表！"); return; }
+
+            ExcelApp.ScreenUpdating = false;//关闭屏幕刷新
+
+            //创建工作簿
+            Excel.Workbook NewWBK;
+            //遍历字典
+            int i4 = 1;
+            int i5 = SheetName.Count;
+            foreach (string STName in SheetName.Keys)
+            {
+                WST = WBK.Worksheets[STName];
+                NewWBK = ExcelApp.Workbooks.Add();
+                WST.Copy(After: NewWBK.Worksheets[1]);
+                (NewWBK.Worksheets[1]).Delete();
+                NewWBK.SaveAs(FolderPath+"\\"+STName+".xlsx", FileFormat: Excel.XlFileFormat.xlOpenXMLWorkbook, CreateBackup: false);
+                NewWBK.Close();
+
+                //显示进度
+                ExcelApp.StatusBar = "当前进度：" + Math.Round((i4 * 100d / i5), 2) + "%";
+                i4++;
+            }
+
+            WBK.Activate();
+            ExcelApp.StatusBar = false;
+            ExcelApp.ScreenUpdating = true;
+            MessageBox.Show(string.Format("已将拆分工作簿存放到{0}，请检查！", FolderPath));
 
         }
     }
