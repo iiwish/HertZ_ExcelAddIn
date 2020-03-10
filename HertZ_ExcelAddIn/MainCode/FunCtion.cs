@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Collections;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace HertZ_ExcelAddIn
 {
@@ -217,17 +218,18 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public bool IsNumber(string str)
         {
-            bool returnValue;
-            try
-            {
-                double OutN = double.Parse(str);
-                returnValue = true;
-            }
-            catch
-            {
-                returnValue = false;
-            }
-            return returnValue;
+            return Regex.IsMatch(str, @"^[+-]?\d*[.]?\d*$");
+            //bool returnValue;
+            //try
+            //{
+            //    double OutN = double.Parse(str);
+            //    returnValue = true;
+            //}
+            //catch
+            //{
+            //    returnValue = false;
+            //}
+            //return returnValue;
         }
 
         /// <summary>
@@ -570,8 +572,7 @@ namespace HertZ_ExcelAddIn
             {
                 for (int i1 = 1; i1 <= ORG.GetLength(1); i1++)
                 {
-                    if (ORG[i, i1] == null) { break; }
-                    if (!IsNumber(ORG[i, i1].ToString()))
+                    if (!IsNumber(TS(ORG[i, i1])))
                     {
                         CellsStr = CellsStr + "," + CName(StartColumn + i1 - 1) + (StartRow + i - 1);
                     }
@@ -1406,6 +1407,16 @@ namespace HertZ_ExcelAddIn
             }
             
             return returnValue;
+        }
+
+        /// <summary>
+        /// 判断字符串是否包含英文字母
+        /// </summary>
+        /// <param name="Str">字符串</param>
+        /// <returns></returns>
+        public bool IncludeLetter(string Str)
+        {
+            return Regex.IsMatch(Str, ".*[A-Za-z]+.*");
         }
 
     }

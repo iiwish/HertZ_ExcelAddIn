@@ -37,8 +37,8 @@
             this.HertZTab = this.Factory.CreateRibbonTab();
             this.TableProcessing = this.Factory.CreateRibbonGroup();
             this.CheckBAJ = this.Factory.CreateRibbonCheckBox();
-            this.WorkSheet = this.Factory.CreateRibbonGroup();
             this.WorkBook = this.Factory.CreateRibbonGroup();
+            this.WorkSheet = this.Factory.CreateRibbonGroup();
             this.Tool = this.Factory.CreateRibbonGroup();
             this.Protect = this.Factory.CreateRibbonGroup();
             this.JiuQi = this.Factory.CreateRibbonGroup();
@@ -55,14 +55,20 @@
             this.Confirmation = this.Factory.CreateRibbonButton();
             this.ConfirmationWord = this.Factory.CreateRibbonButton();
             this.CurrentAccountSetting = this.Factory.CreateRibbonButton();
+            this.UnionBook = this.Factory.CreateRibbonButton();
+            this.SplitBook = this.Factory.CreateRibbonButton();
+            this.Exportxlsx = this.Factory.CreateRibbonButton();
             this.MakeIndex = this.Factory.CreateRibbonSplitButton();
             this.DeleteFirstRow = this.Factory.CreateRibbonButton();
             this.ChangeName = this.Factory.CreateRibbonButton();
             this.SplitSheet = this.Factory.CreateRibbonButton();
             this.UnionSheet = this.Factory.CreateRibbonButton();
-            this.UnionBook = this.Factory.CreateRibbonButton();
-            this.SplitBook = this.Factory.CreateRibbonButton();
-            this.Exportxlsx = this.Factory.CreateRibbonButton();
+            this.RangeFormat = this.Factory.CreateRibbonMenu();
+            this.DateFormate = this.Factory.CreateRibbonButton();
+            this.TextFormat = this.Factory.CreateRibbonButton();
+            this.NumFormat = this.Factory.CreateRibbonButton();
+            this.ToUpper = this.Factory.CreateRibbonButton();
+            this.ToLower = this.Factory.CreateRibbonButton();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
@@ -72,9 +78,7 @@
             this.NoRound = this.Factory.CreateRibbonButton();
             this.TenThousand = this.Factory.CreateRibbonSplitButton();
             this.NoTenThousand = this.Factory.CreateRibbonButton();
-            this.DateFormate = this.Factory.CreateRibbonButton();
-            this.TextFormat = this.Factory.CreateRibbonButton();
-            this.NumFormat = this.Factory.CreateRibbonButton();
+            this.RegText = this.Factory.CreateRibbonButton();
             this.ProtectMenu = this.Factory.CreateRibbonMenu();
             this.ProtectBook = this.Factory.CreateRibbonButton();
             this.ProtectSheet = this.Factory.CreateRibbonButton();
@@ -95,8 +99,8 @@
             this.ProtectCheck = this.Factory.CreateRibbonCheckBox();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
-            this.WorkSheet.SuspendLayout();
             this.WorkBook.SuspendLayout();
+            this.WorkSheet.SuspendLayout();
             this.Tool.SuspendLayout();
             this.Protect.SuspendLayout();
             this.JiuQi.SuspendLayout();
@@ -132,6 +136,14 @@
             this.CheckBAJ.SuperTip = "在加工账中勾选可双击看明细及凭证";
             this.CheckBAJ.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CheckBAJ_Click);
             // 
+            // WorkBook
+            // 
+            this.WorkBook.Items.Add(this.UnionBook);
+            this.WorkBook.Items.Add(this.SplitBook);
+            this.WorkBook.Items.Add(this.Exportxlsx);
+            this.WorkBook.Label = "工作簿";
+            this.WorkBook.Name = "WorkBook";
+            // 
             // WorkSheet
             // 
             this.WorkSheet.Items.Add(this.MakeIndex);
@@ -141,25 +153,16 @@
             this.WorkSheet.Label = "工作表";
             this.WorkSheet.Name = "WorkSheet";
             // 
-            // WorkBook
-            // 
-            this.WorkBook.Items.Add(this.UnionBook);
-            this.WorkBook.Items.Add(this.SplitBook);
-            this.WorkBook.Items.Add(this.Exportxlsx);
-            this.WorkBook.Label = "工作簿";
-            this.WorkBook.Name = "WorkBook";
-            // 
             // Tool
             // 
+            this.Tool.Items.Add(this.RangeFormat);
             this.Tool.Items.Add(this.AutoFillInTheBlanks);
             this.Tool.Items.Add(this.CompareTwoColumns);
             this.Tool.Items.Add(this.CheckNum);
             this.Tool.Items.Add(this.ChangeSign);
             this.Tool.Items.Add(this.RoundButton);
             this.Tool.Items.Add(this.TenThousand);
-            this.Tool.Items.Add(this.DateFormate);
-            this.Tool.Items.Add(this.TextFormat);
-            this.Tool.Items.Add(this.NumFormat);
+            this.Tool.Items.Add(this.RegText);
             this.Tool.Label = "实用工具";
             this.Tool.Name = "Tool";
             // 
@@ -320,6 +323,35 @@
             this.CurrentAccountSetting.SuperTip = "如被审计单位名称、回函单位等。";
             this.CurrentAccountSetting.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CurrentAccountSetting_Click);
             // 
+            // UnionBook
+            // 
+            this.UnionBook.Label = "汇总工作簿";
+            this.UnionBook.Name = "UnionBook";
+            this.UnionBook.OfficeImageId = "ImportExcel";
+            this.UnionBook.ScreenTip = "汇总一个文件夹中所有的Excel工作簿";
+            this.UnionBook.ShowImage = true;
+            this.UnionBook.SuperTip = "要求表头一致，仅汇总活动表一张表格";
+            this.UnionBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnionBook_Click);
+            // 
+            // SplitBook
+            // 
+            this.SplitBook.Label = "拆分工作簿";
+            this.SplitBook.Name = "SplitBook";
+            this.SplitBook.OfficeImageId = "CopyToFolder";
+            this.SplitBook.ScreenTip = "将当前工作簿中的每一个工作表都拆分为单独的工作簿并保存";
+            this.SplitBook.ShowImage = true;
+            this.SplitBook.SuperTip = "不拆分隐藏工作表";
+            this.SplitBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.SplitBook_Click);
+            // 
+            // Exportxlsx
+            // 
+            this.Exportxlsx.Label = "另存为xlsx";
+            this.Exportxlsx.Name = "Exportxlsx";
+            this.Exportxlsx.OfficeImageId = "ExportExcel";
+            this.Exportxlsx.ScreenTip = "将xls文件另存为xlsx格式并删除原文件";
+            this.Exportxlsx.ShowImage = true;
+            this.Exportxlsx.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.Exportxlsx_Click);
+            // 
             // MakeIndex
             // 
             this.MakeIndex.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -367,34 +399,68 @@
             this.UnionSheet.ShowImage = true;
             this.UnionSheet.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnionSheet_Click);
             // 
-            // UnionBook
+            // RangeFormat
             // 
-            this.UnionBook.Label = "汇总工作簿";
-            this.UnionBook.Name = "UnionBook";
-            this.UnionBook.OfficeImageId = "ImportExcel";
-            this.UnionBook.ScreenTip = "汇总一个文件夹中所有的Excel工作簿";
-            this.UnionBook.ShowImage = true;
-            this.UnionBook.SuperTip = "要求表头一致，仅汇总活动表一张表格";
-            this.UnionBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.UnionBook_Click);
+            this.RangeFormat.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.RangeFormat.Items.Add(this.DateFormate);
+            this.RangeFormat.Items.Add(this.TextFormat);
+            this.RangeFormat.Items.Add(this.NumFormat);
+            this.RangeFormat.Items.Add(this.ToUpper);
+            this.RangeFormat.Items.Add(this.ToLower);
+            this.RangeFormat.Label = "格式";
+            this.RangeFormat.Name = "RangeFormat";
+            this.RangeFormat.OfficeImageId = "ControlsGallery";
+            this.RangeFormat.ScreenTip = "批量修改选区格式";
+            this.RangeFormat.ShowImage = true;
             // 
-            // SplitBook
+            // DateFormate
             // 
-            this.SplitBook.Label = "拆分工作簿";
-            this.SplitBook.Name = "SplitBook";
-            this.SplitBook.OfficeImageId = "CopyToFolder";
-            this.SplitBook.ScreenTip = "将当前工作簿中的每一个工作表都拆分为单独的工作簿并保存";
-            this.SplitBook.ShowImage = true;
-            this.SplitBook.SuperTip = "不拆分隐藏工作表";
-            this.SplitBook.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.SplitBook_Click);
+            this.DateFormate.Label = "日期格式";
+            this.DateFormate.Name = "DateFormate";
+            this.DateFormate.OfficeImageId = "ProposeNewTime";
+            this.DateFormate.ScreenTip = "将所选单元格规范为短日期格式";
+            this.DateFormate.ShowImage = true;
+            this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
             // 
-            // Exportxlsx
+            // TextFormat
             // 
-            this.Exportxlsx.Label = "另存为xlsx";
-            this.Exportxlsx.Name = "Exportxlsx";
-            this.Exportxlsx.OfficeImageId = "ExportExcel";
-            this.Exportxlsx.ScreenTip = "将xls文件另存为xlsx格式并删除原文件";
-            this.Exportxlsx.ShowImage = true;
-            this.Exportxlsx.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.Exportxlsx_Click);
+            this.TextFormat.Label = "文本格式";
+            this.TextFormat.Name = "TextFormat";
+            this.TextFormat.OfficeImageId = "FormControlEditBox";
+            this.TextFormat.ScreenTip = "将所选单元格强制存储为文本格式";
+            this.TextFormat.ShowImage = true;
+            this.TextFormat.SuperTip = "加工后不保留公式，仅保留值";
+            this.TextFormat.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TextFormat_Click);
+            // 
+            // NumFormat
+            // 
+            this.NumFormat.Label = "数字格式";
+            this.NumFormat.Name = "NumFormat";
+            this.NumFormat.OfficeImageId = "FormattingUnique";
+            this.NumFormat.ScreenTip = "将所选单元格转换为数字格式";
+            this.NumFormat.ShowImage = true;
+            this.NumFormat.SuperTip = "加工后不保留公式，仅保留值";
+            this.NumFormat.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NumFormat_Click);
+            // 
+            // ToUpper
+            // 
+            this.ToUpper.Label = "字母大写";
+            this.ToUpper.Name = "ToUpper";
+            this.ToUpper.OfficeImageId = "QuickStylesSets";
+            this.ToUpper.ScreenTip = "点击将选区的字母全部转换为大写格式";
+            this.ToUpper.ShowImage = true;
+            this.ToUpper.SuperTip = "类似upper公式，仅保留值";
+            this.ToUpper.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToUpper_Click);
+            // 
+            // ToLower
+            // 
+            this.ToLower.Label = "字母小写";
+            this.ToLower.Name = "ToLower";
+            this.ToLower.OfficeImageId = "TextEffectTransformGallery";
+            this.ToLower.ScreenTip = "点击将选区的字母全部转换为大写格式";
+            this.ToLower.ShowImage = true;
+            this.ToLower.SuperTip = "类似Lower公式，仅保留值";
+            this.ToLower.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToLower_Click);
             // 
             // AutoFillInTheBlanks
             // 
@@ -479,30 +545,14 @@
             this.NoTenThousand.ShowImage = true;
             this.NoTenThousand.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.NoTenThousand_Click);
             // 
-            // DateFormate
+            // RegText
             // 
-            this.DateFormate.Label = "日期格式";
-            this.DateFormate.Name = "DateFormate";
-            this.DateFormate.OfficeImageId = "ProposeNewTime";
-            this.DateFormate.ScreenTip = "将所选单元格规范为短日期格式";
-            this.DateFormate.ShowImage = true;
-            this.DateFormate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DateFormate_Click);
-            // 
-            // TextFormat
-            // 
-            this.TextFormat.Label = "文本格式";
-            this.TextFormat.Name = "TextFormat";
-            this.TextFormat.OfficeImageId = "FormControlEditBox";
-            this.TextFormat.ScreenTip = "将所选单元格强制存储为文本格式";
-            this.TextFormat.ShowImage = true;
-            // 
-            // NumFormat
-            // 
-            this.NumFormat.Label = "数字格式";
-            this.NumFormat.Name = "NumFormat";
-            this.NumFormat.OfficeImageId = "FormattingUnique";
-            this.NumFormat.ScreenTip = "将所选单元格转换为数字格式";
-            this.NumFormat.ShowImage = true;
+            this.RegText.Label = "正则匹配";
+            this.RegText.Name = "RegText";
+            this.RegText.OfficeImageId = "FunctionWizard";
+            this.RegText.ScreenTip = "使用正则表达式处理所选单元格值，不保留公式";
+            this.RegText.ShowImage = true;
+            this.RegText.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RegText_Click);
             // 
             // ProtectMenu
             // 
@@ -672,10 +722,10 @@
             this.HertZTab.PerformLayout();
             this.TableProcessing.ResumeLayout(false);
             this.TableProcessing.PerformLayout();
-            this.WorkSheet.ResumeLayout(false);
-            this.WorkSheet.PerformLayout();
             this.WorkBook.ResumeLayout(false);
             this.WorkBook.PerformLayout();
+            this.WorkSheet.ResumeLayout(false);
+            this.WorkSheet.PerformLayout();
             this.Tool.ResumeLayout(false);
             this.Tool.PerformLayout();
             this.Protect.ResumeLayout(false);
@@ -749,6 +799,10 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton NumFormat;
         internal Microsoft.Office.Tools.Ribbon.RibbonMenu ProtectMenu;
         internal Microsoft.Office.Tools.Ribbon.RibbonMenu Unlock;
+        internal Microsoft.Office.Tools.Ribbon.RibbonMenu RangeFormat;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ToUpper;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ToLower;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton RegText;
     }
 
     partial class ThisRibbonCollection

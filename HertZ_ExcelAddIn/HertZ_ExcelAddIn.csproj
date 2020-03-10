@@ -203,6 +203,12 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="MyForm\Tool\RegForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MyForm\Tool\RegForm.Designer.cs">
+      <DependentUpon>RegForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MyForm\VerInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -238,6 +244,9 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="MyForm\Tool\RegForm.resx">
+      <DependentUpon>RegForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MyForm\Tool\RoundSetting.resx">
       <DependentUpon>RoundSetting.cs</DependentUpon>
     </EmbeddedResource>

@@ -12,6 +12,7 @@ using System.IO;
 using System.Threading;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace HertZ_ExcelAddIn
 {
@@ -2915,9 +2916,9 @@ namespace HertZ_ExcelAddIn
                 for (int i1 = 1; i1 <= AllRows; i1++)
                 {
                     //如果非空且是数字
-                    if (ORGv[i1, i] != null && FunC.IsNumber(ORGv[i1, i].ToString()))
+                    if (ORGv[i1, i] != null && FunC.IsNumber(FunC.TS(ORGv[i1, i])))
                     {
-                        if (Math.Abs(double.Parse(ORGv[i1, i].ToString())) < PRECISION)
+                        if (Math.Abs(FunC.TD(ORGv[i1, i])) < PRECISION)
                         {
                             NRG[i1 - 1, i - 1] = ORGf[i1, i];
                         }
@@ -3337,7 +3338,7 @@ namespace HertZ_ExcelAddIn
             Excel.Range rg = ExcelApp.Selection;
             if(rg.Count == 1) 
             {
-                if(rg.Value2 != null && !FunC.IsNumber(rg.Value2))
+                if(rg.Value2 != null && !FunC.IsNumber(FunC.TS(rg.Value2)))
                 {
                     WST.Range[FunC.CName(rg.Column) + rg.Row].Interior.Color = Color.Yellow;
                 }
@@ -5556,6 +5557,329 @@ namespace HertZ_ExcelAddIn
             ExcelApp.StatusBar = false;
             ExcelApp.ScreenUpdating = true;
             MessageBox.Show(string.Format("已将拆分工作簿存放到{0}，请检查！", FolderPath));
+
+        }
+
+        /// <summary>
+        /// 文本格式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextFormat_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if(rg.Value2 != null)
+                {
+                    rg.NumberFormatLocal = "@";
+                    rg.Value2 = FunC.TS(rg.Value2);
+                }
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGv = rg.Value2;
+            rg.NumberFormatLocal = "" + "@";
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            //定义新数组
+            NRG = new object[AllRows, AllColumns];
+
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    if (ORGv[i1, i] != null)
+                    {
+                        NRG[i1 - 1, i - 1] = FunC.TS(ORGv[i1, i]);
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGv = null;
+            NRG = null;
+
+        }
+
+        /// <summary>
+        /// 数字格式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NumFormat_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Value2 != null && FunC.IsNumber(FunC.TS(rg.Value2)))
+                {
+                    rg.Value2 = FunC.TDM(FunC.TS(rg.Value2));
+                    rg.NumberFormatLocal = "#,##0.00";
+                }
+
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGv = rg.Value2;
+            rg.NumberFormatLocal = "#,##0.00";
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            //定义新数组
+            NRG = new object[AllRows, AllColumns];
+
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    if(ORGv[i1, i] != null)
+                    {
+                        if (FunC.IsNumber(FunC.TS(ORGv[i1, i])))
+                        {
+                            NRG[i1 - 1, i - 1] = FunC.TDM(ORGv[i1, i]);
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = ORGv[i1, i];
+                        }
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGv = null;
+            NRG = null;
+        }
+
+        /// <summary>
+        /// 将选区中的字母大写
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToUpper_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Value2 != null && FunC.IncludeLetter(FunC.TS(rg.Value2)))
+                {
+                    rg.Value2 = (FunC.TS(rg.Value2)).ToUpper();
+                }
+
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            //定义新数组
+            NRG = new object[AllRows, AllColumns];
+
+            for(int i = 1; i <= AllColumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    if (ORGv[i1, i] != null)
+                    {
+                        if (FunC.IncludeLetter(FunC.TS(ORGv[i1, i])))
+                        {
+                            NRG[i1 - 1, i - 1] = (FunC.TS(ORGv[i1, i])).ToUpper();
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = ORGv[i1, i];
+                        }
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGv = null;
+            NRG = null;
+        }
+
+        /// <summary>
+        /// 将选区中的字母小写
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToLower_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Value2 != null && FunC.IncludeLetter(FunC.TS(rg.Value2)))
+                {
+                    rg.Value2 = (FunC.TS(rg.Value2)).ToLower();
+                }
+
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGv;//原始数组ORGv 读取值
+            object[,] NRG;//新数组NRG
+
+            ORGv = rg.Value2;
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            //定义新数组
+            NRG = new object[AllRows, AllColumns];
+
+            for (int i = 1; i <= AllColumns; i++)
+            {
+                for (int i1 = 1; i1 <= AllRows; i1++)
+                {
+                    if (ORGv[i1, i] != null)
+                    {
+                        if (FunC.IncludeLetter(FunC.TS(ORGv[i1, i])))
+                        {
+                            NRG[i1 - 1, i - 1] = (FunC.TS(ORGv[i1, i])).ToLower();
+                        }
+                        else
+                        {
+                            NRG[i1 - 1, i - 1] = ORGv[i1, i];
+                        }
+                    }
+                }
+            }
+
+            //赋值
+            WST.Range[FunC.CName(rg.Column) + rg.Row + ":" + FunC.CName(rg.Column + AllColumns - 1) + (rg.Row + AllRows - 1)].Value2 = NRG;
+
+            ORGv = null;
+            NRG = null;
+        }
+
+        /// <summary>
+        /// 正则匹配
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RegText_Click(object sender, RibbonControlEventArgs e)
+        {
 
         }
     }
