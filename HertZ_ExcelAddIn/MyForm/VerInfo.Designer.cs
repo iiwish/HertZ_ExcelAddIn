@@ -80,6 +80,7 @@
             // 
             // VerInfo
             // 
+            this.AcceptButton = this.Manual;
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(674, 429);
@@ -88,8 +89,12 @@
             this.Controls.Add(this.OnlineVideo);
             this.Controls.Add(this.Manual);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "VerInfo";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "版本信息";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.VerInfo_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -188,6 +188,7 @@
             // 
             // CancelBtn
             // 
+            this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelBtn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.CancelBtn.Location = new System.Drawing.Point(489, 469);
             this.CancelBtn.Name = "CancelBtn";
@@ -210,17 +211,22 @@
             // 
             // BAJSetting
             // 
+            this.AcceptButton = this.ConfirmBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(774, 565);
             this.Controls.Add(this.OrderCheckBox);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.SubjectCodeGroupBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "BAJSetting";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "账表加工设置";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.BAJSettingForm_Load);
             this.SubjectCodeGroupBox.ResumeLayout(false);
             this.SubjectCodeGroupBox.PerformLayout();
