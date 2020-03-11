@@ -41,6 +41,10 @@ namespace HertZ_ExcelAddIn
             ToolCheck.Checked = Tool.Visible;
             Protect.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "ProtectCheck", true);
             ProtectCheck.Checked = Protect.Visible;
+            WorkBook.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "WorkBookCheck", true);
+            WorkBookCheck.Checked = WorkBook.Visible;
+            WorkSheet.Visible = clsConfig.ReadConfig<bool>("GlobalSetting", "WorkSheetCheck", true);
+            WorkSheetCheck.Checked = WorkSheet.Visible;
         }
 
         //加工余额表
@@ -5880,7 +5884,54 @@ namespace HertZ_ExcelAddIn
         /// <param name="e"></param>
         private void RegText_Click(object sender, RibbonControlEventArgs e)
         {
+            Form RegTextForm = new MyForm.Tool.RegForm{};
+            RegTextForm.Show();
+        }
 
+        /// <summary>
+        /// 显示或隐藏工作簿选项卡
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WorkBookCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            if (WorkBookCheck.Checked)
+            {
+                WorkBook.Visible = true;
+                clsConfig.WriteConfig("GlobalSetting", "WorkBookCheck", true.ToString());
+            }
+            else
+            {
+                WorkBook.Visible = false;
+                clsConfig.WriteConfig("GlobalSetting", "WorkBookCheck", false.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 显示或隐藏工作表选项卡
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WorkSheetCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            //从我的文档读取文件路径
+            string strPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+            ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
+
+            if (WorkSheetCheck.Checked)
+            {
+                WorkSheet.Visible = true;
+                clsConfig.WriteConfig("GlobalSetting", "WorkSheetCheck", true.ToString());
+            }
+            else
+            {
+                WorkSheet.Visible = false;
+                clsConfig.WriteConfig("GlobalSetting", "WorkSheetCheck", false.ToString());
+            }
         }
     }
 }

@@ -42,8 +42,8 @@ namespace HertZ_ExcelAddIn
             //写入父节点VerInfo中配置名VerNum的配置项
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
 
-            string msg = "HertZ已更新，当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "新增功能：修复了几个Bug");
+            string msg = "HertZ大更新，当前版本为" + Nverinfo + Environment.NewLine;
+            MessageBox.Show(msg + "新增功能：" + Environment.NewLine + "工作簿拆分合并；" + Environment.NewLine + "工作表拆分合并生成索引等；" + Environment.NewLine + "格式调整、文本过滤等。");
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

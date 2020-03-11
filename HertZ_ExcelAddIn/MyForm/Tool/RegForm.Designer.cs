@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RegForm));
             this.comboBox = new System.Windows.Forms.ComboBox();
             this.ConfirmBtn = new System.Windows.Forms.Button();
+            this.ChangeBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // comboBox
@@ -62,32 +64,10 @@
             "去双字节字符(包括汉字在内): [^\\x00-\\xff]",
             "去HTML标记: <(\\S*?)[^>]*>.*?</\\1>|<.*?/>",
             "去首尾空白字符: ^\\s*|\\s*$",
-            "去Email地址: \\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*",
-            "去网址URL: [a-zA-z]+: //[^\\s]*",
-            "匹配帐号是否合法(字母开头,允许5-16字节,允许字母数字下划线): ^[a-zA-Z][a-zA-Z0-9_]{4,15}$",
-            "匹配国内电话号码(如0511-4405222或021-87888822): \\d{3}-\\d{8}|\\d{4}-\\d{7}",
-            "匹配腾讯QQ号: [1-9][0-9]{4,}",
-            "匹配中国邮政编码: [1-9]\\d{5}(?!\\d)",
-            "匹配身份证: \\d{15}|\\d{18}",
-            "匹配ip地址: \\d+\\.\\d+\\.\\d+\\.\\d+",
-            "匹配正整数: [1-9]\\d*$",
-            "匹配负整数: -[1-9]\\d*$",
-            "匹配整数: -?[1-9]\\d*$",
-            "匹配非负整数（正整数+0）: [1-9]\\d*|0$",
-            "匹配非正整数（负整数+0）: -[1-9]\\d*|0$",
-            "匹配正浮点数: [1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$",
-            "匹配负浮点数: -([1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*)$",
-            "匹配浮点数: -?([1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*|0?\\.0+|0)$",
-            "匹配非负浮点数（正浮点数+0）: [1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*|0?\\.0+|0$",
-            "匹配非正浮点数（负浮点数+0）: (-([1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*))|0?\\.0+|0$",
-            "匹配由26个英文字母组成的字符串: [A-Za-z]+$",
-            "匹配由26个英文字母的大写组成的字符串: [A-Z]+$",
-            "匹配由26个英文字母的小写组成的字符串: [a-z]+$",
-            "匹配由数字和26个英文字母组成的字符串: [A-Za-z0-9]+$",
-            "匹配由数字26个英文字母或者下划线组成的字符串: \\w+$"});
-            this.comboBox.Location = new System.Drawing.Point(35, 65);
+            "去Email地址: \\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*"});
+            this.comboBox.Location = new System.Drawing.Point(170, 65);
             this.comboBox.Name = "comboBox";
-            this.comboBox.Size = new System.Drawing.Size(700, 44);
+            this.comboBox.Size = new System.Drawing.Size(560, 44);
             this.comboBox.TabIndex = 0;
             // 
             // ConfirmBtn
@@ -98,6 +78,29 @@
             this.ConfirmBtn.TabIndex = 1;
             this.ConfirmBtn.Text = "确 认";
             this.ConfirmBtn.UseVisualStyleBackColor = true;
+            this.ConfirmBtn.Click += new System.EventHandler(this.ConfirmBtn_Click);
+            // 
+            // ChangeBtn
+            // 
+            this.ChangeBtn.BackColor = System.Drawing.SystemColors.Window;
+            this.ChangeBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.ChangeBtn.Location = new System.Drawing.Point(50, 65);
+            this.ChangeBtn.Name = "ChangeBtn";
+            this.ChangeBtn.Size = new System.Drawing.Size(120, 44);
+            this.ChangeBtn.TabIndex = 2;
+            this.ChangeBtn.Text = "Replace";
+            this.ChangeBtn.UseVisualStyleBackColor = false;
+            this.ChangeBtn.Click += new System.EventHandler(this.ChangeBtn_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label1.Location = new System.Drawing.Point(201, 160);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(398, 31);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "注意：此操作无法撤销，请手动备份";
             // 
             // RegForm
             // 
@@ -105,6 +108,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(774, 229);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.ChangeBtn);
             this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.comboBox);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -117,6 +122,7 @@
             this.Text = "正则表达式";
             this.TopMost = true;
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -124,5 +130,7 @@
 
         private System.Windows.Forms.ComboBox comboBox;
         private System.Windows.Forms.Button ConfirmBtn;
+        private System.Windows.Forms.Button ChangeBtn;
+        private System.Windows.Forms.Label label1;
     }
 }
