@@ -3430,7 +3430,7 @@ namespace HertZ_ExcelAddIn
                     }
                     else
                     {
-                        if(rg.Text != "0") { rg.Formula = double.Parse(TempStr) / 10000; }
+                        if(rg.Text != "0") { rg.Value2 = double.Parse(TempStr) / 10000; }
                     }
                 }
                 return;
@@ -5588,10 +5588,10 @@ namespace HertZ_ExcelAddIn
             //如果只选中一个单元格
             if (rg.Count == 1)
             {
-                if(rg.Value2 != null)
+                if(rg.Formula != null)
                 {
                     rg.NumberFormatLocal = "@";
-                    rg.Value2 = FunC.TS(rg.Value2);
+                    rg.Value2 = FunC.TS(rg.Formula);
                 }
                 return;
             }
@@ -5602,7 +5602,7 @@ namespace HertZ_ExcelAddIn
             object[,] ORGv;//原始数组ORGv 读取值
             object[,] NRG;//新数组NRG
 
-            ORGv = rg.Value2;
+            ORGv = rg.Formula;
             rg.NumberFormatLocal = "" + "@";
 
             //限制列数，防止选择整行时多余的计算
@@ -5932,6 +5932,64 @@ namespace HertZ_ExcelAddIn
                 WorkSheet.Visible = false;
                 clsConfig.WriteConfig("GlobalSetting", "WorkSheetCheck", false.ToString());
             }
+        }
+
+        /// <summary>
+        /// 公式转结果
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToResult_Click(object sender, RibbonControlEventArgs e)
+        {
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+
+            //读取选中区域
+            Excel.Range rg;
+            try
+            {
+                rg = ExcelApp.Selection;
+            }
+            catch
+            {
+                return;
+            }
+
+            //如果只选中一个单元格
+            if (rg.Count == 1)
+            {
+                if (rg.Formula != null)
+                {
+                    rg.NumberFormatLocal = "G/通用格式";
+                    rg.TextToColumns();
+                }
+                return;
+            }
+
+            //如果选中了一个区域
+            int AllRows;
+            int AllColumns;
+            object[,] ORGv = rg.Value2;//原始数组ORGv 读取值
+
+            rg.NumberFormatLocal = "G/通用格式";
+
+            //限制列数，防止选择整行时多余的计算
+            AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
+            AllColumns = Math.Min(AllColumns, ORGv.GetLength(1));
+            AllColumns = Math.Max(1, AllColumns);
+
+            //限制行数
+            AllRows = FunC.AllRows(FunC.CName(rg.Column), AllColumns) - rg.Row + 1;
+            AllRows = Math.Min(AllRows, ORGv.GetLength(0));
+            AllRows = Math.Max(1, AllRows);
+
+            for (int i = 0; i < AllColumns; i++)
+            {
+                rg = WST.Range[string.Format("{0}{1}:{0}{2}",FunC.CName(rg.Column+i),rg.Row,(rg.Row + AllRows - 1))];
+                rg.TextToColumns();
+            }
+
+            ORGv = null;
         }
     }
 }

@@ -218,7 +218,16 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public bool IsNumber(string str)
         {
-            return Regex.IsMatch(str, @"^[+-]?\d*[.]?\d*$");
+            if(Regex.IsMatch(str, @"^[-+]?(\d*(,\d{3})*.(\d+)?)"))
+            {
+                if(Regex.Match(str,@"^[-+]?(\d*(,\d{3})*.(\d+)?)").Value == str)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            
             //bool returnValue;
             //try
             //{

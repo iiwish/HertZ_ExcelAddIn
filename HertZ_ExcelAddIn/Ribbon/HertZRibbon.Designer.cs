@@ -99,6 +99,7 @@
             this.ToolCheck = this.Factory.CreateRibbonCheckBox();
             this.ProtectCheck = this.Factory.CreateRibbonCheckBox();
             this.JiuQiCheck = this.Factory.CreateRibbonCheckBox();
+            this.ToResult = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.WorkBook.SuspendLayout();
@@ -386,6 +387,7 @@
             this.RangeFormat.Items.Add(this.NumFormat);
             this.RangeFormat.Items.Add(this.ToUpper);
             this.RangeFormat.Items.Add(this.ToLower);
+            this.RangeFormat.Items.Add(this.ToResult);
             this.RangeFormat.Label = "格式";
             this.RangeFormat.Name = "RangeFormat";
             this.RangeFormat.OfficeImageId = "ControlsGallery";
@@ -676,7 +678,7 @@
             this.VersionInfo.Image = global::HertZ_ExcelAddIn.Properties.Resources.HertZ_Logo;
             this.VersionInfo.Label = "版本信息";
             this.VersionInfo.Name = "VersionInfo";
-            this.VersionInfo.ScreenTip = "点击查看版本信息及设置更新";
+            this.VersionInfo.ScreenTip = "点击查看版本信息及查看教程";
             this.VersionInfo.ShowImage = true;
             this.VersionInfo.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.VersionInfo_Click);
             // 
@@ -727,6 +729,16 @@
             this.JiuQiCheck.Label = "久其";
             this.JiuQiCheck.Name = "JiuQiCheck";
             this.JiuQiCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.JiuQiCheck_Click);
+            // 
+            // ToResult
+            // 
+            this.ToResult.Label = "公式转结果";
+            this.ToResult.Name = "ToResult";
+            this.ToResult.OfficeImageId = "FunctionWizard";
+            this.ToResult.ScreenTip = "如果所选单元格内容为公式，则显示公式结果";
+            this.ToResult.ShowImage = true;
+            this.ToResult.SuperTip = "用于“文本格式”中公式的逆向操作";
+            this.ToResult.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToResult_Click);
             // 
             // HertZRibbon
             // 
@@ -821,6 +833,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton RegText;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox WorkBookCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox WorkSheetCheck;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ToResult;
     }
 
     partial class ThisRibbonCollection

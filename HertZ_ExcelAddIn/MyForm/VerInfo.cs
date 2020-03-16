@@ -38,12 +38,12 @@ namespace HertZ_ExcelAddIn
 
         private void Manual_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.jianshu.com/nb/41200586");
+            System.Diagnostics.Process.Start("https://www.yuque.com/hewish/hertz_excel");
         }
 
         private void OnlineVideo_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("");
+            System.Diagnostics.Process.Start("https://space.bilibili.com/11618958/channel/detail?cid=111319");
         }
 
     }
