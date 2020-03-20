@@ -24,6 +24,7 @@ namespace HertZ_ExcelAddIn
         //引用函数模块
         private readonly FunCtion FunC = new FunCtion();
 
+
         //判断浮点数是否等于0的参数
         public const double PRECISION = 0.0001d;
 
@@ -5990,6 +5991,85 @@ namespace HertZ_ExcelAddIn
             }
 
             ORGv = null;
+        }
+
+        /// <summary>
+        /// 工作簿公式转值
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BookToValue_Click(object sender, RibbonControlEventArgs e)
+        {
+            Excel.Application ExcelApp = Globals.ThisAddIn.Application;
+            Excel.Workbook WBK = ExcelApp.ActiveWorkbook;
+            WST = ExcelApp.ActiveSheet;
+            //Excel.Worksheet wst;
+            //Excel.Range Rg;
+            int AllRows = WST.Rows.Count - 1;
+            int AllColumns = WST.Columns.Count - 1;
+            int TempInt;
+            string TempStr;
+
+            //输入最大行数
+            try
+            {
+                object TempRows = ExcelApp.InputBox("请输入最大行数", "输入行数", 300, Type: 1);
+                TempInt = AllRows;
+                AllRows = FunC.TI(TempRows);
+                if (AllRows > TempInt || AllRows < 2)
+                {
+                    MessageBox.Show("仅支持2-" + TempInt + "行，请重新输入！");
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+            
+            //输入最大列数
+            try
+            {
+                object TempRows = ExcelApp.InputBox("请输入最大列数", "输入列数", 30, Type: 1);
+                TempInt = AllColumns;
+                AllColumns = FunC.TI(TempRows);
+                if (AllColumns > TempInt || AllColumns < 2)
+                {
+                    MessageBox.Show("仅支持2-" + TempInt + "列，请重新输入！");
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+
+            TempStr = String.Format("A1:{0}{1}", FunC.CName(AllColumns), AllRows);
+            double OneStep = Math.Round(1 / double.Parse(WBK.Worksheets.Count.ToString()) * 100, 6);//WBK.Worksheets.Count;
+            double i = 0;
+            ExcelApp.StatusBar = "正在进行公式转值操作";
+            //遍历工作表
+            //var SheetE = WBK.Worksheets.GetEnumerator();
+            foreach(Excel.Worksheet wst in WBK.Worksheets)
+            {
+                //AllRows = Math.Max(FunC.AllRows(wst, "A", 13), 2);
+                //AllColumns = Math.Max(FunC.AllColumns(wst, 1, 13), 2);
+                //Rg = wst.Range[TempStr];//String.Format("A1:{0}{1}", FunC.CName(AllColumns), AllRows)];
+                wst.Range[TempStr].Value2 = wst.Range[TempStr].Value2;
+                ExcelApp.StatusBar = "已完成 " + Math.Round(i += OneStep, 2) + "%";
+            }
+
+            ExcelApp.StatusBar = false;
+        }
+
+        private void SheetToValue_Click(object sender, RibbonControlEventArgs e)
+        {
+            Excel.Application ExcelApp = Globals.ThisAddIn.Application;
+            WST = ExcelApp.ActiveSheet;
+            int AllRows = Math.Max(FunC.AllRows(WST, "A", 13), 2);
+            int AllColumns = Math.Max(FunC.AllColumns(WST, 1, 13), 2);
+            Excel.Range Rg = WST.Range[String.Format("A1:{0}{1}", FunC.CName(AllColumns), AllRows)];
+            Rg.Value2 = Rg.Value2;
         }
     }
 }

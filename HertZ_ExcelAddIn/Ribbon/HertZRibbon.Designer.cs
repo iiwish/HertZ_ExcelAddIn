@@ -66,6 +66,7 @@
             this.NumFormat = this.Factory.CreateRibbonButton();
             this.ToUpper = this.Factory.CreateRibbonButton();
             this.ToLower = this.Factory.CreateRibbonButton();
+            this.ToResult = this.Factory.CreateRibbonButton();
             this.AutoFillInTheBlanks = this.Factory.CreateRibbonButton();
             this.CompareTwoColumns = this.Factory.CreateRibbonButton();
             this.CheckNum = this.Factory.CreateRibbonButton();
@@ -76,6 +77,9 @@
             this.TenThousand = this.Factory.CreateRibbonSplitButton();
             this.NoTenThousand = this.Factory.CreateRibbonButton();
             this.RegText = this.Factory.CreateRibbonButton();
+            this.ToValue = this.Factory.CreateRibbonMenu();
+            this.BookToValue = this.Factory.CreateRibbonButton();
+            this.SheetToValue = this.Factory.CreateRibbonButton();
             this.Protect = this.Factory.CreateRibbonGroup();
             this.ProtectMenu = this.Factory.CreateRibbonMenu();
             this.ProtectBook = this.Factory.CreateRibbonButton();
@@ -99,7 +103,6 @@
             this.ToolCheck = this.Factory.CreateRibbonCheckBox();
             this.ProtectCheck = this.Factory.CreateRibbonCheckBox();
             this.JiuQiCheck = this.Factory.CreateRibbonCheckBox();
-            this.ToResult = this.Factory.CreateRibbonButton();
             this.HertZTab.SuspendLayout();
             this.TableProcessing.SuspendLayout();
             this.WorkBook.SuspendLayout();
@@ -376,6 +379,7 @@
             this.Tool.Items.Add(this.RoundButton);
             this.Tool.Items.Add(this.TenThousand);
             this.Tool.Items.Add(this.RegText);
+            this.Tool.Items.Add(this.ToValue);
             this.Tool.Label = "实用工具";
             this.Tool.Name = "Tool";
             // 
@@ -442,6 +446,16 @@
             this.ToLower.ShowImage = true;
             this.ToLower.SuperTip = "类似Lower公式，仅保留值";
             this.ToLower.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToLower_Click);
+            // 
+            // ToResult
+            // 
+            this.ToResult.Label = "公式转结果";
+            this.ToResult.Name = "ToResult";
+            this.ToResult.OfficeImageId = "FunctionWizard";
+            this.ToResult.ScreenTip = "如果所选单元格内容为公式，则显示公式结果";
+            this.ToResult.ShowImage = true;
+            this.ToResult.SuperTip = "用于“文本格式”中公式的逆向操作";
+            this.ToResult.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToResult_Click);
             // 
             // AutoFillInTheBlanks
             // 
@@ -534,6 +548,36 @@
             this.RegText.ScreenTip = "使用正则表达式处理所选单元格值，不保留公式";
             this.RegText.ShowImage = true;
             this.RegText.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RegText_Click);
+            // 
+            // ToValue
+            // 
+            this.ToValue.Items.Add(this.BookToValue);
+            this.ToValue.Items.Add(this.SheetToValue);
+            this.ToValue.Label = "数值化";
+            this.ToValue.Name = "ToValue";
+            this.ToValue.OfficeImageId = "FormattingUnique";
+            this.ToValue.ScreenTip = "去除指定区域的公式";
+            this.ToValue.ShowImage = true;
+            // 
+            // BookToValue
+            // 
+            this.BookToValue.Label = "工作簿";
+            this.BookToValue.Name = "BookToValue";
+            this.BookToValue.OfficeImageId = "PivotExportToExcel";
+            this.BookToValue.ScreenTip = "把当前工作簿中的公式转换为数值";
+            this.BookToValue.ShowImage = true;
+            this.BookToValue.SuperTip = "取前13列13行的最大行列数";
+            this.BookToValue.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BookToValue_Click);
+            // 
+            // SheetToValue
+            // 
+            this.SheetToValue.Label = "工作表";
+            this.SheetToValue.Name = "SheetToValue";
+            this.SheetToValue.OfficeImageId = "ChartShowData";
+            this.SheetToValue.ScreenTip = "把当前工作表中的公式转换为数值";
+            this.SheetToValue.ShowImage = true;
+            this.SheetToValue.SuperTip = "取前13列13行的最大行列数";
+            this.SheetToValue.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.SheetToValue_Click);
             // 
             // Protect
             // 
@@ -730,16 +774,6 @@
             this.JiuQiCheck.Name = "JiuQiCheck";
             this.JiuQiCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.JiuQiCheck_Click);
             // 
-            // ToResult
-            // 
-            this.ToResult.Label = "公式转结果";
-            this.ToResult.Name = "ToResult";
-            this.ToResult.OfficeImageId = "FunctionWizard";
-            this.ToResult.ScreenTip = "如果所选单元格内容为公式，则显示公式结果";
-            this.ToResult.ShowImage = true;
-            this.ToResult.SuperTip = "用于“文本格式”中公式的逆向操作";
-            this.ToResult.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ToResult_Click);
-            // 
             // HertZRibbon
             // 
             this.Name = "HertZRibbon";
@@ -834,6 +868,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox WorkBookCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox WorkSheetCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton ToResult;
+        internal Microsoft.Office.Tools.Ribbon.RibbonMenu ToValue;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton BookToValue;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton SheetToValue;
     }
 
     partial class ThisRibbonCollection

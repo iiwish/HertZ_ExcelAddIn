@@ -48,6 +48,7 @@ namespace HertZ_ExcelAddIn
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
+
         }
 
         #region VSTO 生成的代码
