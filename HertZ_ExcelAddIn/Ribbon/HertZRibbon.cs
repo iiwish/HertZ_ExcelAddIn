@@ -2766,7 +2766,6 @@ namespace HertZ_ExcelAddIn
             int TempInt = FunC.CNumber(SelectColomn2);
             //调整第二列的格式
             WST.Columns[SelectColomn2 + ":" + SelectColomn2].Interior.ColorIndex = 0;
-            string CellsRange = "0";
             for (int i = 0; i < AllRows; i++)
             {
                 if (Arr[i, 7] != 1 && ARG[i, 1] != null && ARG[i, 1] != "0")
@@ -2775,14 +2774,10 @@ namespace HertZ_ExcelAddIn
                     //CellsRange = CellsRange + "," + SelectColomn2 + (i+1);
                 }
             }
-            //if (CellsRange != "0")
-            //{
-            //    WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
-            //}
             TempInt = FunC.CNumber(SelectColomn);
             //调整第一列的格式
             WST.Columns[SelectColomn + ":" + SelectColomn].Interior.ColorIndex = 0;
-            CellsRange = "0";
+            
             for (int i = 0; i < AllRows; i++)
             {
                 if (Arr[i, 6] != 1 && ARG[i, 0] != null && ARG[i, 0] != "0")
@@ -2791,11 +2786,6 @@ namespace HertZ_ExcelAddIn
                     //CellsRange = CellsRange + "," + SelectColomn + (i + 1);
                 }
             }
-            //if (CellsRange != "0")
-            //{
-            //    WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
-            //}
-
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
         }
 
@@ -2806,7 +2796,7 @@ namespace HertZ_ExcelAddIn
             string OFullName = ExcelApp.ActiveWorkbook.FullName;
             string NFullName;
             //检查是否为xlsx文件
-            if(Path.GetExtension(OFullName).Substring(1).ToLower() != "xls") { return; }
+            if(Path.GetExtension(OFullName).Substring(1).ToLower() == "xlsx") { return; }
 
             NFullName = Path.Combine(Path.GetDirectoryName(OFullName), Path.GetFileNameWithoutExtension(OFullName) + ".xlsx");
             //检查是否已存在xlsx文件
@@ -2825,11 +2815,14 @@ namespace HertZ_ExcelAddIn
                 }
             }
 
+            bool DeleteFile = false;
+            if (Path.GetExtension(OFullName).Substring(1).ToLower() == "xls") { DeleteFile = true; }
+
             //另存为
             ExcelApp.ActiveWorkbook.SaveAs(NFullName, FileFormat:Excel.XlFileFormat.xlOpenXMLWorkbook, CreateBackup:false);
 
-            //删除文件
-            File.Delete(OFullName);
+            //如果是xls文件，则删除文件
+            if (DeleteFile) { File.Delete(OFullName); }
         }
 
         //修改正负号
