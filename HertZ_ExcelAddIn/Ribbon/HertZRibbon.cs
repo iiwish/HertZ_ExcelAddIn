@@ -2763,6 +2763,7 @@ namespace HertZ_ExcelAddIn
             }
 
             //调整单元格颜色
+            int TempInt = FunC.CNumber(SelectColomn2);
             //调整第二列的格式
             WST.Columns[SelectColomn2 + ":" + SelectColomn2].Interior.ColorIndex = 0;
             string CellsRange = "0";
@@ -2770,13 +2771,15 @@ namespace HertZ_ExcelAddIn
             {
                 if (Arr[i, 7] != 1 && ARG[i, 1] != null && ARG[i, 1] != "0")
                 {
-                    CellsRange = CellsRange + "," + SelectColomn2 + (i+1);
+                    WST.Cells[i + 1, TempInt].Interior.Color = Color.Yellow;
+                    //CellsRange = CellsRange + "," + SelectColomn2 + (i+1);
                 }
             }
-            if (CellsRange != "0")
-            {
-                WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
-            }
+            //if (CellsRange != "0")
+            //{
+            //    WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
+            //}
+            TempInt = FunC.CNumber(SelectColomn);
             //调整第一列的格式
             WST.Columns[SelectColomn + ":" + SelectColomn].Interior.ColorIndex = 0;
             CellsRange = "0";
@@ -2784,13 +2787,14 @@ namespace HertZ_ExcelAddIn
             {
                 if (Arr[i, 6] != 1 && ARG[i, 0] != null && ARG[i, 0] != "0")
                 {
-                    CellsRange = CellsRange + "," + SelectColomn + (i + 1);
+                    WST.Cells[i + 1, TempInt].Interior.Color = Color.Yellow;
+                    //CellsRange = CellsRange + "," + SelectColomn + (i + 1);
                 }
             }
-            if (CellsRange != "0")
-            {
-                WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
-            }
+            //if (CellsRange != "0")
+            //{
+            //    WST.Range[CellsRange.Remove(0, 2)].Interior.Color = Color.Yellow;
+            //}
 
             ExcelApp.ScreenUpdating = true;//打开Excel视图刷新
         }
@@ -2850,7 +2854,7 @@ namespace HertZ_ExcelAddIn
             //如果只选中一个单元格
             if (rg.Count == 1)
             {
-                if (rg.Text != null && rg.Text != "0" && FunC.IsNumber(rg.Text))
+                if (rg.Text != null && rg.Text != "0" && FunC.IsNumber(rg.Value))
                 {
                     TempStr = rg.Formula;
                     if (TempStr.Substring(0, 1) == "=")
@@ -2887,7 +2891,7 @@ namespace HertZ_ExcelAddIn
                     }
                     else
                     {
-                        rg.Value2 = -double.Parse(rg.Text);
+                        rg.Value2 = -double.Parse(rg.Value);
                     }
                 }
                 return;
@@ -2901,7 +2905,7 @@ namespace HertZ_ExcelAddIn
             object[,] NRG;//新数组NRG
 
             ORGf = rg.Formula;
-            ORGv = rg.Value2;
+            ORGv = rg.Value;
 
             //限制列数，防止选择整行时多余的计算
             AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column))+10) - rg.Column +1;//坑
@@ -3371,6 +3375,7 @@ namespace HertZ_ExcelAddIn
             ExcelApp = Globals.ThisAddIn.Application;//Globals.ThisAddIn.Application;
             WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
             Excel.Range rg = ExcelApp.Selection;
+            rg.NumberFormatLocal = "yyyy/mm/dd";
 
             //限制列数，防止选择整行时多余的计算
             int AllColumns = FunC.AllColumns(rg.Row, FunC.AllRows(FunC.CName(rg.Column)) + 10) - rg.Column + 1;//坑
@@ -3766,7 +3771,7 @@ namespace HertZ_ExcelAddIn
             //加保护
             WST.Cells.Locked = false;
             rg.SpecialCells(Excel.XlCellType.xlCellTypeVisible).Locked = true;
-            WST.Protect(Password);
+            WST.Protect(Password, true, true, true, AllowFormattingCells: true, AllowFormattingColumns: true, AllowFormattingRows: true,AllowInsertingRows:true,AllowDeletingRows:true,AllowSorting:true,AllowFiltering:true,AllowUsingPivotTables:true);
 
         }
 
