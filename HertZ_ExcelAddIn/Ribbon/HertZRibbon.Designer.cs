@@ -309,8 +309,9 @@
             this.Exportxlsx.Label = "另存为xlsx";
             this.Exportxlsx.Name = "Exportxlsx";
             this.Exportxlsx.OfficeImageId = "ExportExcel";
-            this.Exportxlsx.ScreenTip = "将xls文件另存为xlsx格式并删除原文件";
+            this.Exportxlsx.ScreenTip = "将当前文件另存为xlsx格式并删除原文件";
             this.Exportxlsx.ShowImage = true;
+            this.Exportxlsx.SuperTip = "如果是xls文件，另存后将删除原文件";
             this.Exportxlsx.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.Exportxlsx_Click);
             // 
             // WorkSheet
