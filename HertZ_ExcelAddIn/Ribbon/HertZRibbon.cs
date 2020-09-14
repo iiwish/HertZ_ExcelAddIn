@@ -5359,7 +5359,7 @@ namespace HertZ_ExcelAddIn
             Excel.Worksheet WST;
 
             //获取文件夹下的所有xls和xlsx文件
-            string[] files = Directory.GetFiles(FolderPath, "*.xls");
+            string[] files = Directory.GetFiles(FolderPath, "*.xls*");
             //string[] files2 = Directory.GetFiles(FolderPath, "*.xlsx");
             //string[] files = new string[files1.Length + files2.Length];
             //files1.CopyTo(files, 0);
