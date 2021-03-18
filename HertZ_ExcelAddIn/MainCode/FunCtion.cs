@@ -227,18 +227,6 @@ namespace HertZ_ExcelAddIn
             }
 
             return false;
-            
-            //bool returnValue;
-            //try
-            //{
-            //    double OutN = double.Parse(str);
-            //    returnValue = true;
-            //}
-            //catch
-            //{
-            //    returnValue = false;
-            //}
-            //return returnValue;
         }
 
         /// <summary>
@@ -246,22 +234,26 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         public int SelectColumn(List<string> ColumnName,List<string> OName,bool MustSelect)
         {
-            int returnValue = 0;
-            
-            //匹配现有列名和目标列名
+            int returnValue;
+            ExcelApp = Globals.ThisAddIn.Application;
+            WST = (Excel.Worksheet)ExcelApp.ActiveSheet;
+            string DefRG = null;
+
+            //匹配现有列名和目标列名,如果能查找到作为默认值
             for (int i = 1; i <= ColumnName.Count(); i++)
             {
                 for (int i1 = 1; i1 <= OName.Count(); i1++)
                 {
                     if (ColumnName[i - 1] == OName[i1 - 1])
                     {
-                        returnValue = i1;
-                        return returnValue;
+                        DefRG = string.Format("${0}:${0}", CName(i1));
+                        break;
                     }
                 }
+                if (DefRG != null) break;
             }
 
-            //如果未匹配到该列，弹出窗体选择
+            //弹出窗体选择
             string PromptText = "请选择“" + ColumnName[0] + "”列";
 
             if (MustSelect == false)
@@ -271,7 +263,7 @@ namespace HertZ_ExcelAddIn
             //捕获用户 直接点击取消 的情况
             try
             {
-                returnValue = ExcelApp.InputBox(Prompt: PromptText, Type: 8).Column;
+                returnValue = ExcelApp.InputBox(Prompt: PromptText,Default: DefRG, Type: 8).Column;
             }
             catch
             {
@@ -350,7 +342,7 @@ namespace HertZ_ExcelAddIn
         /// 添加往来科目单sheet
         /// </summary>
         /// <param name="ORG">原始数组</param>
-        /// <param name="AllRows">全部行数</param>
+        /// <param name="AllRowsC">全部行数</param>
         /// <param name="AccountName">科目名称</param>
         /// <param name="OtherName">对方科目</param>
         /// <returns></returns>
@@ -531,33 +523,34 @@ namespace HertZ_ExcelAddIn
         /// </summary>
         /// <param name="Value"></param>
         /// <returns></returns>
-        public double TD(object Value)
+        public double TD(object Value,double Def = 0d,int Dec = 4)
         {
-            double returnValue = 0d;
+            double returnValue = Def;
             if (Value == null)
             {
-                return Math.Round(returnValue, 4);
+                return Math.Round(returnValue, Dec);
             }
             string inputValue = Value.ToString();
             double.TryParse(inputValue, out returnValue);
-            returnValue = Math.Round(returnValue, 4);
+            returnValue = Math.Round(returnValue, Dec);
             return returnValue;
         }
 
         /// <summary>
         /// 将object转换为string
         /// </summary>
-        /// <param name="Value"></param>
+        /// <param name="InputObj"></param>
         /// <returns></returns>
-        public string TS(object Value)
+        public string TS(object InputObj, string DefStr = "")
         {
-            string returnValue = "";
-            if (Value == null)
+            if (InputObj == null)
             {
-                return "";
+                return DefStr;
             }
-            returnValue = Value.ToString();
-            return returnValue;
+            else
+            {
+                return InputObj.ToString();
+            }
         }
 
         /// <summary>

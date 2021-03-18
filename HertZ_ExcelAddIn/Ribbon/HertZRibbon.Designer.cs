@@ -190,6 +190,7 @@
             this.TotalBalance.ScreenTip = "从末级科目汇总至一级科目";
             this.TotalBalance.ShowImage = true;
             this.TotalBalance.SuperTip = "同时规范格式";
+            this.TotalBalance.Visible = false;
             this.TotalBalance.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.TotalBalance_Click);
             // 
             // BalanceAndJournalSetting
@@ -671,6 +672,7 @@
             this.JiuQi.Items.Add(this.OpenNoteTemplate);
             this.JiuQi.Label = "久其";
             this.JiuQi.Name = "JiuQi";
+            this.JiuQi.Visible = false;
             // 
             // EditJiuQi
             // 
@@ -773,6 +775,7 @@
             // 
             this.JiuQiCheck.Label = "久其";
             this.JiuQiCheck.Name = "JiuQiCheck";
+            this.JiuQiCheck.Visible = false;
             this.JiuQiCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.JiuQiCheck_Click);
             // 
             // HertZRibbon

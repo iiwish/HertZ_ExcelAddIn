@@ -24,15 +24,15 @@ namespace HertZ_ExcelAddIn
             ClsThisAddinConfig clsConfig = new ClsThisAddinConfig(strPath);
 
             //从父节点CurrentAccount中读取配置名为AccountingFirmName的值，作为事务所名称，默认为致同
-            AccountingFirmName.Text = clsConfig.ReadConfig<string>("CurrentAccount", "AccountingFirmName", "致同会计师事务所（特殊普通合伙）");
+            AccountingFirmName.Text = clsConfig.ReadConfig<string>("CurrentAccount", "AccountingFirmName", "xx会计师事务所");
             //从父节点CurrentAccount中读取配置名为Auditee的值，作为被审计单位名称，默认为空
-            Auditee.Text = clsConfig.ReadConfig<string>("CurrentAccount", "Auditee", "请修改");
+            Auditee.Text = clsConfig.ReadConfig<string>("CurrentAccount", "Auditee", "xx公司");
             //从父节点CurrentAccount中读取配置名为ReplyAddress的值，作为回函地址，默认为致同
-            ReplyAddress.Text = clsConfig.ReadConfig<string>("CurrentAccount", "ReplyAddress", "北京建外大街22号赛特大厦十五层");
+            ReplyAddress.Text = clsConfig.ReadConfig<string>("CurrentAccount", "ReplyAddress", "xx省xx市xx区xx街道xx楼xx层");
             //从父节点CurrentAccount中读取配置名为PostalCode的值，作为回函邮编，默认为致同
-            PostalCode.Text = clsConfig.ReadConfig<string>("CurrentAccount", "PostalCode", "100004");
+            PostalCode.Text = clsConfig.ReadConfig<string>("CurrentAccount", "PostalCode", "000000");
             //从父节点CurrentAccount中读取配置名为AuditDeadline的值，作为审计截止日，默认为2019年12月31日
-            AuditDeadline.Text = clsConfig.ReadConfig<string>("CurrentAccount", "AuditDeadline", "2019年12月31日");
+            AuditDeadline.Text = clsConfig.ReadConfig<string>("CurrentAccount", "AuditDeadline", "20xx年12月31日");
             //从父节点CurrentAccount中读取配置名为Contact的值，作为联系人名称，默认为空
             Contact.Text = clsConfig.ReadConfig<string>("CurrentAccount", "Contact", "请修改");
             //从父节点CurrentAccount中读取配置名为Telephone的值，作为联系电话，默认为空
