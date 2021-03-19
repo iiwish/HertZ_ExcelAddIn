@@ -2211,13 +2211,13 @@ namespace HertZ_ExcelAddIn
 
                 TempNRG = null;
 
-                NRG[0, 0] = "客户名称";
-                NRG[0, 1] = "应收账款";
-                NRG[0, 2] = "预付账款";
-                NRG[0, 3] = "其他应收款";
-                NRG[0, 4] = "应付账款";
-                NRG[0, 5] = "预收账款";
-                NRG[0, 6] = "其他应付款";
+                NRG[0, 0] = "[客户名称]";
+                NRG[0, 1] = "[应收账款]";
+                NRG[0, 2] = "[预付账款]";
+                NRG[0, 3] = "[其他应收款]";
+                NRG[0, 4] = "[应付账款]";
+                NRG[0, 5] = "[预收账款]";
+                NRG[0, 6] = "[其他应付款]";
                 NRG[0, 7] = "邮编";
                 NRG[0, 8] = "联系地址";
                 NRG[0, 9] = "联系人";
@@ -2293,7 +2293,7 @@ namespace HertZ_ExcelAddIn
                 //查找客户名称列
                 for (int i = 1; i <= AllColumns; i++)
                 {
-                    if (OName[i - 1] == "客户名称")
+                    if (OName[i - 1] == "[客户名称]")
                     {
                         ColumnNum = i;
                         break;
@@ -2301,9 +2301,9 @@ namespace HertZ_ExcelAddIn
                 }
 
                 //创建目标新数组NRG
-                if (ColumnNum == 0) { MessageBox.Show("未发现客户名称列，请检查"); return; }
+                if (ColumnNum == 0) { MessageBox.Show("未发现[客户名称]列，请检查"); return; }
                 NRG = new object[FunC.AllRows(FunC.CName(ColumnNum)), 9];
-
+                 
                 //查找指定列
                 int ColumnNum1 = 0;//应收账款
                 int ColumnNum2 = 0;//预付账款
@@ -2464,7 +2464,7 @@ namespace HertZ_ExcelAddIn
                     NRG[i, 7] = AuditDeadline.Substring(0, 4) + "-" + NRG[i, 7] + "-" + i;
 
                     List<string> list1 = new List<string> { "Number","Auditee","OurCompany","AccountingFirmName","ReplyAddress"
-                ,"PostalCode","Telephone","Department","Contact","Leading","AuditDeadline","TotalReceivables","Receivable"
+                ,"PostalCode","Telephone","Department","Contact","Leading","AuditDeadline","TotalReceivables","[应收账款]"
                 ,"OtherReceivables","Prepayment","TotalPayables","Payable","OtherPayables","DepositReceived","OtherMatters"
                 };  //保存的是域
 
