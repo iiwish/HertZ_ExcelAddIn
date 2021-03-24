@@ -2381,7 +2381,7 @@ namespace HertZ_ExcelAddIn
                 }
 
                 //创建公司名字典，如果有重复的添加编号
-                string ItemID;
+                string ItemID = "";
                 Dictionary<string, int> CompanyDict = new Dictionary<string, int> { };
                 Dictionary<string, string> VariablesDict = new Dictionary<string, string> { };
                 Dictionary<string, string> BaseDict = new Dictionary<string, string> { };
@@ -2394,6 +2394,21 @@ namespace HertZ_ExcelAddIn
                 BaseDict.Add("Telephone", Telephone);
                 BaseDict.Add("Department", Department);
                 BaseDict.Add("Leading", Leading);
+
+                //生成函证编号
+                if (OurCompany.Length > 3)
+                {
+                    for (int i1 = 1; i1 < 5; i1++)
+                    {
+                        ItemID += FunC.GetSpellCode(OurCompany.Substring(i1 - 1, 1));
+                    }
+                }
+                else
+                {
+                    ItemID = "HertZ";
+                }
+                //读取审计截止日做函证编号
+                ItemID = string.Format("{0}-{1}-", AuditDeadline.Substring(0, Math.Min(AuditDeadline.Length, 4)), ItemID);
 
                 for (int i = 2; i <= AllRows; i++)
                 {
@@ -2414,23 +2429,8 @@ namespace HertZ_ExcelAddIn
                         CompanyDict[TempStr] = 0;
                     }
 
-                    //生成函证编号
-                    ItemID = "";
-                    if (TempStr.Length > 3)
-                    {
-                        for (int i1 = 1; i1 < 5; i1++)
-                        {
-                            ItemID += FunC.GetSpellCode(TempStr.Substring(i1 - 1, 1));
-                        }
-                    }
-                    else
-                    {
-                        ItemID = "HertZ";
-                    }
-                    //读取审计截止日做函证编号
-                    ItemID = string.Format("{0}-{1}-{2}", AuditDeadline.Substring(0, Math.Max(AuditDeadline.Length,4)), ItemID, i);
                     //编号
-                    WordDoc.Variables.Add("Number", ItemID);
+                    WordDoc.Variables.Add("Number", ItemID + i);
                     foreach (string ColName in ColDict.Keys)
                     {
                         TempStr = FunC.TS(ORG[i, ColDict[ColName]]);
