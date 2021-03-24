@@ -1462,8 +1462,10 @@ namespace HertZ_ExcelAddIn
         //账表加工设置
         private void BalanceAndJournalSetting_Click(object sender, RibbonControlEventArgs e)
         {
-            Form BAJSetting = new BAJSetting();
-            BAJSetting.StartPosition = FormStartPosition.CenterScreen;
+            Form BAJSetting = new BAJSetting
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
             BAJSetting.Show();
         }
 
@@ -2178,7 +2180,7 @@ namespace HertZ_ExcelAddIn
                 WST.Range["A1:F" + TempNRG.GetLength(0)].Value2 = TempNRG;//赋值函证清单
 
                 //重新定义数组，按公司名称做表
-                NRG = new object[KeyDic.Count + 1, 11];
+                NRG = new object[KeyDic.Count + 1, 12];
                 //定义关键列数组
                 object[] KeyDicArr;
                 //将客户名称存入数组
@@ -2218,12 +2220,13 @@ namespace HertZ_ExcelAddIn
                 NRG[0, 4] = "[应付账款]";
                 NRG[0, 5] = "[预收账款]";
                 NRG[0, 6] = "[其他应付款]";
-                NRG[0, 7] = "邮编";
-                NRG[0, 8] = "联系地址";
-                NRG[0, 9] = "联系人";
-                NRG[0, 10] = "联系电话";
+                NRG[0, 7] = "[备注]";
+                NRG[0, 8] = "邮编";
+                NRG[0, 9] = "联系地址";
+                NRG[0, 10] = "联系人";
+                NRG[0, 11] = "联系电话";
 
-                Excel.Range rg = WST.Range["H1:R" + NRG.GetLength(0)];//定义有效区域
+                Excel.Range rg = WST.Range["H1:S" + NRG.GetLength(0)];//定义有效区域
                 rg.Value2 = NRG;//赋值函证清单
 
                 //加框线
@@ -2233,8 +2236,7 @@ namespace HertZ_ExcelAddIn
                 //设置数字格式
                 WST.Range["I2:N" + NRG.GetLength(0)].NumberFormatLocal = "#,##0.00 ";
                 //首行颜色设置为灰色
-                rg = WST.Range["H1:R1"];
-                rg.Interior.ColorIndex = 15;
+                WST.Range["H1:S1"].Interior.ColorIndex = 15;
                 //冻结行和列
                 ExcelApp.ActiveWindow.SplitRow = 1;
                 ExcelApp.ActiveWindow.FreezePanes = true;
@@ -2260,112 +2262,56 @@ namespace HertZ_ExcelAddIn
 
                 int AllRows;
                 int AllColumns;
-                int ColumnNum = 0;
+                string TempStr;
                 //原始表格数组ORG
                 object[,] ORG;
                 //目标新数组NRG
-                object[,] NRG;
+                //object[,] NRG;
 
                 //选中发函清单表并继续
                 if (FunC.SelectSheet("发函清单") == false) return;
                 WST = (Excel.Worksheet)ExcelApp.ActiveWorkbook.Worksheets["发函清单"];
                 WST.Select();
-                AllRows = FunC.AllRows();
                 AllColumns = FunC.AllColumns();
 
-                //将表格读入数组ORG
-                ORG = WST.Range["A1:" + FunC.CName(AllColumns) + AllRows.ToString()].Value2;
+                //将表头读入数组ORG
+                ORG = WST.Range[string.Format("A1:{0}1",FunC.CName(AllColumns))].Value2;
 
-                //将列名读入List
-                List<string> OName = new List<string> { };
+                //将需要刷新数据的列加入字典
+                Dictionary<string, int> ColDict = new Dictionary<string, int> { };
+
+                Regex rg = new Regex(@"^\[.*\]$");
+                //查找需要添加的列
                 for (int i = 1; i <= AllColumns; i++)
                 {
-                    if (ORG[1, i] != null)
+                    TempStr = FunC.TS(ORG[1, i]);
+                    if (rg.IsMatch(TempStr))
                     {
-                        OName.Add(FunC.TS(ORG[1, i]));
-                    }
-                    else
-                    {
-                        OName.Add("0");
-                    }
-                }
-
-                //查找客户名称列
-                for (int i = 1; i <= AllColumns; i++)
-                {
-                    if (OName[i - 1] == "[客户名称]")
-                    {
-                        ColumnNum = i;
-                        break;
+                        if(ColDict.ContainsKey(TempStr))
+                        {
+                            MessageBox.Show("首行字段名有重复，请检查！");
+                            return;
+                        }
+                        else
+                        {
+                            ColDict.Add(TempStr, i);
+                        }
                     }
                 }
 
                 //创建目标新数组NRG
-                if (ColumnNum == 0) { MessageBox.Show("未发现[客户名称]列，请检查"); return; }
-                NRG = new object[FunC.AllRows(FunC.CName(ColumnNum)), 9];
-                 
-                //查找指定列
-                int ColumnNum1 = 0;//应收账款
-                int ColumnNum2 = 0;//预付账款
-                int ColumnNum3 = 0;//其他应收款
-                int ColumnNum4 = 0;//应付账款
-                int ColumnNum5 = 0;//预收账款
-                int ColumnNum6 = 0;//其他应付款
-
-                //查找往来款列
-                for (int i = 1; i <= AllColumns; i++)
-                {
-                    if (OName[i - 1] == "应收账款")
-                    {
-                        ColumnNum1 = i;
-                    }
-                    else if (OName[i - 1] == "预付账款")
-                    {
-                        ColumnNum2 = i;
-                    }
-                    else if (OName[i - 1] == "其他应收款")
-                    {
-                        ColumnNum3 = i;
-                    }
-                    else if (OName[i - 1] == "应付账款")
-                    {
-                        ColumnNum4 = i;
-                    }
-                    else if (OName[i - 1] == "预收账款")
-                    {
-                        ColumnNum5 = i;
-                    }
-                    else if (OName[i - 1] == "其他应付款")
-                    {
-                        ColumnNum6 = i;
-                    }
-                }
-
-                //检查是否有找到往来款列并赋值
-                if (ColumnNum1 != 0 || ColumnNum2 != 0 || ColumnNum3 != 0 || ColumnNum4 != 0 || ColumnNum5 != 0 || ColumnNum6 != 0)
-                {
-                    for (int i = 1; i < NRG.GetLength(0); i++)
-                    {
-                        NRG[i, 0] = ORG[i + 1, ColumnNum];
-                        if (ColumnNum1 != 0) { NRG[i, 1] = ORG[i + 1, ColumnNum1]; }
-                        if (ColumnNum2 != 0) { NRG[i, 2] = ORG[i + 1, ColumnNum2]; }
-                        if (ColumnNum3 != 0) { NRG[i, 3] = ORG[i + 1, ColumnNum3]; }
-                        if (ColumnNum4 != 0) { NRG[i, 4] = ORG[i + 1, ColumnNum4]; }
-                        if (ColumnNum5 != 0) { NRG[i, 5] = ORG[i + 1, ColumnNum5]; }
-                        if (ColumnNum6 != 0) { NRG[i, 6] = ORG[i + 1, ColumnNum6]; }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("未发现往来款列，请检查");
-                    return;
-                }
+                if (!ColDict.ContainsKey("[客户名称]")) { MessageBox.Show("未发现[客户名称]列，请检查"); return; }
+                AllRows = FunC.AllRows(FunC.CName(ColDict["[客户名称]"]));
+                ORG = WST.Range[string.Format("A1:{0}{1}", FunC.CName(AllColumns), AllRows)].Value2;
+                // NRG = new object[FunC.AllRows(FunC.CName(ColDict["[客户名称]"])), ColDict.Count + 2];
 
                 //获取存放函证的文件夹路径
                 string FolderPath = ExcelApp.ActiveWorkbook.Path;
-                FolderBrowserDialog folderDialog = new FolderBrowserDialog();
-                folderDialog.Description = "请选择文件夹存放函证";
-                folderDialog.SelectedPath = FolderPath;
+                FolderBrowserDialog folderDialog = new FolderBrowserDialog
+                {
+                    Description = "请选择文件夹存放函证",
+                    SelectedPath = FolderPath
+                };
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
                     FolderPath = folderDialog.SelectedPath;
@@ -2434,55 +2380,84 @@ namespace HertZ_ExcelAddIn
                     outputExcelFile.Close();
                 }
 
-                //第8列做函证编号，第9列做word名称
-                for (int i = 1; i < NRG.GetLength(0); i++)
-                {
-                    //如果客户名称列为空则跳过
-                    if (NRG[i, 0] == null) { break; }
-                    //如果合计为空则跳过
-                    if (Math.Abs(FunC.TD(NRG[i, 1])) + Math.Abs(FunC.TD(NRG[i, 2])) + Math.Abs(FunC.TD(NRG[i, 3])) + Math.Abs(FunC.TD(NRG[i, 4])) + Math.Abs(FunC.TD(NRG[i, 5])) + Math.Abs(FunC.TD(NRG[i, 6])) < p) { break; }
+                //创建公司名字典，如果有重复的添加编号
+                string ItemID;
+                Dictionary<string, int> CompanyDict = new Dictionary<string, int> { };
+                Dictionary<string, string> VariablesDict = new Dictionary<string, string> { };
+                Dictionary<string, string> BaseDict = new Dictionary<string, string> { };
+                BaseDict.Add("AccountingFirmName", AccountingFirmName);
+                BaseDict.Add("OurCompany", OurCompany);
+                BaseDict.Add("ReplyAddress", ReplyAddress);
+                BaseDict.Add("PostalCode", PostalCode);
+                BaseDict.Add("AuditDeadline", AuditDeadline);
+                BaseDict.Add("Contact", Contact);
+                BaseDict.Add("Telephone", Telephone);
+                BaseDict.Add("Department", Department);
+                BaseDict.Add("Leading", Leading);
 
+                for (int i = 2; i <= AllRows; i++)
+                {
+
+                    //如果客户名称列为空则跳过
+                    TempStr = FunC.TS(ORG[i, ColDict["[客户名称]"]]);
+                    if (TempStr == "") { break; }
+                    //新建模板
                     WordDoc = WordApp.Documents.Add(strPath + "\\HertZTemplate\\往来询证函模板.dotx");
 
-                    //第8列放文件名
-                    NRG[i, 8] = NRG[i, 0];//这里留个坑，如果有重复的客户名称，在NRG第8列加编号区分
+                    //用于防止存在重复的公司名导致文件无法保存
+                    if (CompanyDict.ContainsKey(TempStr))
+                    {
+                        CompanyDict[TempStr] = CompanyDict[TempStr] + 1;
+                    }
+                    else
+                    {
+                        CompanyDict[TempStr] = 0;
+                    }
 
-                    //第七列存放编号
-                    if (OurCompany.Length > 3)
+                    //生成函证编号
+                    ItemID = "";
+                    if (TempStr.Length > 3)
                     {
                         for (int i1 = 1; i1 < 5; i1++)
                         {
-                            NRG[i, 7] = NRG[i, 7] + FunC.GetSpellCode(OurCompany.Substring(i1 - 1, 1));
+                            ItemID += FunC.GetSpellCode(TempStr.Substring(i1 - 1, 1));
                         }
                     }
                     else
                     {
-                        NRG[i, 7] = "HertZ";
+                        ItemID = "HertZ";
                     }
-
                     //读取审计截止日做函证编号
-                    NRG[i, 7] = AuditDeadline.Substring(0, 4) + "-" + NRG[i, 7] + "-" + i;
-
-                    List<string> list1 = new List<string> { "Number","Auditee","OurCompany","AccountingFirmName","ReplyAddress"
-                ,"PostalCode","Telephone","Department","Contact","Leading","AuditDeadline","TotalReceivables","[应收账款]"
-                ,"OtherReceivables","Prepayment","TotalPayables","Payable","OtherPayables","DepositReceived","OtherMatters"
-                };  //保存的是域
-
-                    List<string> list2 = new List<string> { FunC.TS(NRG[i, 7]), FunC.TS(NRG[i, 8]), OurCompany , AccountingFirmName , ReplyAddress
-                ,PostalCode,Telephone,Department,Contact,Leading,AuditDeadline,String.Format("{0:N}",(FunC.TD(NRG[i, 1])+FunC.TD(NRG[i, 3]))),String.Format("{0:N}",FunC.TD(NRG[i, 1]))
-                ,String.Format("{0:N}",FunC.TD(NRG[i, 3])),String.Format("{0:N}",FunC.TD(NRG[i, 2])),String.Format("{0:N}",(FunC.TD(NRG[i, 4])+FunC.TD(NRG[i, 6])))
-                ,String.Format("{0:N}",FunC.TD(NRG[i, 4])),String.Format("{0:N}",FunC.TD(NRG[i, 6])),String.Format("{0:N}",FunC.TD(NRG[i, 5]))," "
-                };  //保存的是要插入的数据
-
-                    for (int i1 = 0; i1 < 20; i1++)
+                    ItemID = string.Format("{0}-{1}-{2}", AuditDeadline.Substring(0, Math.Max(AuditDeadline.Length,4)), ItemID, i);
+                    //编号
+                    WordDoc.Variables.Add("Number", ItemID);
+                    foreach (string ColName in ColDict.Keys)
                     {
-                        WordDoc.Variables.Add(list1[i1], list2[i1]);
+                        TempStr = FunC.TS(ORG[i, ColDict[ColName]]);
+                        if(TempStr == "")
+                        {
+                            TempStr = " ";
+                        }
+                        else if (FunC.IsNumber(TempStr))
+                        {
+                            TempStr = String.Format("{0:N}", FunC.TD(TempStr, 0d, 2));
+                        }
+                        WordDoc.Variables.Add(ColName, TempStr);
+                    }
+                    foreach (string ColName in BaseDict.Keys)
+                    {
+                        WordDoc.Variables.Add(ColName, BaseDict[ColName]);
                     }
 
                     //更新域
                     WordDoc.Fields.Update();
                     //另存为
-                    WordDoc.SaveAs2(string.Format("{0}\\{1}\\{2}.docx", FolderPath, OurCompany, FunC.TS(NRG[i, 8])));
+                    TempStr = FunC.TS(ORG[i, ColDict["[客户名称]"]]);
+                    if(CompanyDict[TempStr] != 0)
+                    {
+                        TempStr += CompanyDict[TempStr];
+                    }
+                    WordDoc.SaveAs2(string.Format("{0}\\{1}\\{2}.docx", FolderPath, OurCompany, TempStr));
                     WordDoc.Close();
                 }
 

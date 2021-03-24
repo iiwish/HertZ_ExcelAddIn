@@ -554,6 +554,25 @@ namespace HertZ_ExcelAddIn
         }
 
         /// <summary>
+        /// 打开网址
+        /// </summary>
+        /// <param name="WebPath">网址路径</param>
+        /// <returns>成功打开返回true，否则false</returns>
+        public bool OpenWeb(string WebPath)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(WebPath);
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("打开网址失败!" + Environment.NewLine + WebPath);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// 将不是数字的单元格标注黄色
         /// </summary>
         /// <param name="SelectRange"></param>

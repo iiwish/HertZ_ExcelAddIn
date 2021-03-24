@@ -41,9 +41,17 @@ namespace HertZ_ExcelAddIn
 
             //写入父节点VerInfo中配置名VerNum的配置项
             clsConfig.WriteConfig("VerInfo", "VerNum", Nverinfo);
-
-            string msg = "HertZ已更新，当前版本为" + Nverinfo + Environment.NewLine;
-            MessageBox.Show(msg + "更新内容：修复了几个bug；" + Environment.NewLine + "修改了使用说明文档链接");
+            string WebPath = @"https://www.yuque.com/hewish/hertz_excel/nup9wy";
+            try
+            {
+                string msg = "HertZ插件已更新，当前版本为" + Nverinfo + Environment.NewLine;
+                MessageBox.Show(msg + "后续更新提示改为直接打开“更新说明”网页");
+                System.Diagnostics.Process.Start(WebPath);
+            }
+            catch
+            {
+                MessageBox.Show("打开更新说明网址失败!" + Environment.NewLine + WebPath);
+            }
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
